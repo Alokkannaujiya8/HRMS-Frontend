@@ -1,0 +1,69 @@
+.emplyess-test-section {
+    padding: 2rem;
+    max-width: 1000px;
+    /* Made slightly wider to fit the 5 columns comfortably */
+    margin: 0 auto;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+
+    /* This ensures the table can be scrolled sideways on mobile phones */
+    overflow-x: auto;
+
+    h1 {
+        color: #2c3e50;
+        text-align: center;
+        margin-bottom: 1.5rem;
+        font-size: 2.2rem;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        background-color: #ffffff;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        border-radius: 8px;
+        overflow: hidden;
+        min-width: 700px;
+        /* Prevents columns from squishing too much */
+
+        th {
+            background-color: #007bff;
+            color: #ffffff;
+            text-align: left;
+            padding: 15px;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+            letter-spacing: 0.5px;
+
+            /* Aligns Salary and Join Date headers to the right */
+            &:nth-child(4),
+            &:nth-child(5) {
+                text-align: right;
+            }
+        }
+
+        td {
+            padding: 12px 15px;
+            color: #495057;
+            border-bottom: 1px solid #e9ecef;
+
+            /* Aligns Salary and Join Date data to the right */
+            &:nth-child(4),
+            &:nth-child(5) {
+                text-align: right;
+            }
+        }
+
+        tr {
+            transition: background-color 0.2s ease;
+
+            &:last-child td {
+                border-bottom: none;
+            }
+
+            &:hover {
+                background-color: #f1f3f5;
+            }
+        }
+    }
+}

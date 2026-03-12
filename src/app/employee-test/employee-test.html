@@ -1,0 +1,31 @@
+<section class="emplyess-test-section">
+  <h1>Employee Directory</h1>
+  
+  <table>
+    <tr>
+      <th>Name</th>
+      <th>Email</th>
+      <th>Mobile</th>
+      <th>Salary</th>
+      <th>Join Date</th>
+    </tr>
+
+    @for (emp of employees; track emp.id) {
+      <tr>
+        <td>{{ emp.name }}</td>
+        <td>{{ emp.email }}</td>
+        <td>{{ emp.mobile }}</td>
+        <td>{{ emp.salary | currency:'INR' }}</td>
+        <td>{{ emp.joinDate | date:'mediumDate' }}</td>
+      </tr>
+    }
+    
+    @empty {
+      <tr>
+        <td colspan="5" style="text-align: center; padding: 20px;">
+          No employees found.
+        </td>
+      </tr>
+    }
+  </table>
+</section>
