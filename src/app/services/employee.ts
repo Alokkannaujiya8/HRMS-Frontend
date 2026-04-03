@@ -1,16 +1,17 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
 })
 export class Employee {
-  apiUrl = "https://localhost:7147/api/employee"
+  private apiUrl = 'https://localhost:7147/api/employee';
 
   constructor(private http: HttpClient) {}
 
-  getEmployees(){
-    return this.http.get(this.apiUrl)
+  getEmployees(): Observable<any> {
+    return this.http.get<any>(this.apiUrl);
   }
 
   addEmployee(emp:any){

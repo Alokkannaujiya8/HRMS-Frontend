@@ -7,22 +7,23 @@ import { Employee } from '../services/employee';
   templateUrl: './employee-test.html',
   styleUrl: './employee-test.scss',
 })
-export class EmployeeTest implements OnInit{
-employees:any=[]
+export class EmployeeTest implements OnInit {
+  employees: any = [];
 
-constructor(private service:Employee){}
+  constructor(private service: Employee) {}
 
-
-ngOnInit() {
+  ngOnInit(): void {
+    this.loadEmployees();
+  }
+  loadEmployees(): void {
     this.service.getEmployees().subscribe({
-      next: (res) => {
-        
-        this.employees = res; 
-        console.log("Data loaded from API:", this.employees); 
+      next: (data) => {
+        this.employees = data; // API से आया डेटा array में सेव कर लिया
+        console.log('Data fetched successfully', data);
       },
       error: (err) => {
-        console.error("API Error:", err);
-      }
+        console.error('API Error:', err);
+      },
     });
-}
+  }
 }

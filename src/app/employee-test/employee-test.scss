@@ -1,41 +1,48 @@
 .emplyess-test-section {
-    padding: 2rem;
-    max-width: 1000px;
-    /* Made slightly wider to fit the 5 columns comfortably */
-    margin: 0 auto;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    padding: 2.5rem;
 
-    /* This ensures the table can be scrolled sideways on mobile phones */
+    min-height: 100vh;
+
+    background-color: #151521;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
     overflow-x: auto;
 
+
+
     h1 {
-        color: #2c3e50;
         text-align: center;
-        margin-bottom: 1.5rem;
-        font-size: 2.2rem;
+        margin-bottom: 2rem;
+        font-size: 2.5rem;
+        font-weight: 700;
+        letter-spacing: 1px;
+
+        background: linear-gradient(90deg, #00b2ff, #006aff);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
     }
 
     table {
         width: 100%;
         border-collapse: collapse;
-        background-color: #ffffff;
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-        border-radius: 8px;
+        background-color: #1e1e2d;
+        border-radius: 10px;
         overflow: hidden;
         min-width: 700px;
-        /* Prevents columns from squishing too much */
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
 
         th {
-            background-color: #007bff;
-            color: #ffffff;
+            background-color: #181824;
+            color: #a1a5b7;
             text-align: left;
-            padding: 15px;
+            padding: 18px 15px;
             font-weight: 600;
             text-transform: uppercase;
-            font-size: 0.9rem;
-            letter-spacing: 0.5px;
+            font-size: 0.85rem;
+            letter-spacing: 1.5px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 
-            /* Aligns Salary and Join Date headers to the right */
             &:nth-child(4),
             &:nth-child(5) {
                 text-align: right;
@@ -43,26 +50,34 @@
         }
 
         td {
-            padding: 12px 15px;
-            color: #495057;
-            border-bottom: 1px solid #e9ecef;
+            padding: 16px 15px;
+            color: #e4e6ef;
+            font-size: 0.95rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 
-            /* Aligns Salary and Join Date data to the right */
             &:nth-child(4),
             &:nth-child(5) {
                 text-align: right;
+                font-family: 'Courier New', Courier, monospace;
+                font-weight: 500;
+            }
+
+            &:nth-child(4) {
+                color: #50cd89;
             }
         }
 
         tr {
-            transition: background-color 0.2s ease;
+            transition: all 0.3s ease;
 
             &:last-child td {
                 border-bottom: none;
             }
 
             &:hover {
-                background-color: #f1f3f5;
+                background-color: #2b2b40;
+                transform: translateY(-2px);
+                box-shadow: inset 4px 0 0 #00b2ff;
             }
         }
     }
