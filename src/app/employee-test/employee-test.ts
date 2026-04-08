@@ -15,10 +15,11 @@ export class EmployeeTest implements OnInit {
   ngOnInit(): void {
     this.loadEmployees();
   }
+
   loadEmployees(): void {
     this.service.getEmployees().subscribe({
       next: (data) => {
-        this.employees = data; // API से आया डेटा array में सेव कर लिया
+        this.employees = data;
         console.log('Data fetched successfully', data);
       },
       error: (err) => {

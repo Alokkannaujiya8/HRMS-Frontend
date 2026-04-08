@@ -1,2 +1,15 @@
+@if (authService.loggedInSignal()) {
+  <nav class="navbar">
+    <div class="logo">
+      {{ title() }}
+    </div>
+    <div class="nav-links">
+      <a routerLink="/employees" routerLinkActive="active">Employees</a>
+      <button class="logout-btn" (click)="onLogout()">Logout</button>
+    </div>
+  </nav>
+}
 
-<router-outlet />
+<div class="main-content">
+  <router-outlet></router-outlet>
+</div>

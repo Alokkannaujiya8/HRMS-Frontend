@@ -1,0 +1,38 @@
+<section class="section-register">
+<div class="auth-wrapper">
+  <div class="auth-card">
+    <h2>Create Account</h2>
+
+    @if (errorMessage) {
+      <div class="error-message">
+        {{ errorMessage }}
+      </div>
+    }
+
+    <div class="input-group">
+      <label>Username</label>
+      <input type="text" [(ngModel)]="registerObj.username" placeholder="Choose a username">
+    </div>
+
+    <div class="input-group">
+      <label>Password</label>
+      <input type="password" [(ngModel)]="registerObj.password" placeholder="Create a password">
+    </div>
+
+    <div class="input-group">
+      <label>Role</label>
+      <select [(ngModel)]="registerObj.role">
+        <option value="Employee">Employee</option>
+        <option value="HR">HR</option>
+        <option value="Admin">Admin</option>
+      </select>
+    </div>
+
+    <button class="auth-btn" (click)="onRegister()">Register</button>
+
+    <div class="footer-link">
+      Already have an account? <a routerLink="/login">Login here</a>
+    </div>
+  </div>
+</div>
+</section>
