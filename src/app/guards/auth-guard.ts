@@ -8,9 +8,8 @@ export const authGuard: CanActivateFn = (_route, _state) => {
 
   if (authService.isLoggedIn()) {
     return true;
-  } else {
-    alert('Please Login first to access this page!');
-    router.navigate(['/login']);
-    return false;
   }
+
+  alert('Please login first to access this page.');
+  return router.createUrlTree(['/login']);
 };

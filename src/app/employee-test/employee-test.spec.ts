@@ -1,4 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideHttpClient } from '@angular/common/http';
+import { NO_ERRORS_SCHEMA } from '@angular/core';
 
 import { EmployeeTest } from './employee-test';
 
@@ -8,7 +10,9 @@ describe('EmployeeTest', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [EmployeeTest]
+      declarations: [EmployeeTest],
+      providers: [provideHttpClient()],
+      schemas: [NO_ERRORS_SCHEMA],
     })
     .compileComponents();
 

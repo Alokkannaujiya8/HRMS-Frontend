@@ -1,34 +1,133 @@
+<!-- 
 <section class="emplyess-test-section">
   <h1>Employee Directory</h1>
   
- <table border="1">
-  <thead>
-    <tr>
-      <th>ID</th>
-      <th>Name</th>
-      <th>Email</th>
-      <th>Mobile</th>
-      <th>Salary</th>
-      <th>Department ID</th>
-      <th>Join Date</th>
-    </tr>
-  </thead>
-  <tbody>
-    @for (emp of employees; track emp.id) {
-      <tr>
-        <td>{{ emp.id }}</td>
-        <td>{{ emp.name }}</td>
-        <td>{{ emp.email }}</td>
-        <td>{{ emp.mobile }}</td>
-        <td>{{ emp.salary }}</td>
-        <td>{{ emp.departmentId }}</td>
-        <td>{{ emp.joinDate | date }}</td>
-      </tr>
-    } @empty {
-      <tr>
-        <td colspan="7">No data found</td>
-      </tr>
+  @if (successMessage) {
+    <div class="alert-success">
+      <strong>Success!</strong> {{ successMessage }}
+    </div>
+  }
+  
+  <div class="form-container">
+    <h3>{{ isEditing ? 'Edit Employee' : 'Add New Employee' }}</h3>
+
+    <div class="form-row">
+      <input type="text" [(ngModel)]="currentEmployee.name" placeholder="Name *" required />
+      <input type="email" [(ngModel)]="currentEmployee.email" placeholder="Email *" required />
+      <input type="text" [(ngModel)]="currentEmployee.mobile" placeholder="Mobile" />
+      <input type="number" [(ngModel)]="currentEmployee.salary" placeholder="Salary" />
+      
+      <select [(ngModel)]="currentEmployee.departmentId" required>
+        <option [ngValue]="null" disabled>Select Department</option>
+        @for (dept of departments; track dept.id) {
+          <option [value]="dept.id">{{ dept.name }}</option>
+        }
+      </select>
+      
+      <input type="date" [(ngModel)]="currentEmployee.joinDate" />
+    </div>
+
+    <button 
+      class="btn-save"
+      (click)="saveEmployee()" 
+      [disabled]="!currentEmployee.name || !currentEmployee.email || !currentEmployee.departmentId"
+    >
+      {{ isEditing ? 'Update Employee' : 'Add Employee' }}
+    </button>
+
+    @if (isEditing) {
+      <button class="btn-cancel" (click)="resetForm()">Cancel</button>
     }
-  </tbody>
-</table>
+  </div>
+  
+  <div class="search-container">
+    <input 
+      type="text" 
+      class="search-input"
+      [(ngModel)]="searchText" 
+      (ngModelChange)="onSearchChange()"
+      placeholder="🔍 Search by name or email..." 
+    />
+  </div>
+
+  <table class="employee-table">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Mobile</th>
+        <th>Salary</th>
+        <th>Department ID</th>
+        <th>Join Date</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (emp of paginatedEmployees; track emp.id) {
+        <tr>
+          <td>{{ emp.id }}</td>
+          <td>{{ emp.name }}</td>
+          <td>{{ emp.email }}</td>
+          <td>{{ emp.mobile }}</td>
+          <td>{{ emp.salary }}</td>
+          <td>{{ emp.departmentId }}</td>
+          <td>{{ emp.joinDate | date }}</td>
+          <td>
+            <button (click)="editEmployee(emp)">Edit</button>
+            <button class="btn-delete" (click)="deleteEmployee(emp.id)">Delete</button>
+          </td>
+        </tr>
+      } @empty {
+        <tr>
+          <td colspan="8" class="empty-state">No data found</td>
+        </tr>
+      }
+    </tbody>
+  </table>
+
+  <div class="pagination-container">
+    <span>Showing page {{ currentPage }} of {{ totalPages === 0 ? 1 : totalPages }}</span>
+    <div>
+      <button class="btn-page" (click)="prevPage()" [disabled]="currentPage === 1">
+        Previous
+      </button>
+      <button class="btn-page" (click)="nextPage()" [disabled]="currentPage >= totalPages">
+        Next
+      </button>
+    </div>
+  </div>
+</section> -->
+
+
+<section class="emplyess-test-section">
+  <h1>Employee Directory</h1>
+
+  <app-dashboard [employees]="employees" [departments]="departments"></app-dashboard>
+
+  @if (successMessage) {
+    <div class="alert-success"><strong>Success!</strong> {{ successMessage }}</div>
+  }
+
+  @if (errorMessage) {
+    <div class="alert-error"><strong>Error:</strong> {{ errorMessage }}</div>
+  }
+
+  @if (userRole === 'Admin' || userRole === 'HR') {
+    <app-employee-form 
+      [currentEmployee]="currentEmployee" 
+      [departments]="departments" 
+      [isEditing]="isEditing"
+      (onSave)="saveEmployee()" 
+      (onCancel)="resetForm()">
+    </app-employee-form>
+  }
+
+  <app-employee-list 
+    [employees]="employees" 
+    [userRole]="userRole"
+    (onEdit)="editEmployee($event)" 
+    (onDelete)="deleteEmployee($event)">
+  </app-employee-list>
+
 </section>

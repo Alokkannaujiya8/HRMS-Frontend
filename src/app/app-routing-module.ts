@@ -5,22 +5,23 @@ import { Login } from './components/login/login';
 import { Register } from './components/register/register';
 import { authGuard } from './guards/auth-guard';
 
-
 const routes: Routes = [
   {
-    path:'',
+    path: '',
     redirectTo: 'login',
-    pathMatch: 'full'
+    pathMatch: 'full',
   },
   {
-    path: 'login', component: Login
+    path: 'login',
+    component: Login,
   },
   { path: 'register', component: Register },
   {
     path: 'employees',
     component: EmployeeTest,
-    canActivate: [authGuard]
+    canActivate: [authGuard],
   },
+  { path: '**', redirectTo: 'login' },
 ];
 
 @NgModule({

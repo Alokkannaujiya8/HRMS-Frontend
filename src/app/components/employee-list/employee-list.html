@@ -1,0 +1,57 @@
+<div class="search-container">
+  <input
+    type="text"
+    class="search-input"
+    [(ngModel)]="searchText"
+    (ngModelChange)="onSearchChange()"
+    placeholder="Search by name or email..."
+  />
+</div>
+
+<div class="table-responsive">
+  <table class="employee-table">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Mobile</th>
+        <th>Salary</th>
+        <th>Dept ID</th>
+        <th>Join Date</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (emp of paginatedEmployees; track emp.id) {
+        <tr>
+          <td>{{ emp.id }}</td>
+          <td>{{ emp.name }}</td>
+          <td>{{ emp.email }}</td>
+          <td>{{ emp.mobile || 'N/A' }}</td>
+          <td class="text-success">Rs {{ (emp.salary ?? 0) | number:'1.0-0' }}</td>
+          <td>{{ emp.departmentId }}</td>
+          <td>{{ emp.joinDate | date:'mediumDate' }}</td>
+          <td>
+            @if (userRole === 'Admin' || userRole === 'HR') {
+              <button class="btn-edit" type="button" (click)="edit(emp)">Edit</button>
+              <button class="btn-delete" type="button" (click)="delete(emp.id)">Delete</button>
+            } @else {
+              <span class="view-only-badge">View Only</span>
+            }
+          </td>
+        </tr>
+      } @empty {
+        <tr><td colspan="8" class="empty-state">No employees found.</td></tr>
+      }
+    </tbody>
+  </table>
+</div>
+
+<div class="pagination-container">
+  <span class="page-info">Showing page {{ currentPage }} of {{ totalPages === 0 ? 1 : totalPages }}</span>
+  <div class="page-buttons">
+    <button class="btn-page" type="button" (click)="prevPage()" [disabled]="currentPage === 1">Previous</button>
+    <button class="btn-page" type="button" (click)="nextPage()" [disabled]="currentPage >= totalPages">Next</button>
+  </div>
+</div>

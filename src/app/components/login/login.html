@@ -1,29 +1,29 @@
 <section class="login-section">
-<div class="login-wrapper">
-  <div class="login-card">
-    <h2>HRMS Login</h2>
+  <div class="login-wrapper">
+    <div class="login-card">
+      <h2>HRMS Login</h2>
 
-    @if (errorMessage) {
-      <div class="error-message">
-        {{ errorMessage }}
+      @if (errorMessage) {
+        <div class="error-message">
+          {{ errorMessage }}
+        </div>
+      }
+
+      <div class="input-group">
+        <label>Username</label>
+        <input type="text" [(ngModel)]="loginObj.username" placeholder="Enter your username" />
       </div>
-    }
 
-    <div class="input-group">
-      <label>Username</label>
-      <input type="text" [(ngModel)]="loginObj.username" placeholder="Enter your username">
-    </div>
+      <div class="input-group">
+        <label>Password</label>
+        <input type="password" [(ngModel)]="loginObj.password" placeholder="Enter your password" />
+      </div>
 
-    <div class="input-group">
-      <label>Password</label>
-      <input type="password" [(ngModel)]="loginObj.password" placeholder="Enter your password">
-    </div>
+      <button class="login-btn" type="button" (click)="onLogin()">Login</button>
 
-    <button class="login-btn" (click)="onLogin()">Login</button>
-
-    <div class="footer-link" style="text-align: center; margin-top: 20px; font-size: 14px; color: #a8b2d1;">
-      Don't have an account? <a routerLink="/register" style="color: #5bc0be; text-decoration: none; font-weight: bold;">Register here</a>
+      <div class="footer-link">
+        Don't have an account? <a routerLink="/register">Register here</a>
+      </div>
     </div>
   </div>
-</div>
 </section>

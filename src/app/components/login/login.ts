@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Auth } from '../../services/auth';
 import { Router } from '@angular/router';
+import { LoginRequest } from '../../models/auth.model';
 
 @Component({
   selector: 'app-login',
@@ -9,7 +10,7 @@ import { Router } from '@angular/router';
   styleUrl: './login.scss',
 })
 export class Login implements OnInit {
-  loginObj: any = {
+  loginObj: LoginRequest = {
     username: '',
     password: '',
   };
@@ -21,7 +22,7 @@ export class Login implements OnInit {
     private router: Router,
   ) {}
 
-  ngOnInit() {
+  ngOnInit(): void {
     if (this.authService.isLoggedIn()) {
       this.router.navigate(['/employees']);
     } else {
@@ -29,7 +30,9 @@ export class Login implements OnInit {
     }
   }
 
-  onLogin() {
+  onLogin(): void {
+    this.errorMessage = '';
+
     this.authService.login(this.loginObj).subscribe({
       next: (res) => {
         if (res.token) {
@@ -39,9 +42,8 @@ export class Login implements OnInit {
           this.router.navigate(['/employees']);
         }
       },
-      error: (err) => {
-        this.errorMessage = 'Invalid Username or Password';
-        console.error('Login Error:', err);
+      error: (err: Error) => {
+        this.errorMessage = err.message || 'Invalid username or password.';
       },
     });
   }

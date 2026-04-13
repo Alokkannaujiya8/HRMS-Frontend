@@ -1,0 +1,34 @@
+<div class="form-container">
+  <h3>{{ isEditing ? 'Edit Employee' : 'Add New Employee' }}</h3>
+
+  <div class="form-row">
+    <input type="text" [(ngModel)]="currentEmployee.name" placeholder="Full Name *" required />
+    <input type="email" [(ngModel)]="currentEmployee.email" placeholder="Email Address *" required />
+    <input type="text" [(ngModel)]="currentEmployee.mobile" placeholder="Mobile Number" />
+    <input type="number" [(ngModel)]="currentEmployee.salary" placeholder="Salary (Rs)" />
+
+    <select [(ngModel)]="currentEmployee.departmentId" required>
+      <option [ngValue]="null" disabled>Select Department *</option>
+      @for (dept of departments; track dept.id) {
+        <option [value]="dept.id">{{ dept.name }}</option>
+      }
+    </select>
+
+    <input type="date" [(ngModel)]="currentEmployee.joinDate" />
+  </div>
+
+  <div class="form-actions">
+    <button
+      class="btn-save"
+      type="button"
+      (click)="save()"
+      [disabled]="!currentEmployee.name || !currentEmployee.email || !currentEmployee.departmentId"
+    >
+      {{ isEditing ? 'Update Employee' : 'Add Employee' }}
+    </button>
+
+    @if (isEditing) {
+      <button class="btn-cancel" type="button" (click)="cancel()">Cancel</button>
+    }
+  </div>
+</div>

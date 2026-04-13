@@ -1,84 +1,42 @@
 .emplyess-test-section {
-    padding: 2.5rem;
+  width: min(1200px, 100%);
+  margin: 0 auto;
+  padding: 8px;
 
-    min-height: 100vh;
+  h1 {
+    margin: 0 0 14px;
+    font-size: clamp(1.5rem, 1.8vw + 1rem, 2.25rem);
+    letter-spacing: 0.2px;
+    color: #f8fafc;
+    font-weight: 800;
+  }
 
-    background-color: #151521;
+  .alert-success,
+  .alert-error {
+    margin: 10px 0;
     border-radius: 12px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
-    overflow-x: auto;
+    padding: 10px 12px;
+    font-size: 0.9rem;
+    font-weight: 600;
+  }
 
+  .alert-success {
+    border: 1px solid rgba(74, 222, 128, 0.4);
+    background: rgba(20, 83, 45, 0.35);
+    color: #bbf7d0;
+  }
 
+  .alert-error {
+    border: 1px solid rgba(248, 113, 113, 0.42);
+    background: rgba(127, 29, 29, 0.35);
+    color: #fecaca;
+  }
+}
 
+@media (max-width: 768px) {
+  .emplyess-test-section {
     h1 {
-        text-align: center;
-        margin-bottom: 2rem;
-        font-size: 2.5rem;
-        font-weight: 700;
-        letter-spacing: 1px;
-
-        background: linear-gradient(90deg, #00b2ff, #006aff);
-        -webkit-background-clip: text;
-        background-clip: text;
-        -webkit-text-fill-color: transparent;
+      margin-bottom: 10px;
     }
-
-    table {
-        width: 100%;
-        border-collapse: collapse;
-        background-color: #1e1e2d;
-        border-radius: 10px;
-        overflow: hidden;
-        min-width: 700px;
-        box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
-
-        th {
-            background-color: #181824;
-            color: #a1a5b7;
-            text-align: left;
-            padding: 18px 15px;
-            font-weight: 600;
-            text-transform: uppercase;
-            font-size: 0.85rem;
-            letter-spacing: 1.5px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-
-            &:nth-child(4),
-            &:nth-child(5) {
-                text-align: right;
-            }
-        }
-
-        td {
-            padding: 16px 15px;
-            color: #e4e6ef;
-            font-size: 0.95rem;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-
-            &:nth-child(4),
-            &:nth-child(5) {
-                text-align: right;
-                font-family: 'Courier New', Courier, monospace;
-                font-weight: 500;
-            }
-
-            &:nth-child(4) {
-                color: #50cd89;
-            }
-        }
-
-        tr {
-            transition: all 0.3s ease;
-
-            &:last-child td {
-                border-bottom: none;
-            }
-
-            &:hover {
-                background-color: #2b2b40;
-                transform: translateY(-2px);
-                box-shadow: inset 4px 0 0 #00b2ff;
-            }
-        }
-    }
+  }
 }

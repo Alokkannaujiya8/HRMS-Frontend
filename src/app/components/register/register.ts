@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { Auth } from '../../services/auth';
+import { RegisterRequest } from '../../models/auth.model';
 
 @Component({
   selector: 'app-register',
@@ -9,7 +10,7 @@ import { Auth } from '../../services/auth';
   styleUrl: './register.scss',
 })
 export class Register {
-  registerObj: any = {
+  registerObj: RegisterRequest = {
     username: '',
     password: '',
     role: 'Employee',
@@ -19,15 +20,16 @@ export class Register {
 
   constructor(private authService: Auth, private router: Router) {}
 
-  onRegister() {
+  onRegister(): void {
+    this.errorMessage = '';
+
     this.authService.register(this.registerObj).subscribe({
       next: () => {
         alert('Registration Successful! Please login.');
         this.router.navigate(['/login']);
       },
-      error: (err) => {
-        this.errorMessage = err.error?.message || 'Username already exists or Registration Failed';
-        console.error('Register Error:', err);
+      error: (err: Error) => {
+        this.errorMessage = err.message || 'Username already exists or registration failed.';
       },
     });
   }
