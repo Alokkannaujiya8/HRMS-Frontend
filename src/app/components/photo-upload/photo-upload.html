@@ -1,0 +1,27 @@
+<div class="photo-upload-container text-center mb-3">
+  <div class="photo-preview mb-2">
+    @if (previewUrl) {
+      <img [src]="previewUrl" alt="Preview" class="profile-pic" (error)="onImageError($event)">
+    } 
+    @else if (existingPhotoUrl) {
+      <img [src]="getExistingPhotoUrl()" alt="Existing" class="profile-pic" (error)="onImageError($event)">
+    } 
+    @else {
+      <img src="assets/dummy-user.png" alt="Dummy" class="profile-pic">
+    }
+  </div>
+
+  <input type="file" #fileInput (change)="onFileChange($event)" accept="image/*" style="display: none;">
+  
+  <div class="d-flex justify-content-center gap-2">
+    <button type="button" class="btn btn-sm btn-outline-info" (click)="fileInput.click()">
+      Select Photo
+    </button>
+    
+    @if (previewUrl || existingPhotoUrl) {
+      <button type="button" class="btn btn-sm btn-outline-danger" (click)="removePhoto()">
+        Remove
+      </button>
+    }
+  </div>
+</div>

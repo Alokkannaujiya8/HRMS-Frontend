@@ -11,9 +11,10 @@ import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { Dashboard } from './components/dashboard/dashboard';
 import { EmployeeForm } from './components/employee-form/employee-form';
 import { EmployeeList } from './components/employee-list/employee-list';
+import { PhotoUpload } from './components/photo-upload/photo-upload';
 
 @NgModule({
-  declarations: [App, EmployeeTest, Login, Register, Dashboard, EmployeeForm, EmployeeList],
+  declarations: [App, EmployeeTest, Login, Register, Dashboard, EmployeeForm, EmployeeList, PhotoUpload, ],
   imports: [BrowserModule, AppRoutingModule, FormsModule],
   providers: [provideHttpClient(withInterceptors([authInterceptor]))],
   bootstrap: [App],

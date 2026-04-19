@@ -1,0 +1,71 @@
+.photo-upload-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 12px;
+  border: 1px dashed rgba(148, 163, 184, 0.35);
+  border-radius: 14px;
+  background: rgba(2, 6, 23, 0.35);
+}
+
+.photo-preview {
+  width: 112px;
+  height: 112px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 2px solid rgba(125, 211, 252, 0.45);
+  box-shadow: 0 8px 18px rgba(2, 6, 23, 0.35);
+  background: rgba(15, 23, 42, 0.8);
+}
+
+.profile-pic {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.d-flex {
+  display: flex;
+}
+
+.justify-content-center {
+  justify-content: center;
+}
+
+.gap-2 {
+  gap: 8px;
+}
+
+.btn {
+  border-radius: 10px;
+  padding: 8px 12px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: 1px solid transparent;
+}
+
+.btn-outline-info {
+  border-color: rgba(56, 189, 248, 0.65);
+  color: #7dd3fc;
+  background: rgba(8, 47, 73, 0.35);
+
+  &:hover {
+    transform: translateY(-1px);
+    background: rgba(8, 47, 73, 0.55);
+  }
+}
+
+.btn-outline-danger {
+  border-color: rgba(248, 113, 113, 0.65);
+  color: #fca5a5;
+  background: rgba(69, 10, 10, 0.35);
+
+  &:hover {
+    transform: translateY(-1px);
+    background: rgba(69, 10, 10, 0.55);
+  }
+}

@@ -33,7 +33,7 @@
 .employee-table {
   width: 100%;
   border-collapse: collapse;
-  min-width: 760px;
+  min-width: 860px;
 
   th,
   td {
@@ -67,6 +67,16 @@
     color: var(--text-muted);
     padding: 24px;
   }
+}
+
+.employee-photo {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid rgba(125, 211, 252, 0.55);
+  box-shadow: 0 4px 12px rgba(2, 6, 23, 0.35);
+  background: rgba(15, 23, 42, 0.8);
 }
 
 .btn-edit,

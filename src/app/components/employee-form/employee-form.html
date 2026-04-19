@@ -1,6 +1,28 @@
 <div class="form-container">
   <h3>{{ isEditing ? 'Edit Employee' : 'Add New Employee' }}</h3>
 
+  <app-photo-upload
+    [existingPhotoUrl]="currentEmployee.photoUrl || ''"
+    (fileSelected)="onPhotoSelected($event)"
+  ></app-photo-upload>
+
+  <div class="form-row">
+    <label class="file-label">
+      Employee Document
+      <input type="file" (change)="onDocumentChange($event)" accept=".pdf,.doc,.docx,.png,.jpg,.jpeg" />
+    </label>
+    <div class="file-info">
+      @if (selectedDocumentName) {
+        <span>Selected: {{ selectedDocumentName }}</span>
+        <button type="button" class="btn-cancel" (click)="removeDocument()">Remove</button>
+      } @else if (currentEmployee.documentUrl) {
+        <a [href]="getDocumentUrl()" target="_blank" rel="noopener">
+          View Current Document
+        </a>
+      }
+    </div>
+  </div>
+
   <div class="form-row">
     <input type="text" [(ngModel)]="currentEmployee.name" placeholder="Full Name *" required />
     <input type="email" [(ngModel)]="currentEmployee.email" placeholder="Email Address *" required />
@@ -22,9 +44,9 @@
       class="btn-save"
       type="button"
       (click)="save()"
-      [disabled]="!currentEmployee.name || !currentEmployee.email || !currentEmployee.departmentId"
+      [disabled]="isSaving || !currentEmployee.name || !currentEmployee.email || !currentEmployee.departmentId"
     >
-      {{ isEditing ? 'Update Employee' : 'Add Employee' }}
+      {{ isSaving ? 'Saving...' : isEditing ? 'Update Employee' : 'Add Employee' }}
     </button>
 
     @if (isEditing) {

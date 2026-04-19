@@ -13,6 +13,7 @@
     <thead>
       <tr>
         <th>ID</th>
+        <th>Photo</th>
         <th>Name</th>
         <th>Email</th>
         <th>Mobile</th>
@@ -26,6 +27,14 @@
       @for (emp of paginatedEmployees; track emp.id) {
         <tr>
           <td>{{ emp.id }}</td>
+          <td>
+            <img
+              class="employee-photo"
+              [src]="getPhotoUrl(emp.photoUrl)"
+              [alt]="emp.name + ' photo'"
+              (error)="onImageError($event)"
+            />
+          </td>
           <td>{{ emp.name }}</td>
           <td>{{ emp.email }}</td>
           <td>{{ emp.mobile || 'N/A' }}</td>
@@ -42,7 +51,7 @@
           </td>
         </tr>
       } @empty {
-        <tr><td colspan="8" class="empty-state">No employees found.</td></tr>
+        <tr><td colspan="9" class="empty-state">No employees found.</td></tr>
       }
     </tbody>
   </table>

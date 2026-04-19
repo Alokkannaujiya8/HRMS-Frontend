@@ -76,12 +76,14 @@ export class Dashboard implements OnChanges, AfterViewInit, OnDestroy {
       type: 'bar',
       data: {
         labels: labels,
-        datasets: [{
-          label: 'Employees',
-          data: data,
-          backgroundColor: ['#00b2ff', '#50cd89', '#f1416c', '#ffc700', '#7239ea'],
-          borderRadius: 6,
-        }],
+        datasets: [
+          {
+            label: 'Employees',
+            data: data,
+            backgroundColor: ['#00b2ff', '#50cd89', '#f1416c', '#ffc700', '#7239ea'],
+            borderRadius: 6,
+          },
+        ],
       },
       options: {
         responsive: true,

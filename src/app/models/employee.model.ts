@@ -11,6 +11,8 @@ export interface EmployeeRecord {
   salary: number | null;
   departmentId: number | null;
   joinDate: string | null;
+  photoUrl: string | null;
+  documentUrl: string | null;
 }
 
 export type EmployeeUpsertPayload = Omit<EmployeeRecord, 'id'> & { id?: number };
@@ -22,4 +24,6 @@ export const EMPTY_EMPLOYEE: EmployeeUpsertPayload = {
   salary: null,
   departmentId: null,
   joinDate: '',
+  photoUrl: '',
+  documentUrl: '',
 };

@@ -41,8 +41,34 @@ export class Employee {
       .pipe(catchError((error) => this.handleError(error, 'delete employee')));
   }
 
+  uploadPhoto(file: File): Observable<Record<string, unknown>> {
+    return this.uploadFile(file, 'photo');
+  }
+
+  uploadDocument(file: File): Observable<Record<string, unknown>> {
+    return this.uploadFile(file, 'document');
+  }
+
+  private uploadFile(file: File, type: 'photo' | 'document'): Observable<Record<string, unknown>> {
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('type', type);
+    return this.http
+      .post<Record<string, unknown>>(`${this.apiUrl}/upload`, formData)
+      .pipe(catchError((error) => this.handleError(error, `upload ${type}`)));
+  }
+
   private handleError(error: HttpErrorResponse, operation: string): Observable<never> {
-    const message = error.error?.message || error.message || `Unable to ${operation}.`;
+    const validationErrors = error.error?.errors && typeof error.error.errors === 'object'
+      ? Object.values(error.error.errors as Record<string, string[]>).flat().join(' ')
+      : '';
+
+    const message =
+      validationErrors ||
+      error.error?.message ||
+      error.error?.title ||
+      error.message ||
+      `Unable to ${operation}.`;
     return throwError(() => new Error(message));
   }
 }

@@ -1,5 +1,6 @@
 import { Component,Input, Output, EventEmitter } from '@angular/core';
 import { EmployeeRecord } from '../../models/employee.model';
+import { buildFileUrl } from '../../utils/file-url';
 
 @Component({
   selector: 'app-employee-list',
@@ -42,5 +43,17 @@ export class EmployeeList {
     if (typeof id === 'number') {
       this.onDelete.emit(id);
     }
+  }
+
+  getPhotoUrl(photoUrl: string | null): string {
+    return buildFileUrl(photoUrl) || 'assets/dummy-user.png';
+  }
+
+  onImageError(event: Event): void {
+    const img = event.target as HTMLImageElement | null;
+    if (!img || img.src.endsWith('/assets/dummy-user.png')) {
+      return;
+    }
+    img.src = 'assets/dummy-user.png';
   }
 }

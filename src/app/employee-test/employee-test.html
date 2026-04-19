@@ -118,8 +118,11 @@
       [currentEmployee]="currentEmployee" 
       [departments]="departments" 
       [isEditing]="isEditing"
+      [isSaving]="isSaving"
       (onSave)="saveEmployee()" 
-      (onCancel)="resetForm()">
+      (onCancel)="resetForm()"
+      (onPhotoFileChange)="onPhotoSelected($event)"
+      (onDocumentFileChange)="onDocumentSelected($event)">
     </app-employee-form>
   }
 
