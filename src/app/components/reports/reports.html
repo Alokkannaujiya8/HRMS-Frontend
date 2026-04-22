@@ -1,0 +1,106 @@
+<section class="feature-page">
+  <div class="feature-header">
+    <h1>Reports</h1>
+    @if (canExportAll) {
+      <p>Admin / HR view: organization reports export (Excel/CSV + PDF summary).</p>
+    } @else {
+      <p>Employee view: your own attendance and leave history.</p>
+    }
+  </div>
+
+  @if (message) {
+    <div class="alert success">{{ message }}</div>
+  }
+  @if (errorMessage) {
+    <div class="alert error">{{ errorMessage }}</div>
+  }
+
+  <div class="panel controls">
+    <label>
+      Report Month
+      <input type="month" [(ngModel)]="selectedMonth" />
+    </label>
+    @if (canExportAll) {
+      <div class="btns">
+        <button type="button" class="btn" (click)="downloadExcelReport()">Employee Excel</button>
+        <button type="button" class="btn" (click)="downloadAttendanceExcel()">Attendance Excel</button>
+        <button type="button" class="btn pdf" (click)="downloadPdfSummary()">PDF Summary</button>
+      </div>
+    } @else {
+      <p class="muted">Exports are available only for Admin / HR.</p>
+    }
+  </div>
+
+  <div class="stats">
+    <div class="card">
+      <h3>Total Employees</h3>
+      <p>{{ visibleEmployees.length }}</p>
+    </div>
+    <div class="card">
+      <h3>Salary Expense</h3>
+      <p>Rs {{ monthlySalaryExpense | number:'1.0-0' }}</p>
+    </div>
+    <div class="card">
+      <h3>Attendance Records</h3>
+      <p>{{ filteredAttendance.length }}</p>
+    </div>
+    <div class="card">
+      <h3>Leave Requests</h3>
+      <p>{{ filteredLeaves.length }}</p>
+    </div>
+  </div>
+
+  @if (!canExportAll) {
+    <div class="panel table-wrap">
+      <h3>My Attendance History</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Status</th>
+            <th>Check In</th>
+            <th>Check Out</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (entry of filteredAttendance; track entry.id) {
+            <tr>
+              <td>{{ entry.date }}</td>
+              <td>{{ entry.status }}</td>
+              <td>{{ entry.checkIn }}</td>
+              <td>{{ entry.checkOut }}</td>
+            </tr>
+          } @empty {
+            <tr><td colspan="4" class="empty">No attendance history for this month.</td></tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+    <div class="panel table-wrap">
+      <h3>My Leave History</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Type</th>
+            <th>From</th>
+            <th>To</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (leave of filteredLeaves; track leave.id) {
+            <tr>
+              <td>{{ leave.leaveType }}</td>
+              <td>{{ leave.fromDate }}</td>
+              <td>{{ leave.toDate }}</td>
+              <td>{{ leave.status }}</td>
+            </tr>
+          } @empty {
+            <tr><td colspan="4" class="empty">No leave history for this month.</td></tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</section>

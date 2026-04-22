@@ -1,0 +1,47 @@
+<section class="payroll-page">
+  <div class="header">
+    <h1>My Payroll</h1>
+    <p>Select month and year to download your payslip.</p>
+  </div>
+
+  @if (errorMessage) {
+    <div class="alert error">{{ errorMessage }}</div>
+  }
+
+  <div class="card">
+    <div class="grid">
+      <label>
+        Month
+        <select [(ngModel)]="selectedMonth">
+          @for (month of months; track month.value) {
+            <option [value]="month.value">{{ month.label }}</option>
+          }
+        </select>
+      </label>
+
+      <label>
+        Year
+        <select [(ngModel)]="selectedYear">
+          @for (year of years; track year) {
+            <option [value]="year">{{ year }}</option>
+          }
+        </select>
+      </label>
+    </div>
+
+    <button
+      type="button"
+      class="btn-download"
+      (click)="downloadPayslip()"
+      [disabled]="isGenerating"
+      *appHasPermission="'CanViewSalary'"
+    >
+      @if (isGenerating) {
+        <span class="spinner"></span>
+        <span>Generating PDF...</span>
+      } @else {
+        <span>Download Payslip</span>
+      }
+    </button>
+  </div>
+</section>

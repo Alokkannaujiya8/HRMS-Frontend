@@ -1,0 +1,79 @@
+<section class="bank-page">
+  <div class="form-card">
+    <h1>STAFF BANK DETAILS</h1>
+
+    @if (message) {
+      <div class="msg">{{ message }}</div>
+    }
+
+    <label>
+      Employee ID: *
+      <select [(ngModel)]="selectedEmployeeId">
+        @for (emp of employees; track emp.id) {
+          <option [value]="emp.id">JOPL/{{ emp.id }} - {{ emp.name }}</option>
+        }
+      </select>
+    </label>
+
+    <label>
+      Bank Name: *
+      <input type="text" [(ngModel)]="bankName" />
+    </label>
+
+    <label>
+      IFSC Code: *
+      <input type="text" [(ngModel)]="ifscCode" />
+    </label>
+
+    <button type="button" class="btn-light" (click)="verifyIfsc()">Verify IFSC</button>
+
+    <label>
+      Account Number: *
+      <input type="text" [(ngModel)]="accountNumber" />
+    </label>
+
+    <label>
+      Status
+      <select [(ngModel)]="status">
+        <option value="Active">Active</option>
+        <option value="Inactive">Inactive</option>
+      </select>
+    </label>
+
+    <button type="button" class="btn-update" (click)="updateRecord()">Update</button>
+  </div>
+
+  <div class="table-card">
+    <h3>Bank Records</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Employee ID</th>
+          <th>Employee Name</th>
+          <th>Bank Name</th>
+          <th>IFSC Code</th>
+          <th>Account Num...</th>
+          <th>Created Date</th>
+          <th>Updated Date</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (row of bankRecords; track row.employeeId) {
+          <tr>
+            <td>{{ row.employeeCode }}</td>
+            <td>{{ row.employeeName }}</td>
+            <td>{{ row.bankName }}</td>
+            <td>{{ row.ifscCode }}</td>
+            <td>{{ row.accountNumber }}</td>
+            <td>{{ row.createdDate | date:'dd/MM/yyyy' }}</td>
+            <td>{{ row.updatedDate | date:'dd/MM/yyyy' }}</td>
+            <td>{{ row.status }}</td>
+          </tr>
+        } @empty {
+          <tr><td colspan="8" class="empty">No bank records found.</td></tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</section>

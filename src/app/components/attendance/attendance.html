@@ -1,0 +1,91 @@
+<section class="feature-page">
+  <div class="feature-header">
+    <h1>Attendance Management</h1>
+    @if (canManageAll) {
+      <p>Admin / HR view: all employee attendance logs and bulk updates.</p>
+    } @else {
+      <p>Employee view: self check-in/check-out and personal log history.</p>
+    }
+  </div>
+
+  @if (successMessage) {
+    <div class="alert success">{{ successMessage }}</div>
+  }
+
+  @if (errorMessage) {
+    <div class="alert error">{{ errorMessage }}</div>
+  }
+
+  <div class="panel controls">
+    <label>
+      Attendance Date
+      <input type="date" [(ngModel)]="selectedDate" (change)="onDateChange()" />
+    </label>
+    <button type="button" class="btn-primary" (click)="saveAttendance()">
+      {{ canManageAll ? 'Save Attendance' : 'Check-in / Check-out Save' }}
+    </button>
+  </div>
+
+  <div class="panel table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Employee</th>
+          <th>Status</th>
+          <th>Check In</th>
+          <th>Check Out</th>
+          <th>Notes</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (row of visibleRows; track row.employeeId) {
+          <tr>
+            <td>{{ row.employeeName }}</td>
+            <td>
+              <select [(ngModel)]="row.status">
+                @for (status of statusOptions; track status) {
+                  <option [value]="status">{{ status }}</option>
+                }
+              </select>
+            </td>
+            <td><input type="time" [(ngModel)]="row.checkIn" /></td>
+            <td><input type="time" [(ngModel)]="row.checkOut" /></td>
+            <td><input type="text" [(ngModel)]="row.notes" placeholder="Optional notes" /></td>
+          </tr>
+        } @empty {
+          <tr><td colspan="5" class="empty">No attendance rows available.</td></tr>
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <div class="panel table-wrap">
+    <h3>{{ canManageAll ? 'All Employee Logs' : 'My Attendance Logs' }}</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Employee</th>
+          <th>Status</th>
+          <th>Check In</th>
+          <th>Check Out</th>
+          <th>Marked By</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (log of visibleLogs; track log.id) {
+          <tr>
+            <td>{{ log.date }}</td>
+            <td>{{ log.employeeName }}</td>
+            <td>{{ log.status }}</td>
+            <td>{{ log.checkIn }}</td>
+            <td>{{ log.checkOut }}</td>
+            <td>{{ log.markedBy }}</td>
+          </tr>
+        } @empty {
+          <tr><td colspan="6" class="empty">No logs found for selected date.</td></tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</section>

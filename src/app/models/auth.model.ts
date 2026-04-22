@@ -17,6 +17,16 @@ export interface LoginResponse {
   role: UserRole;
 }
 
+export interface RefreshTokenRequest {
+  refreshToken: string;
+}
+
+export interface RefreshTokenResponse {
+  token: string;
+  refreshToken: string;
+  role?: UserRole;
+}
+
 export interface RegisterResponse {
   message?: string;
 }

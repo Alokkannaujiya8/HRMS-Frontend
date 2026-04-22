@@ -1,0 +1,16 @@
+<section class="employee-shell">
+  <aside class="left-menu">
+    <h3>Employee Modules</h3>
+
+    <p class="menu-group">My Workspace</p>
+    <a routerLink="/employee/attendance" routerLinkActive="active">Attendance</a>
+    <a routerLink="/employee/leave-management" routerLinkActive="active">Leave</a>
+    <a routerLink="/employee/reports" routerLinkActive="active">My Reports</a>
+    <a routerLink="/employee/notifications" routerLinkActive="active">Notifications</a>
+    <a routerLink="/employee/my-payroll" routerLinkActive="active">My Payroll</a>
+  </aside>
+
+  <div class="content-area">
+    <router-outlet></router-outlet>
+  </div>
+</section>

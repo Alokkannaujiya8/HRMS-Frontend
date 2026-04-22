@@ -1,0 +1,34 @@
+<section class="salary-management">
+  <h1>Salary Management</h1>
+
+  @if (message) {
+    <div class="alert">{{ message }}</div>
+  }
+
+  <div class="card">
+    <label>
+      Select Employee
+      <select [ngModel]="selectedEmployeeId" (ngModelChange)="onEmployeeChange($event)">
+        @for (employee of employees; track employee.id) {
+          <option [value]="employee.id">{{ employee.name }} ({{ employee.id }})</option>
+        }
+      </select>
+    </label>
+
+    <form [formGroup]="salaryForm" class="grid">
+      <label>Basic Salary <input type="number" formControlName="basicSalary" /></label>
+      <label>Increment % <input type="number" formControlName="incrementPercent" /></label>
+      <label>Increment Amount <input type="number" formControlName="incrementAmount" /></label>
+      <label>Effective Date <input type="date" formControlName="effectiveDate" /></label>
+      <label>Special Allowance <input type="number" formControlName="specialAllowance" /></label>
+      <label>Deduction <input type="number" formControlName="deduction" /></label>
+      <label>Total Salary (Auto) <input type="number" formControlName="totalSalary" /></label>
+    </form>
+
+    @if (noAllowanceOrDeduction) {
+      <p class="empty">Special Allowance / Deduction: No Record Found</p>
+    }
+
+    <button type="button" (click)="saveSalary()">Save Salary Structure</button>
+  </div>
+</section>

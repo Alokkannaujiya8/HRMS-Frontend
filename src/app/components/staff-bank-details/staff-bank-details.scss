@@ -1,0 +1,125 @@
+.bank-page {
+  background: radial-gradient(circle at 20% 0, #132b46 0, #0b1426 45%, #070d1a 100%);
+  border: 1px solid rgba(56, 189, 248, 0.24);
+  border-radius: 12px;
+  padding: 18px;
+}
+
+.form-card {
+  width: min(500px, 100%);
+  margin: 0 auto 16px;
+  background: linear-gradient(150deg, #111b2f, #0b1224);
+  border: 1px solid rgba(56, 189, 248, 0.22);
+  border-radius: 12px;
+  padding: 18px;
+  box-shadow: 0 18px 38px rgba(2, 6, 23, 0.6);
+}
+
+.form-card h1 {
+  margin: 0 0 14px;
+  text-align: center;
+  letter-spacing: 1px;
+  color: #7dd3fc;
+  border-bottom: 2px solid rgba(56, 189, 248, 0.6);
+  padding-bottom: 8px;
+}
+
+label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 10px;
+  color: #dbeafe;
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+
+input,
+select {
+  border: 1px solid rgba(148, 163, 184, 0.28);
+  border-radius: 8px;
+  padding: 10px;
+  background: rgba(2, 6, 23, 0.82);
+  color: #e2e8f0;
+}
+
+input:focus,
+select:focus {
+  outline: none;
+  border-color: #38bdf8;
+  box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.18);
+}
+
+.btn-light,
+.btn-update {
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.btn-light {
+  margin-bottom: 12px;
+  background: linear-gradient(135deg, #0ea5e9, #0284c7);
+  color: #fff;
+  padding: 8px 12px;
+}
+
+.btn-update {
+  width: 200px;
+  display: block;
+  margin: 14px auto 0;
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  color: #fff;
+  padding: 12px;
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.msg {
+  background: rgba(30, 64, 175, 0.25);
+  border: 1px solid rgba(96, 165, 250, 0.45);
+  border-radius: 6px;
+  color: #bfdbfe;
+  padding: 8px;
+  margin-bottom: 10px;
+}
+
+.table-card h3 {
+  text-align: center;
+  color: #7dd3fc;
+}
+
+.table-card {
+  overflow: auto;
+}
+
+table {
+  width: 100%;
+  min-width: 980px;
+  border-collapse: collapse;
+  background: rgba(10, 18, 34, 0.95);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+th {
+  background: linear-gradient(135deg, #0369a1, #0284c7);
+  color: #fff;
+  padding: 10px 8px;
+  font-size: 0.95rem;
+}
+
+td {
+  border-bottom: 1px solid rgba(148, 163, 184, 0.2);
+  padding: 8px;
+  color: #e2e8f0;
+  font-size: 0.92rem;
+}
+
+tbody tr:hover {
+  background: rgba(14, 165, 233, 0.08);
+}
+
+.empty {
+  text-align: center;
+}

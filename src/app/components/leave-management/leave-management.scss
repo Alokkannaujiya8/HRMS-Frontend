@@ -1,0 +1,155 @@
+.feature-page {
+  width: min(1200px, 100%);
+  margin: 0 auto;
+  color: #e2e8f0;
+}
+
+.feature-header h1 {
+  margin: 0;
+}
+
+.feature-header p {
+  margin: 6px 0 16px;
+  color: #94a3b8;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 14px;
+  margin-bottom: 14px;
+}
+
+.panel {
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  border-radius: 14px;
+  background: rgba(15, 23, 42, 0.55);
+  padding: 14px;
+}
+
+label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+
+input,
+select,
+textarea {
+  border: 1px solid rgba(148, 163, 184, 0.35);
+  border-radius: 10px;
+  padding: 9px 10px;
+  background: rgba(2, 6, 23, 0.5);
+  color: #e2e8f0;
+}
+
+.btn-primary {
+  border: none;
+  border-radius: 10px;
+  padding: 10px 14px;
+  background: linear-gradient(135deg, #0284c7, #0369a1);
+  color: #fff;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+li {
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.16);
+  padding: 10px 0;
+}
+
+.table-wrap {
+  overflow: auto;
+}
+
+table {
+  width: 100%;
+  min-width: 850px;
+  border-collapse: collapse;
+}
+
+th,
+td {
+  padding: 10px;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.15);
+}
+
+.badge {
+  border-radius: 999px;
+  font-size: 0.78rem;
+  padding: 4px 8px;
+}
+
+.pending {
+  background: rgba(234, 179, 8, 0.2);
+  color: #fde68a;
+}
+
+.approved {
+  background: rgba(34, 197, 94, 0.2);
+  color: #bbf7d0;
+}
+
+.rejected {
+  background: rgba(239, 68, 68, 0.2);
+  color: #fecaca;
+}
+
+.btn-small {
+  border: none;
+  border-radius: 8px;
+  padding: 6px 10px;
+  margin-right: 6px;
+  color: #fff;
+  cursor: pointer;
+}
+
+.approve {
+  background: #16a34a;
+}
+
+.reject {
+  background: #dc2626;
+}
+
+.muted,
+.empty {
+  color: #94a3b8;
+}
+
+.self-balance {
+  margin: 0;
+  font-size: 1.2rem;
+  font-weight: 800;
+}
+
+.alert {
+  border-radius: 12px;
+  padding: 10px 12px;
+  margin-bottom: 12px;
+}
+
+.success {
+  border: 1px solid rgba(74, 222, 128, 0.4);
+  background: rgba(21, 128, 61, 0.2);
+}
+
+.error {
+  border: 1px solid rgba(248, 113, 113, 0.4);
+  background: rgba(185, 28, 28, 0.2);
+}
+
+@media (max-width: 960px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}

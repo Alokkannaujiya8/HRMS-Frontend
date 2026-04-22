@@ -1,0 +1,60 @@
+.master-data h1 {
+  margin: 0 0 12px;
+  color: #f8fafc;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.card {
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  border-radius: 14px;
+  padding: 14px;
+  background: rgba(15, 23, 42, 0.56);
+}
+
+.inline {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+input,
+button {
+  border: 1px solid rgba(148, 163, 184, 0.35);
+  border-radius: 10px;
+  background: rgba(2, 6, 23, 0.55);
+  color: #e2e8f0;
+  padding: 9px 10px;
+}
+
+button {
+  cursor: pointer;
+}
+
+ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.15);
+  padding: 8px 0;
+}
+
+.danger {
+  background: rgba(220, 38, 38, 0.3);
+}
+
+@media (max-width: 780px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}

@@ -1,0 +1,62 @@
+<section class="feature-page">
+  <div class="feature-header">
+    <h1>Email Notifications</h1>
+    <p>SMTP / SendGrid based notification flow simulation with delivery log.</p>
+  </div>
+
+  <div class="panel">
+    <h3>Send Test Notification</h3>
+    <div class="form-grid">
+      <label>
+        Recipient (Email/Name)
+        <input type="text" [(ngModel)]="recipient" placeholder="employee@company.com" />
+      </label>
+      <label>
+        Provider
+        <select [(ngModel)]="provider">
+          <option value="SMTP">SMTP</option>
+          <option value="SendGrid">SendGrid</option>
+        </select>
+      </label>
+      <label class="full">
+        Title
+        <input type="text" [(ngModel)]="title" placeholder="Subject" />
+      </label>
+      <label class="full">
+        Message
+        <textarea rows="3" [(ngModel)]="message" placeholder="Notification message"></textarea>
+      </label>
+    </div>
+    <button type="button" class="btn-primary" (click)="sendTestEmail()">Send Notification</button>
+  </div>
+
+  <div class="panel table-wrap">
+    <h3>Delivery Log</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Time</th>
+          <th>Type</th>
+          <th>Recipient</th>
+          <th>Title</th>
+          <th>Provider</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (item of notifications; track item.id) {
+          <tr>
+            <td>{{ item.createdAt | date:'medium' }}</td>
+            <td>{{ item.type }}</td>
+            <td>{{ item.recipient }}</td>
+            <td>{{ item.title }}</td>
+            <td>{{ item.provider }}</td>
+            <td>{{ item.status }}</td>
+          </tr>
+        } @empty {
+          <tr><td colspan="6" class="empty">No notification events.</td></tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</section>

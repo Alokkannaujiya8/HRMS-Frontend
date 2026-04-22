@@ -9,10 +9,12 @@ import { buildFileUrl } from '../../utils/file-url';
   styleUrl: './employee-form.scss',
 })
 export class EmployeeForm {
+  private readonly emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
   @Input() currentEmployee: EmployeeUpsertPayload = { ...EMPTY_EMPLOYEE };
   @Input() departments: Department[] = [];
   @Input() isEditing = false;
-  @Input() isSaving = false;
+  @Input() isLoading = false;
 
   @Output() onSave = new EventEmitter<void>();
   @Output() onCancel = new EventEmitter<void>();
@@ -20,6 +22,25 @@ export class EmployeeForm {
   @Output() onDocumentFileChange = new EventEmitter<File | undefined>();
 
   selectedDocumentName = '';
+
+  get emailValue(): string {
+    return this.currentEmployee.email?.trim() ?? '';
+  }
+
+  get isEmailValid(): boolean {
+    if (!this.emailValue) {
+      return false;
+    }
+
+    return this.emailPattern.test(this.emailValue);
+  }
+
+  get canSave(): boolean {
+    return !this.isLoading &&
+      !!this.currentEmployee.name?.trim() &&
+      this.isEmailValid &&
+      !!this.currentEmployee.departmentId;
+  }
 
   onPhotoSelected(file: File | undefined): void {
     this.onPhotoFileChange.emit(file);

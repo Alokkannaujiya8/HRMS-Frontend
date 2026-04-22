@@ -1,0 +1,67 @@
+<section class="department-page">
+  <div class="header">
+    <h1>Department Management</h1>
+    <p>Add and manage organization departments.</p>
+  </div>
+
+  @if (successMessage) {
+    <div class="alert success">{{ successMessage }}</div>
+  }
+
+  @if (errorMessage) {
+    <div class="alert error">{{ errorMessage }}</div>
+  }
+
+  <div class="card">
+    <h3>Add New Department</h3>
+    <form [formGroup]="departmentForm" (ngSubmit)="addDepartment()" class="department-form">
+      <div class="field">
+        <label for="name">Department Name</label>
+        <input id="name" type="text" formControlName="name" placeholder="e.g. Operations" />
+        @if (nameControl.touched && nameControl.invalid) {
+          <small class="field-error">Department Name is required.</small>
+        }
+      </div>
+
+      <div class="field">
+        <label for="code">Department Code</label>
+        <input id="code" type="text" formControlName="code" placeholder="e.g. OPS" />
+        @if (codeControl.touched && codeControl.invalid) {
+          <small class="field-error">Department Code is required.</small>
+        }
+      </div>
+
+      <button type="submit" class="btn-add">Add Department</button>
+    </form>
+  </div>
+
+  <div class="card table-wrap">
+    <h3>Existing Departments</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Code</th>
+          <th>Created On</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (dept of departments; track dept.id) {
+          <tr>
+            <td>{{ dept.name }}</td>
+            <td>{{ dept.code }}</td>
+            <td>{{ dept.createdAt | date:'mediumDate' }}</td>
+            <td>
+              <button type="button" class="btn-delete" (click)="deleteDepartment(dept.id)">Delete</button>
+            </td>
+          </tr>
+        } @empty {
+          <tr>
+            <td colspan="4" class="empty">No departments available.</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</section>

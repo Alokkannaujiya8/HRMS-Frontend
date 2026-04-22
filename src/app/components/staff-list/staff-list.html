@@ -1,0 +1,55 @@
+<section class="staff-list">
+  <h1>Staff List</h1>
+
+  <div class="filters">
+    <input type="text" [(ngModel)]="search" placeholder="Search by name/mobile/email" />
+    <select [(ngModel)]="divisionFilter">
+      <option value="">All Divisions</option>
+      @for (division of divisions; track division) {
+        <option [value]="division">{{ division }}</option>
+      }
+    </select>
+    <select [(ngModel)]="designationFilter">
+      <option value="">All Designations</option>
+      @for (designation of designations; track designation) {
+        <option [value]="designation">{{ designation }}</option>
+      }
+    </select>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Employee ID</th>
+          <th>Name</th>
+          <th>Mobile</th>
+          <th>Email</th>
+          <th>Division</th>
+          <th>Designation</th>
+          <th>Salary</th>
+          <th>Options</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (row of filteredRows; track row.id) {
+          <tr>
+            <td>{{ row.id }}</td>
+            <td>{{ row.name }}</td>
+            <td>{{ row.mobile }}</td>
+            <td>{{ row.email }}</td>
+            <td>{{ row.division }}</td>
+            <td>{{ row.designation }}</td>
+            <td>Rs {{ row.salary | number:'1.0-0' }}</td>
+            <td>
+              <button type="button" (click)="viewProfile(row.id)">View</button>
+              <button type="button" class="edit" (click)="editEmployee(row.id)">Edit</button>
+            </td>
+          </tr>
+        } @empty {
+          <tr><td colspan="8" class="empty">No staff found.</td></tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</section>

@@ -8,6 +8,7 @@ import {
   EMPTY_EMPLOYEE,
 } from '../models/employee.model';
 import { Employee } from '../services/employee';
+import { HrOperations } from '../services/hr-operations';
 
 @Component({
   selector: 'app-employee-test',
@@ -16,6 +17,8 @@ import { Employee } from '../services/employee';
   styleUrl: './employee-test.scss',
 })
 export class EmployeeTest implements OnInit {
+  private readonly emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
   employees: EmployeeRecord[] = [];
   departments: Department[] = [
     { id: 1, name: 'HR' },
@@ -27,14 +30,18 @@ export class EmployeeTest implements OnInit {
   currentEmployee: EmployeeUpsertPayload = { ...EMPTY_EMPLOYEE };
 
   isEditing = false;
-  isSaving = false;
+  isLoading = false;
   successMessage = '';
   errorMessage = '';
   userRole: UserRole = 'Employee';
   selectedPhotoFile: File | null = null;
   selectedDocumentFile: File | null = null;
+  private employeeBeforeEdit: EmployeeRecord | null = null;
 
-  constructor(private service: Employee) {}
+  constructor(
+    private service: Employee,
+    private hrOps: HrOperations,
+  ) {}
 
   ngOnInit(): void {
     const storedRole = localStorage.getItem('role');
@@ -57,6 +64,7 @@ export class EmployeeTest implements OnInit {
 
   editEmployee(emp: EmployeeRecord): void {
     this.currentEmployee = { ...emp };
+    this.employeeBeforeEdit = { ...emp };
     if (this.currentEmployee.joinDate) {
       this.currentEmployee.joinDate = new Date(this.currentEmployee.joinDate).toISOString().split('T')[0];
     }
@@ -64,13 +72,20 @@ export class EmployeeTest implements OnInit {
   }
 
   saveEmployee(): void {
-    if (this.isSaving) {
+    if (this.isLoading) {
       return;
     }
 
     const wasEditing = this.isEditing;
     this.errorMessage = '';
-    this.isSaving = true;
+
+    const normalizedEmail = this.currentEmployee.email?.trim() ?? '';
+    if (!this.emailPattern.test(normalizedEmail)) {
+      this.errorMessage = 'Please enter a valid email address before saving.';
+      return;
+    }
+
+    this.isLoading = true;
 
     this.uploadPendingFiles().subscribe({
       next: () => {
@@ -81,20 +96,24 @@ export class EmployeeTest implements OnInit {
 
         action.subscribe({
           next: () => {
+            const changedBy = this.userRole;
+            this.logEmployeeActions(wasEditing, changedBy);
             this.loadEmployees();
             this.resetForm();
-            this.showMessage(wasEditing ? 'Employee updated successfully!' : 'Employee added successfully!');
-            this.isSaving = false;
+            this.showMessage(
+              wasEditing ? 'Employee updated successfully!' : 'Employee added and Welcome Email sent!',
+            );
+            this.isLoading = false;
           },
           error: (err: Error) => {
             this.errorMessage = err.message;
-            this.isSaving = false;
+            this.isLoading = false;
           },
         });
       },
       error: (err: Error) => {
         this.errorMessage = err.message;
-        this.isSaving = false;
+        this.isLoading = false;
       },
     });
   }
@@ -103,6 +122,12 @@ export class EmployeeTest implements OnInit {
     if (confirm('Are you sure you want to delete this employee?')) {
       this.service.deleteEmployee(id).subscribe({
         next: () => {
+          this.hrOps.addAudit({
+            action: 'Employee Deleted',
+            module: 'Employee',
+            changedBy: this.userRole,
+            details: `Employee id ${id} deleted by ${this.userRole}.`,
+          });
           this.loadEmployees();
           this.showMessage('Employee deleted successfully!');
         },
@@ -116,9 +141,10 @@ export class EmployeeTest implements OnInit {
   resetForm(): void {
     this.currentEmployee = { ...EMPTY_EMPLOYEE };
     this.isEditing = false;
+    this.employeeBeforeEdit = null;
     this.selectedPhotoFile = null;
     this.selectedDocumentFile = null;
-    this.isSaving = false;
+    this.isLoading = false;
   }
 
   onPhotoSelected(file: File | undefined): void {
@@ -216,10 +242,54 @@ export class EmployeeTest implements OnInit {
 
     return {
       ...employee,
+      email: employee.email?.trim() ?? '',
       mobile: employee.mobile?.trim() ? employee.mobile.trim() : null,
       joinDate: normalizedJoinDate,
       photoUrl: employee.photoUrl?.trim() ? employee.photoUrl.trim() : null,
       documentUrl: employee.documentUrl?.trim() ? employee.documentUrl.trim() : null,
     };
+  }
+
+  private logEmployeeActions(wasEditing: boolean, changedBy: string): void {
+    if (!wasEditing) {
+      this.hrOps.addAudit({
+        action: 'Employee Added',
+        module: 'Employee',
+        changedBy,
+        details: `${this.currentEmployee.name} added by ${changedBy}.`,
+      });
+      this.hrOps.queueEmail(
+        this.currentEmployee.email,
+        'Welcome to HR Portal',
+        `Hello ${this.currentEmployee.name}, your employee profile is now active.`,
+        'SendGrid',
+      );
+      this.hrOps.addAudit({
+        action: 'Welcome Email Sent',
+        module: 'Notification',
+        changedBy,
+        details: `Welcome email triggered for ${this.currentEmployee.email}.`,
+      });
+      return;
+    }
+
+    this.hrOps.addAudit({
+      action: 'Employee Updated',
+      module: 'Employee',
+      changedBy,
+      details: `${this.currentEmployee.name} profile updated by ${changedBy}.`,
+    });
+
+    if (
+      this.employeeBeforeEdit &&
+      (this.employeeBeforeEdit.salary ?? 0) !== (this.currentEmployee.salary ?? 0)
+    ) {
+      this.hrOps.addAudit({
+        action: 'Salary Updated',
+        module: 'Employee',
+        changedBy,
+        details: `Salary updated by ${changedBy}: ${this.employeeBeforeEdit.salary ?? 0} -> ${this.currentEmployee.salary ?? 0}.`,
+      });
+    }
   }
 }

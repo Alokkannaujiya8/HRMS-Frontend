@@ -1,0 +1,61 @@
+.staff-list h1 {
+  margin: 0 0 12px;
+  color: #f8fafc;
+}
+
+.filters {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+input,
+select,
+button {
+  border: 1px solid rgba(148, 163, 184, 0.35);
+  border-radius: 10px;
+  background: rgba(2, 6, 23, 0.55);
+  color: #e2e8f0;
+  padding: 9px 10px;
+}
+
+button {
+  cursor: pointer;
+}
+
+.edit {
+  margin-left: 6px;
+}
+
+.table-wrap {
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  border-radius: 14px;
+  padding: 10px;
+  background: rgba(15, 23, 42, 0.55);
+  overflow: auto;
+}
+
+table {
+  width: 100%;
+  min-width: 940px;
+  border-collapse: collapse;
+}
+
+th,
+td {
+  padding: 10px;
+  text-align: left;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.16);
+}
+
+.empty {
+  text-align: center;
+  color: #94a3b8;
+}
+
+@media (max-width: 920px) {
+  .filters {
+    grid-template-columns: 1fr;
+  }
+}

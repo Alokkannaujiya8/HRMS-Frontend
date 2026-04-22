@@ -1,0 +1,36 @@
+<section class="master-data">
+  <h1>Master Data</h1>
+  <div class="grid">
+    <div class="card">
+      <h3>Divisions</h3>
+      <div class="inline">
+        <input type="text" [(ngModel)]="newDivision" placeholder="Add division" />
+        <button type="button" (click)="addDivision()">Add</button>
+      </div>
+      <ul>
+        @for (division of master.divisions; track division) {
+          <li>
+            {{ division }}
+            <button type="button" class="danger" (click)="removeDivision(division)">Delete</button>
+          </li>
+        }
+      </ul>
+    </div>
+
+    <div class="card">
+      <h3>Designations</h3>
+      <div class="inline">
+        <input type="text" [(ngModel)]="newDesignation" placeholder="Add designation" />
+        <button type="button" (click)="addDesignation()">Add</button>
+      </div>
+      <ul>
+        @for (designation of master.designations; track designation) {
+          <li>
+            {{ designation }}
+            <button type="button" class="danger" (click)="removeDesignation(designation)">Delete</button>
+          </li>
+        }
+      </ul>
+    </div>
+  </div>
+</section>

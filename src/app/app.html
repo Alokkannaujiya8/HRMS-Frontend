@@ -2,9 +2,33 @@
   <nav class="navbar">
     <div class="logo">
       {{ title() }}
+      <span class="role-chip">{{ userRoleLabel }} Login</span>
     </div>
     <div class="nav-links">
-      <a routerLink="/employees" routerLinkActive="active">Employees</a>
+      @if (canViewHrModules) {
+        <a routerLink="/hr/employees" routerLinkActive="active">Employees</a>
+        <a routerLink="/hr/attendance" routerLinkActive="active">Attendance</a>
+        <a routerLink="/hr/leave-management" routerLinkActive="active">Leave</a>
+        <a routerLink="/hr/audit-trail" routerLinkActive="active">Audit Trail</a>
+        <a routerLink="/hr/reports" routerLinkActive="active">Reports</a>
+        <a routerLink="/hr/notifications" routerLinkActive="active">Notifications</a>
+        <a routerLink="/hr/my-payroll" routerLinkActive="active">My Payroll</a>
+        <a routerLink="/hr/dashboard" routerLinkActive="active">HR Modules</a>
+      }
+
+      @if (canViewEmployeeModules) {
+        <a routerLink="/employee/attendance" routerLinkActive="active">Attendance</a>
+        <a routerLink="/employee/leave-management" routerLinkActive="active">Leave</a>
+        <a routerLink="/employee/reports" routerLinkActive="active">My Reports</a>
+        <a routerLink="/employee/notifications" routerLinkActive="active">Notifications</a>
+        <a routerLink="/employee/my-payroll" routerLinkActive="active">My Payroll</a>
+        <a routerLink="/employee" routerLinkActive="active">Employee Modules</a>
+      }
+
+      @if (isAdmin) {
+        <a routerLink="/departments" routerLinkActive="active">Departments</a>
+        <a routerLink="/register" routerLinkActive="active">Admin Users</a>
+      }
       <button class="logout-btn" (click)="onLogout()">Logout</button>
     </div>
   </nav>

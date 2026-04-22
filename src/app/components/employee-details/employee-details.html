@@ -1,0 +1,73 @@
+<section class="employee-details">
+  @if (employee && profile) {
+    <h1>Employee Details</h1>
+    @if (message) {
+      <div class="alert">{{ message }}</div>
+    }
+
+    <div class="card">
+      <h3>Personal Information</h3>
+      <p><strong>Name:</strong> {{ employee.name }}</p>
+      <p><strong>Mobile:</strong> {{ employee.mobile || 'N/A' }}</p>
+      <p><strong>Email:</strong> {{ employee.email }}</p>
+      <p><strong>Address:</strong> {{ profile.address || 'Not updated' }}</p>
+      <p><strong>Joining Date:</strong> {{ employee.joinDate || 'N/A' }}</p>
+      <p><strong>Designation:</strong> {{ profile.designation }}</p>
+      <p><strong>Division:</strong> {{ profile.division }}</p>
+    </div>
+
+    <div class="actions">
+      <button type="button" (click)="generateLetter('Appointment')">Generate Appointment Letter</button>
+      <button type="button" (click)="generateLetter('Appraisal')">Generate Appraisal Letter</button>
+      <button type="button" [disabled]="profile.aadhaarVerified" (click)="verifyAadhaar()">
+        {{ profile.aadhaarVerified ? 'Aadhaar Verified' : 'Verify Aadhaar' }}
+      </button>
+    </div>
+
+    <div class="grid">
+      <div class="card">
+        <h3>Add Skills</h3>
+        <div class="inline">
+          <input type="text" [(ngModel)]="skillInput" placeholder="Enter skill" />
+          <button type="button" (click)="addSkill()">Add Skills</button>
+        </div>
+        <ul>
+          @for (skill of profile.skills; track skill) {
+            <li>{{ skill }}</li>
+          } @empty {
+            <li class="empty">No skills added.</li>
+          }
+        </ul>
+      </div>
+
+      <div class="card">
+        <h3>Add Remarks</h3>
+        <div class="inline">
+          <input type="text" [(ngModel)]="remarkInput" placeholder="Enter remark" />
+          <button type="button" (click)="addRemark()">Add Remarks</button>
+        </div>
+        <ul>
+          @for (remark of profile.remarks; track remark) {
+            <li>{{ remark }}</li>
+          } @empty {
+            <li class="empty">No remarks added.</li>
+          }
+        </ul>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Upload Documents</h3>
+      <input type="file" multiple (change)="uploadDocuments($event)" />
+      <ul>
+        @for (doc of profile.documents; track doc) {
+          <li>{{ doc }}</li>
+        } @empty {
+          <li class="empty">No document uploaded.</li>
+        }
+      </ul>
+    </div>
+  } @else {
+    <p class="empty">Loading employee details...</p>
+  }
+</section>

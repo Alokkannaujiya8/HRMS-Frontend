@@ -26,6 +26,9 @@
   <div class="form-row">
     <input type="text" [(ngModel)]="currentEmployee.name" placeholder="Full Name *" required />
     <input type="email" [(ngModel)]="currentEmployee.email" placeholder="Email Address *" required />
+    @if (emailValue && !isEmailValid) {
+      <span class="field-error">Please enter a valid email address.</span>
+    }
     <input type="text" [(ngModel)]="currentEmployee.mobile" placeholder="Mobile Number" />
     <input type="number" [(ngModel)]="currentEmployee.salary" placeholder="Salary (Rs)" />
 
@@ -41,12 +44,17 @@
 
   <div class="form-actions">
     <button
-      class="btn-save"
+      class="btn btn-primary d-inline-flex align-items-center gap-2"
       type="button"
       (click)="save()"
-      [disabled]="isSaving || !currentEmployee.name || !currentEmployee.email || !currentEmployee.departmentId"
+      [disabled]="!canSave"
     >
-      {{ isSaving ? 'Saving...' : isEditing ? 'Update Employee' : 'Add Employee' }}
+      @if (isLoading) {
+        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+        <span>Sending Email...</span>
+      } @else {
+        <span>{{ isEditing ? 'Update Employee' : 'Save Employee' }}</span>
+      }
     </button>
 
     @if (isEditing) {

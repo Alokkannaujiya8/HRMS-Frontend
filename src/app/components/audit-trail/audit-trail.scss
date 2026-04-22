@@ -1,0 +1,70 @@
+.feature-page {
+  width: min(1200px, 100%);
+  margin: 0 auto;
+  color: #e2e8f0;
+}
+
+.feature-header p {
+  color: #94a3b8;
+  margin-bottom: 14px;
+}
+
+.panel {
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  border-radius: 14px;
+  background: rgba(15, 23, 42, 0.55);
+  padding: 14px;
+  margin-bottom: 14px;
+}
+
+.controls {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  align-items: end;
+}
+
+label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+select,
+button {
+  border: 1px solid rgba(148, 163, 184, 0.35);
+  border-radius: 10px;
+  background: rgba(2, 6, 23, 0.5);
+  color: #e2e8f0;
+  padding: 9px 10px;
+}
+
+.btn-refresh {
+  border: none;
+  background: linear-gradient(135deg, #0ea5e9, #0369a1);
+  color: #fff;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.table-wrap {
+  overflow: auto;
+}
+
+table {
+  width: 100%;
+  min-width: 820px;
+  border-collapse: collapse;
+}
+
+th,
+td {
+  border-bottom: 1px solid rgba(148, 163, 184, 0.15);
+  padding: 10px;
+  text-align: left;
+}
+
+.empty {
+  text-align: center;
+  color: #94a3b8;
+}

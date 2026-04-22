@@ -1,0 +1,37 @@
+<section class="hr-shell">
+  <aside class="left-menu">
+    <h3>{{ panelTitle }}</h3>
+
+    <p class="menu-group">Core HR</p>
+    <a routerLink="/hr/dashboard" routerLinkActive="active">HR Dashboard</a>
+    <a routerLink="/hr/employees" routerLinkActive="active">Employee Directory</a>
+
+    <p class="menu-group">Staff & Master</p>
+    <a routerLink="/hr/staff-list" routerLinkActive="active">Staff List</a>
+    <a routerLink="/hr/staff-list" routerLinkActive="active">Employee Details</a>
+    <a routerLink="/hr/staff-master" routerLinkActive="active">Staff Master</a>
+    <a routerLink="/hr/staff-bank-details" routerLinkActive="active">Staff Bank Details</a>
+    <a routerLink="/hr/salary-management" routerLinkActive="active">Salary Management</a>
+    <a routerLink="/hr/master-data" routerLinkActive="active">Master Data</a>
+    @if (isAdmin) {
+      <a routerLink="/departments" routerLinkActive="active">Departments</a>
+    }
+
+    <p class="menu-group">Attendance & Leave</p>
+    <a routerLink="/hr/attendance" routerLinkActive="active">Attendance</a>
+    <a routerLink="/hr/leave-management" routerLinkActive="active">Leave Management</a>
+
+    <p class="menu-group">Audit & Reports</p>
+    <a routerLink="/hr/audit-trail" routerLinkActive="active">Audit Trail</a>
+    <a routerLink="/hr/reports" routerLinkActive="active">Reports</a>
+    <a routerLink="/hr/notifications" routerLinkActive="active">Notifications</a>
+
+    <p class="menu-group">Payroll & Admin</p>
+    <a routerLink="/hr/my-payroll" routerLinkActive="active">My Payroll</a>
+    <a routerLink="/register" routerLinkActive="active">User Registration</a>
+  </aside>
+
+  <div class="content-area">
+    <router-outlet></router-outlet>
+  </div>
+</section>

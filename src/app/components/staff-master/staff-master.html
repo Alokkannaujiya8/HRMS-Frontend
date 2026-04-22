@@ -1,0 +1,72 @@
+<section class="staff-master">
+  <h1>Staff Master</h1>
+
+  @if (message) {
+    <div class="alert success">{{ message }}</div>
+  }
+  @if (errorMessage) {
+    <div class="alert error">{{ errorMessage }}</div>
+  }
+
+  <form [formGroup]="form" class="grid">
+    <label>Name <input type="text" formControlName="name" /></label>
+    <label>Email <input type="email" formControlName="email" /></label>
+    <label>Mobile <input type="text" formControlName="mobile" /></label>
+    <label>Division <input type="text" formControlName="division" /></label>
+    <label>Designation <input type="text" formControlName="designation" /></label>
+    <label>Salary <input type="number" formControlName="salary" /></label>
+
+    <label class="checkbox">
+      <input type="checkbox" formControlName="is7thPay" />
+      Apply Govt 7th Pay Commission
+    </label>
+
+    <label>Bank Account <input type="text" formControlName="bankAccount" /></label>
+    <label>IFSC <input type="text" formControlName="ifsc" /></label>
+    <label>PAN <input type="text" formControlName="pan" /></label>
+    <label>DOB <input type="date" formControlName="dob" /></label>
+    <label>
+      Gender
+      <select formControlName="gender">
+        <option value="Male">Male</option>
+        <option value="Female">Female</option>
+        <option value="Other">Other</option>
+      </select>
+    </label>
+    <label>
+      Status
+      <select formControlName="status">
+        <option value="Active">Active</option>
+        <option value="Inactive">Inactive</option>
+      </select>
+    </label>
+    <label>
+      Employment Type
+      <select formControlName="employmentType">
+        <option value="Full-Time">Full-Time</option>
+        <option value="Contract">Contract</option>
+        <option value="Part-Time">Part-Time</option>
+      </select>
+    </label>
+
+    <label class="full">
+      Address
+      <textarea rows="2" formControlName="address"></textarea>
+    </label>
+
+    <label class="full">
+      Documents Upload
+      <input type="file" multiple (change)="onDocumentChange($event)" />
+    </label>
+
+    @if (selectedDocuments.length > 0) {
+      <div class="full docs">
+        @for (doc of selectedDocuments; track doc) {
+          <span>{{ doc }}</span>
+        }
+      </div>
+    }
+  </form>
+
+  <button type="button" (click)="save()">{{ editingEmployeeId ? 'Update Employee' : 'Add Employee' }}</button>
+</section>

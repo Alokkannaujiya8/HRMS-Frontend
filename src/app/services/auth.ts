@@ -1,10 +1,12 @@
 import { Injectable, signal } from '@angular/core';
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { HttpBackend, HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable, catchError, throwError } from 'rxjs';
 import { Router } from '@angular/router';
 import {
   LoginRequest,
   LoginResponse,
+  RefreshTokenRequest,
+  RefreshTokenResponse,
   RegisterRequest,
   RegisterResponse,
   UserRole,
@@ -15,13 +17,17 @@ import {
 })
 export class Auth {
   private readonly apiUrl = 'https://localhost:7147/api/auth';
+  private readonly httpWithoutInterceptor: HttpClient;
 
   loggedInSignal = signal<boolean>(this.checkToken());
 
   constructor(
     private http: HttpClient,
     private router: Router,
-  ) {}
+    httpBackend: HttpBackend,
+  ) {
+    this.httpWithoutInterceptor = new HttpClient(httpBackend);
+  }
 
   private checkToken(): boolean {
     const token = localStorage.getItem('token');
@@ -40,10 +46,12 @@ export class Auth {
       .pipe(catchError((error) => this.handleError(error, 'login')));
   }
 
-  saveSession(token: string, refreshToken: string, role: UserRole) {
+  saveSession(token: string, refreshToken: string, role: string, username: string) {
+    const normalizedRole = this.normalizeRole(role) ?? 'Employee';
     localStorage.setItem('token', token);
     localStorage.setItem('refreshToken', refreshToken);
-    localStorage.setItem('role', role);
+    localStorage.setItem('role', normalizedRole);
+    localStorage.setItem('username', username);
 
     this.loggedInSignal.set(true);
   }
@@ -52,6 +60,7 @@ export class Auth {
     localStorage.removeItem('token');
     localStorage.removeItem('refreshToken');
     localStorage.removeItem('role');
+    localStorage.removeItem('username');
 
     this.loggedInSignal.set(false);
     this.router.navigate(['/login']);
@@ -59,6 +68,51 @@ export class Auth {
 
   isLoggedIn(): boolean {
     return this.checkToken();
+  }
+
+  getAccessToken(): string {
+    return localStorage.getItem('token') ?? '';
+  }
+
+  getRefreshToken(): string {
+    return localStorage.getItem('refreshToken') ?? '';
+  }
+
+  refreshAccessToken(): Observable<RefreshTokenResponse> {
+    const request: RefreshTokenRequest = {
+      refreshToken: this.getRefreshToken(),
+    };
+    return this.httpWithoutInterceptor
+      .post<RefreshTokenResponse>(`${this.apiUrl}/refresh-token`, request)
+      .pipe(catchError((error) => this.handleError(error, 'refresh token')));
+  }
+
+  updateTokens(token: string, refreshToken: string, role?: string): void {
+    localStorage.setItem('token', token);
+    localStorage.setItem('refreshToken', refreshToken);
+    const normalizedRole = this.normalizeRole(role);
+    if (normalizedRole) {
+      localStorage.setItem('role', normalizedRole);
+    }
+    this.loggedInSignal.set(true);
+  }
+
+  private normalizeRole(role?: string): UserRole | undefined {
+    const normalized = role?.trim().toLowerCase();
+    if (!normalized) {
+      return undefined;
+    }
+
+    if (normalized === 'admin') {
+      return 'Admin';
+    }
+    if (normalized === 'hr') {
+      return 'HR';
+    }
+    if (normalized === 'employee') {
+      return 'Employee';
+    }
+    return undefined;
   }
 
   private handleError(error: HttpErrorResponse, operation: string): Observable<never> {

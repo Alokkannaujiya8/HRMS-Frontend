@@ -24,7 +24,8 @@ export class Login implements OnInit {
 
   ngOnInit(): void {
     if (this.authService.isLoggedIn()) {
-      this.router.navigate(['/employees']);
+      const storedRole = localStorage.getItem('role') ?? '';
+      this.router.navigate([this.getLandingRoute(storedRole)]);
     } else {
       this.authService.loggedInSignal.set(false);
     }
@@ -36,15 +37,31 @@ export class Login implements OnInit {
     this.authService.login(this.loginObj).subscribe({
       next: (res) => {
         if (res.token) {
-          this.authService.saveSession(res.token, res.refreshToken, res.role);
-          alert('Login Successful!');
-
-          this.router.navigate(['/employees']);
+          const normalizedRole = (res.role ?? '').trim();
+          this.authService.saveSession(
+            res.token,
+            res.refreshToken,
+            normalizedRole,
+            this.loginObj.username.trim(),
+          );
+          const savedRole = localStorage.getItem('role') ?? normalizedRole;
+          if (savedRole.trim().toLowerCase() === 'admin') {
+            alert('Admin login hua hai');
+          }
+          this.router.navigate([this.getLandingRoute(savedRole)]);
         }
       },
       error: (err: Error) => {
         this.errorMessage = err.message || 'Invalid username or password.';
       },
     });
+  }
+
+  private getLandingRoute(role: string): string {
+    const normalizedRole = role.trim().toLowerCase();
+    if (normalizedRole === 'admin' || normalizedRole === 'hr') {
+      return '/hr/dashboard';
+    }
+    return '/employee';
   }
 }

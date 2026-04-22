@@ -1,0 +1,111 @@
+<section class="feature-page">
+  <div class="feature-header">
+    <h1>Leave Management</h1>
+    @if (canReview) {
+      <p>Admin / HR view: approve/reject employee leaves and track overall balance.</p>
+    } @else {
+      <p>Employee view: apply leave for self and check your leave balance/history.</p>
+    }
+  </div>
+
+  @if (successMessage) {
+    <div class="alert success">{{ successMessage }}</div>
+  }
+  @if (errorMessage) {
+    <div class="alert error">{{ errorMessage }}</div>
+  }
+
+  <div class="grid">
+    <div class="panel">
+      <h3>Apply Leave</h3>
+      @if (canReview) {
+        <label>
+          Employee
+          <select [(ngModel)]="selectedEmployeeId">
+            @for (employee of employees; track employee.id) {
+              <option [value]="employee.id">{{ employee.name }}</option>
+            }
+          </select>
+        </label>
+      } @else {
+        <p class="muted">Applying as: <strong>{{ currentEmployee?.name || 'Unknown Employee' }}</strong></p>
+      }
+      <label>
+        Leave Type
+        <select [(ngModel)]="leaveType">
+          <option value="Casual">Casual</option>
+          <option value="Sick">Sick</option>
+          <option value="Earned">Earned</option>
+        </select>
+      </label>
+      <label>
+        From Date
+        <input type="date" [(ngModel)]="fromDate" />
+      </label>
+      <label>
+        To Date
+        <input type="date" [(ngModel)]="toDate" />
+      </label>
+      <label>
+        Reason
+        <textarea rows="3" [(ngModel)]="reason" placeholder="Reason for leave"></textarea>
+      </label>
+      <button type="button" class="btn-primary" (click)="applyLeave()">Submit Leave Request</button>
+    </div>
+
+    <div class="panel">
+      <h3>Leave Balance</h3>
+      @if (canReview) {
+        <ul>
+          @for (employee of employees; track employee.id) {
+            <li>
+              <span>{{ employee.name }}</span>
+              <strong>{{ leaveBalanceByEmployee[employee.id] }} days left</strong>
+            </li>
+          }
+        </ul>
+      } @else {
+        <p class="self-balance">{{ selfLeaveBalance }} days left</p>
+      }
+    </div>
+  </div>
+
+  <div class="panel table-wrap">
+    <h3>Requests</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Employee</th>
+          <th>Type</th>
+          <th>From</th>
+          <th>To</th>
+          <th>Status</th>
+          <th>Reason</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (leave of visibleLeaveRequests; track leave.id) {
+          <tr>
+            <td>{{ leave.employeeName }}</td>
+            <td>{{ leave.leaveType }}</td>
+            <td>{{ leave.fromDate }}</td>
+            <td>{{ leave.toDate }}</td>
+            <td><span class="badge" [class.pending]="leave.status === 'Pending'" [class.approved]="leave.status === 'Approved'" [class.rejected]="leave.status === 'Rejected'">{{ leave.status }}</span></td>
+            <td>{{ leave.reason }}</td>
+            <td>
+              @if (canReview && leave.status === 'Pending' && leave.employeeId !== currentEmployee?.id) {
+                <button type="button" class="btn-small approve" (click)="approveLeave(leave.id)">Approve</button>
+                <button type="button" class="btn-small reject" (click)="rejectLeave(leave.id)">Reject</button>
+              } @else {
+                <span class="muted">No Action</span>
+              }
+            </td>
+          </tr>
+        } @empty {
+          <tr><td colspan="7" class="empty">No leave requests yet.</td></tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</section>
