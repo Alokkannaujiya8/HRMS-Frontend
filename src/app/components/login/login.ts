@@ -16,6 +16,7 @@ export class Login implements OnInit {
   };
 
   errorMessage: string = '';
+  showPassword = false;
 
   constructor(
     private authService: Auth,
@@ -25,7 +26,7 @@ export class Login implements OnInit {
   ngOnInit(): void {
     if (this.authService.isLoggedIn()) {
       const storedRole = localStorage.getItem('role') ?? '';
-      this.router.navigate([this.getLandingRoute(storedRole)]);
+      this.router.navigate([this.authService.getLandingRoute(storedRole)]);
     } else {
       this.authService.loggedInSignal.set(false);
     }
@@ -48,7 +49,7 @@ export class Login implements OnInit {
           if (savedRole.trim().toLowerCase() === 'admin') {
             alert('Admin login hua hai');
           }
-          this.router.navigate([this.getLandingRoute(savedRole)]);
+          this.router.navigate([this.authService.getLandingRoute(savedRole)]);
         }
       },
       error: (err: Error) => {
@@ -57,11 +58,7 @@ export class Login implements OnInit {
     });
   }
 
-  private getLandingRoute(role: string): string {
-    const normalizedRole = role.trim().toLowerCase();
-    if (normalizedRole === 'admin' || normalizedRole === 'hr') {
-      return '/hr/dashboard';
-    }
-    return '/employee';
+  togglePasswordVisibility(): void {
+    this.showPassword = !this.showPassword;
   }
 }

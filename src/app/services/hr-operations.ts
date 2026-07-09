@@ -37,6 +37,14 @@ export class HrOperations {
       existing.notes = entry.notes;
       existing.markedBy = entry.markedBy;
       existing.markedAt = new Date().toISOString();
+      existing.dayType = entry.dayType;
+      existing.standardWorkingHours = entry.standardWorkingHours;
+      existing.monthlyWorkingDays = entry.monthlyWorkingDays;
+      existing.workedHours = entry.workedHours;
+      existing.overtimeHours = entry.overtimeHours;
+      existing.overtimeMultiplier = entry.overtimeMultiplier;
+      existing.hourlySalary = entry.hourlySalary;
+      existing.overtimeAmount = entry.overtimeAmount;
       this.saveAttendanceEntries(entries);
       return existing;
     }

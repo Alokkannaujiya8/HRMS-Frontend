@@ -12,7 +12,7 @@
     <div class="grid">
       <label>
         Month
-        <select [(ngModel)]="selectedMonth">
+        <select [(ngModel)]="selectedMonth" (change)="onPeriodChange()">
           @for (month of months; track month.value) {
             <option [value]="month.value">{{ month.label }}</option>
           }
@@ -21,13 +21,50 @@
 
       <label>
         Year
-        <select [(ngModel)]="selectedYear">
+        <select [(ngModel)]="selectedYear" (change)="onPeriodChange()">
           @for (year of years; track year) {
             <option [value]="year">{{ year }}</option>
           }
         </select>
       </label>
     </div>
+
+    @if (payrollSummary) {
+      <div class="summary-grid">
+        <div class="metric">
+          <span>Monthly Salary</span>
+          <strong>Rs {{ payrollSummary.monthlySalary | number:'1.0-0' }}</strong>
+        </div>
+        <div class="metric">
+          <span>Hourly Salary</span>
+          <strong>Rs {{ payrollSummary.hourlySalary | number:'1.2-2' }}</strong>
+        </div>
+        <div class="metric">
+          <span>Worked Hours</span>
+          <strong>{{ payrollSummary.totalWorkedHours | number:'1.1-2' }}</strong>
+        </div>
+        <div class="metric">
+          <span>Overtime Hours</span>
+          <strong>{{ payrollSummary.totalOvertimeHours | number:'1.1-2' }}</strong>
+        </div>
+        <div class="metric">
+          <span>Weekend OT</span>
+          <strong>{{ payrollSummary.weekendOtHours | number:'1.1-2' }}</strong>
+        </div>
+        <div class="metric">
+          <span>Holiday OT</span>
+          <strong>{{ payrollSummary.holidayOtHours | number:'1.1-2' }}</strong>
+        </div>
+        <div class="metric">
+          <span>OT Amount</span>
+          <strong>Rs {{ payrollSummary.overtimeAmount | number:'1.0-0' }}</strong>
+        </div>
+        <div class="metric highlight">
+          <span>Total Salary</span>
+          <strong>Rs {{ payrollSummary.totalSalary | number:'1.0-0' }}</strong>
+        </div>
+      </div>
+    }
 
     <button
       type="button"

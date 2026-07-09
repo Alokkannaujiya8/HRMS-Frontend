@@ -1,5 +1,20 @@
 export type UserRole = 'Admin' | 'HR' | 'Employee';
 
+export type Permission =
+  | 'CanManageUsers'
+  | 'CanManageDepartments'
+  | 'CanManageEmployees'
+  | 'CanManageAttendance'
+  | 'CanManageLeave'
+  | 'CanViewAudit'
+  | 'CanViewReports'
+  | 'CanManagePayroll'
+  | 'CanViewSalary'
+  | 'CanViewOwnAttendance'
+  | 'CanApplyLeave'
+  | 'CanViewOwnReports'
+  | 'CanViewNotifications';
+
 export interface LoginRequest {
   username: string;
   password: string;

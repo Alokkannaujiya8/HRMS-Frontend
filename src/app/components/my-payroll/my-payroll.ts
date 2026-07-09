@@ -1,5 +1,9 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { HttpErrorResponse, HttpResponse } from '@angular/common/http';
+import { EmployeeRecord } from '../../models/employee.model';
+import { Employee } from '../../services/employee';
+import { HrOperations } from '../../services/hr-operations';
+import { MonthlyPayrollSummary, OvertimeCalculator } from '../../services/overtime-calculator';
 import { Payroll } from '../../services/payroll';
 
 interface MonthOption {
@@ -13,7 +17,7 @@ interface MonthOption {
   templateUrl: './my-payroll.html',
   styleUrl: './my-payroll.scss',
 })
-export class MyPayroll {
+export class MyPayroll implements OnInit {
   readonly months: MonthOption[] = [
     { value: 1, label: 'January' },
     { value: 2, label: 'February' },
@@ -35,8 +39,24 @@ export class MyPayroll {
   selectedYear = new Date().getFullYear();
   isGenerating = false;
   errorMessage = '';
+  currentEmployee: EmployeeRecord | null = null;
+  payrollSummary: MonthlyPayrollSummary | null = null;
+  private readonly username = (localStorage.getItem('username') ?? '').trim().toLowerCase();
 
-  constructor(private payrollService: Payroll) {}
+  constructor(
+    private payrollService: Payroll,
+    private employeeService: Employee,
+    private hrOps: HrOperations,
+    private overtimeCalculator: OvertimeCalculator,
+  ) {}
+
+  ngOnInit(): void {
+    this.loadPayrollPreview();
+  }
+
+  onPeriodChange(): void {
+    this.buildPayrollSummary();
+  }
 
   downloadPayslip(): void {
     this.errorMessage = '';
@@ -52,6 +72,39 @@ export class MyPayroll {
         this.errorMessage = error.error?.message || 'Unable to generate payslip right now.';
       },
     });
+  }
+
+  private loadPayrollPreview(): void {
+    this.employeeService.getEmployees().subscribe({
+      next: (employees) => {
+        const source = employees ?? [];
+        this.currentEmployee =
+          source.find(
+            (employee) =>
+              employee.email.toLowerCase() === this.username ||
+              employee.name.toLowerCase() === this.username,
+          ) ?? null;
+        this.buildPayrollSummary();
+      },
+      error: (error: Error) => {
+        this.errorMessage = error.message;
+      },
+    });
+  }
+
+  private buildPayrollSummary(): void {
+    if (!this.currentEmployee) {
+      this.payrollSummary = null;
+      return;
+    }
+
+    const monthKey = `${this.selectedYear}-${String(this.selectedMonth).padStart(2, '0')}`;
+    this.payrollSummary =
+      this.overtimeCalculator.createMonthlySummaries(
+        [this.currentEmployee],
+        this.hrOps.getAttendanceEntries(),
+        monthKey,
+      )[0] ?? null;
   }
 
   private openPdfInNewTab(response: HttpResponse<Blob>): void {

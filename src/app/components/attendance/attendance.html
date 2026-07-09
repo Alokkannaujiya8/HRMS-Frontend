@@ -1,8 +1,11 @@
 <section class="feature-page">
   <div class="feature-header">
-    <h1>Attendance Management</h1>
+    <div>
+      <h1>Attendance</h1>
+      <p class="breadcrumb">Dashboard / Attendance</p>
+    </div>
     @if (canManageAll) {
-      <p>Admin / HR view: all employee attendance logs and bulk updates.</p>
+      <p>Admin / HR view: attendance logs, overtime and payroll-ready totals.</p>
     } @else {
       <p>Employee view: self check-in/check-out and personal log history.</p>
     }
@@ -15,6 +18,77 @@
   @if (errorMessage) {
     <div class="alert error">{{ errorMessage }}</div>
   }
+
+  <div class="attendance-grid">
+    <div class="panel timesheet-card">
+      <div class="panel-title">
+        <h2>Timesheet</h2>
+        <span>{{ selectedDate }}</span>
+      </div>
+      <div class="punch-box">
+        <strong>Today Attendance</strong>
+        <span>{{ activeTodayCount }} active employees</span>
+      </div>
+      <div class="ring" [style.--progress]="workProgress + '%'">
+        <span>{{ totalWorkedHours | number:'1.1-2' }}</span>
+        <small>hrs</small>
+      </div>
+      <button type="button" class="btn-primary" (click)="saveAttendance()">
+        {{ canManageAll ? 'Save Attendance' : 'Save Punch' }}
+      </button>
+      <div class="split-metrics">
+        <div>
+          <span>Late</span>
+          <strong>{{ lateCount }}</strong>
+        </div>
+        <div>
+          <span>Overtime</span>
+          <strong>{{ totalOvertimeHours | number:'1.1-2' }} hrs</strong>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel stats-card">
+      <h2>Statistics</h2>
+      <div class="stat-line">
+        <span>Today</span>
+        <strong>{{ totalWorkedHours | number:'1.1-2' }} hrs</strong>
+        <div class="bar"><i [style.width.%]="workProgress"></i></div>
+      </div>
+      <div class="stat-line danger">
+        <span>Late Employees</span>
+        <strong>{{ lateCount }}</strong>
+        <div class="bar"><i [style.width.%]="lateCount * 12"></i></div>
+      </div>
+      <div class="stat-line warning">
+        <span>Overtime</span>
+        <strong>{{ totalOvertimeHours | number:'1.1-2' }} hrs</strong>
+        <div class="bar"><i [style.width.%]="overtimeProgress"></i></div>
+      </div>
+      <div class="stat-line success">
+        <span>OT Amount</span>
+        <strong>Rs {{ totalOvertimeAmount | number:'1.0-0' }}</strong>
+        <div class="bar"><i [style.width.%]="overtimeProgress"></i></div>
+      </div>
+    </div>
+
+    <div class="panel activity-card">
+      <h2>Today Activity</h2>
+      <div class="timeline">
+        @for (log of activityLogs; track log.id) {
+          <div class="timeline-item">
+            <span></span>
+            <div>
+              <strong>{{ log.employeeName }}</strong>
+              <p>{{ log.status }} / {{ log.checkIn }} - {{ log.checkOut }}</p>
+            </div>
+          </div>
+        } @empty {
+          <p class="empty">No activity yet.</p>
+        }
+      </div>
+    </div>
+  </div>
 
   <div class="panel controls">
     <label>
@@ -32,8 +106,15 @@
         <tr>
           <th>Employee</th>
           <th>Status</th>
+          <th>Day</th>
           <th>Check In</th>
           <th>Check Out</th>
+          <th>Std Hrs</th>
+          <th>Month Days</th>
+          <th>Worked</th>
+          <th>OT Hrs</th>
+          <th>OT Pay</th>
+          <th>Late</th>
           <th>Notes</th>
         </tr>
       </thead>
@@ -42,18 +123,50 @@
           <tr>
             <td>{{ row.employeeName }}</td>
             <td>
-              <select [(ngModel)]="row.status">
+              <select [(ngModel)]="row.status" (change)="recalculateRow(row)">
                 @for (status of statusOptions; track status) {
                   <option [value]="status">{{ status }}</option>
                 }
               </select>
             </td>
-            <td><input type="time" [(ngModel)]="row.checkIn" /></td>
-            <td><input type="time" [(ngModel)]="row.checkOut" /></td>
+            <td>
+              <select [(ngModel)]="row.dayType" (change)="recalculateRow(row)">
+                @for (dayType of dayTypeOptions; track dayType) {
+                  <option [value]="dayType">{{ dayType }}</option>
+                }
+              </select>
+            </td>
+            <td><input type="time" [(ngModel)]="row.checkIn" (change)="recalculateRow(row)" /></td>
+            <td><input type="time" [(ngModel)]="row.checkOut" (change)="recalculateRow(row)" /></td>
+            <td>
+              <input
+                type="number"
+                min="1"
+                max="12"
+                step="0.5"
+                [(ngModel)]="row.standardWorkingHours"
+                (input)="recalculateRow(row)"
+              />
+            </td>
+            <td>
+              <input
+                type="number"
+                min="1"
+                max="31"
+                [(ngModel)]="row.monthlyWorkingDays"
+                (input)="recalculateRow(row)"
+              />
+            </td>
+            <td>{{ row.workedHours | number:'1.1-2' }}</td>
+            <td>{{ row.overtimeHours | number:'1.1-2' }}</td>
+            <td>Rs {{ row.overtimeAmount | number:'1.0-0' }}</td>
+            <td>
+              <span class="pill" [class.warn]="row.isLate">{{ row.isLate ? 'Late' : 'On Time' }}</span>
+            </td>
             <td><input type="text" [(ngModel)]="row.notes" placeholder="Optional notes" /></td>
           </tr>
         } @empty {
-          <tr><td colspan="5" class="empty">No attendance rows available.</td></tr>
+          <tr><td colspan="12" class="empty">No attendance rows available.</td></tr>
         }
       </tbody>
     </table>
@@ -69,6 +182,10 @@
           <th>Status</th>
           <th>Check In</th>
           <th>Check Out</th>
+          <th>Day</th>
+          <th>Worked</th>
+          <th>OT Hrs</th>
+          <th>OT Pay</th>
           <th>Marked By</th>
         </tr>
       </thead>
@@ -80,10 +197,14 @@
             <td>{{ log.status }}</td>
             <td>{{ log.checkIn }}</td>
             <td>{{ log.checkOut }}</td>
+            <td>{{ log.dayType ?? 'Regular' }}</td>
+            <td>{{ (log.workedHours ?? 0) | number:'1.1-2' }}</td>
+            <td>{{ (log.overtimeHours ?? 0) | number:'1.1-2' }}</td>
+            <td>Rs {{ (log.overtimeAmount ?? 0) | number:'1.0-0' }}</td>
             <td>{{ log.markedBy }}</td>
           </tr>
         } @empty {
-          <tr><td colspan="6" class="empty">No logs found for selected date.</td></tr>
+          <tr><td colspan="10" class="empty">No logs found for selected date.</td></tr>
         }
       </tbody>
     </table>

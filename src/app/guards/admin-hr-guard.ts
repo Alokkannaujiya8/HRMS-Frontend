@@ -1,11 +1,12 @@
 import { CanActivateFn, Router } from '@angular/router';
 import { inject } from '@angular/core';
+import { Auth } from '../services/auth';
 
 export const adminHrGuard: CanActivateFn = () => {
   const router = inject(Router);
-  const role = localStorage.getItem('role')?.trim().toLowerCase();
+  const authService = inject(Auth);
 
-  if (role === 'admin' || role === 'hr') {
+  if (authService.hasRole(['Admin', 'HR'])) {
     return true;
   }
 

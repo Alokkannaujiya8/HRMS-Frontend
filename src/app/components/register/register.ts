@@ -17,11 +17,24 @@ export class Register {
   };
 
   errorMessage: string = '';
+  confirmPassword = '';
+  showPassword = false;
+  showConfirmPassword = false;
 
   constructor(private authService: Auth, private router: Router) {}
 
   onRegister(): void {
     this.errorMessage = '';
+
+    if (this.registerObj.password !== this.confirmPassword) {
+      this.errorMessage = 'Password and confirm password do not match.';
+      return;
+    }
+
+    if (this.registerObj.password.length < 6) {
+      this.errorMessage = 'Password must be at least 6 characters.';
+      return;
+    }
 
     this.authService.register(this.registerObj).subscribe({
       next: () => {
@@ -32,5 +45,13 @@ export class Register {
         this.errorMessage = err.message || 'Username already exists or registration failed.';
       },
     });
+  }
+
+  togglePasswordVisibility(): void {
+    this.showPassword = !this.showPassword;
+  }
+
+  toggleConfirmPasswordVisibility(): void {
+    this.showConfirmPassword = !this.showConfirmPassword;
   }
 }

@@ -13,5 +13,25 @@
       <h3>Aadhaar Pending</h3>
       <p>{{ aadhaarPending }}</p>
     </div>
+    <div class="card">
+      <h3>Today's Attendance</h3>
+      <p>{{ todayAttendance }}</p>
+    </div>
+    <div class="card">
+      <h3>Total OT Hours</h3>
+      <p>{{ totalOvertimeHours | number:'1.1-2' }}</p>
+    </div>
+    <div class="card">
+      <h3>Late Employees</h3>
+      <p>{{ lateEmployees }}</p>
+    </div>
+    <div class="card">
+      <h3>Leave Requests</h3>
+      <p>{{ pendingLeaves }}</p>
+    </div>
+    <div class="card">
+      <h3>Payroll With OT</h3>
+      <p>Rs {{ payrollTotal | number:'1.0-0' }}</p>
+    </div>
   </div>
 </section>

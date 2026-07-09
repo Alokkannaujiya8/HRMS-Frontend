@@ -4,8 +4,7 @@ import { EmployeeTest } from './employee-test/employee-test';
 import { Login } from './components/login/login';
 import { Register } from './components/register/register';
 import { authGuard } from './guards/auth-guard';
-import { adminHrGuard } from './guards/admin-hr-guard';
-import { adminOnlyGuard } from './guards/admin-only-guard';
+import { roleChildGuard, roleGuard } from './guards/role-guard';
 import { Attendance } from './components/attendance/attendance';
 import { LeaveManagement } from './components/leave-management/leave-management';
 import { AuditTrail } from './components/audit-trail/audit-trail';
@@ -23,7 +22,6 @@ import { StaffMaster } from './components/staff-master/staff-master';
 import { MasterDataComponent } from './components/master-data/master-data';
 import { StaffBankDetails } from './components/staff-bank-details/staff-bank-details';
 import { EmployeeShell } from './components/employee-shell/employee-shell';
-import { employeeOnlyGuard } from './guards/employee-only-guard';
 
 const routes: Routes = [
   {
@@ -38,42 +36,50 @@ const routes: Routes = [
   {
     path: 'register',
     component: Register,
-    canActivate: [authGuard, adminHrGuard],
+    canActivate: [authGuard, roleGuard],
+    data: { roles: ['Admin'] },
   },
   {
     path: 'employees',
     component: EmployeeTest,
-    canActivate: [authGuard],
+    canActivate: [authGuard, roleGuard],
+    data: { roles: ['Admin', 'HR'] },
   },
   {
     path: 'attendance',
     component: Attendance,
-    canActivate: [authGuard],
+    canActivate: [authGuard, roleGuard],
+    data: { roles: ['Admin', 'HR'] },
   },
   {
     path: 'leave-management',
     component: LeaveManagement,
-    canActivate: [authGuard],
+    canActivate: [authGuard, roleGuard],
+    data: { roles: ['Admin', 'HR'] },
   },
   {
     path: 'audit-trail',
     component: AuditTrail,
-    canActivate: [authGuard],
+    canActivate: [authGuard, roleGuard],
+    data: { roles: ['Admin', 'HR'] },
   },
   {
     path: 'reports',
     component: Reports,
-    canActivate: [authGuard],
+    canActivate: [authGuard, roleGuard],
+    data: { roles: ['Admin', 'HR'] },
   },
   {
     path: 'notifications',
     component: Notifications,
-    canActivate: [authGuard],
+    canActivate: [authGuard, roleGuard],
+    data: { roles: ['Admin', 'HR'] },
   },
   {
     path: 'departments',
     component: DepartmentManagement,
-    canActivate: [authGuard, adminOnlyGuard],
+    canActivate: [authGuard, roleGuard],
+    data: { roles: ['Admin'] },
   },
   {
     path: 'access-denied',
@@ -83,41 +89,46 @@ const routes: Routes = [
   {
     path: 'my-payroll',
     component: MyPayroll,
-    canActivate: [authGuard],
+    canActivate: [authGuard, roleGuard],
+    data: { roles: ['Employee'] },
   },
   {
     path: 'hr',
     component: HrShell,
-    canActivate: [authGuard, adminHrGuard],
+    canActivate: [authGuard, roleGuard],
+    canActivateChild: [roleChildGuard],
+    data: { roles: ['Admin', 'HR'] },
     children: [
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
-      { path: 'dashboard', component: HrDashboardHome },
-      { path: 'employees', component: EmployeeTest },
-      { path: 'attendance', component: Attendance },
-      { path: 'leave-management', component: LeaveManagement },
-      { path: 'audit-trail', component: AuditTrail },
-      { path: 'reports', component: Reports },
-      { path: 'notifications', component: Notifications },
-      { path: 'my-payroll', component: MyPayroll },
-      { path: 'staff-list', component: StaffList },
-      { path: 'staff/:id', component: EmployeeDetails },
-      { path: 'salary-management', component: SalaryManagement },
-      { path: 'staff-bank-details', component: StaffBankDetails },
-      { path: 'staff-master', component: StaffMaster },
-      { path: 'master-data', component: MasterDataComponent },
+      { path: 'dashboard', component: HrDashboardHome, data: { roles: ['Admin', 'HR'] } },
+      { path: 'employees', component: EmployeeTest, data: { roles: ['Admin', 'HR'] } },
+      { path: 'attendance', component: Attendance, data: { roles: ['Admin', 'HR'] } },
+      { path: 'leave-management', component: LeaveManagement, data: { roles: ['Admin', 'HR'] } },
+      { path: 'audit-trail', component: AuditTrail, data: { roles: ['Admin', 'HR'] } },
+      { path: 'reports', component: Reports, data: { roles: ['Admin', 'HR'] } },
+      { path: 'notifications', component: Notifications, data: { roles: ['Admin', 'HR'] } },
+      { path: 'my-payroll', component: MyPayroll, data: { roles: ['Admin', 'HR'] } },
+      { path: 'staff-list', component: StaffList, data: { roles: ['Admin', 'HR'] } },
+      { path: 'staff/:id', component: EmployeeDetails, data: { roles: ['Admin', 'HR'] } },
+      { path: 'salary-management', component: SalaryManagement, data: { roles: ['Admin', 'HR'] } },
+      { path: 'staff-bank-details', component: StaffBankDetails, data: { roles: ['Admin', 'HR'] } },
+      { path: 'staff-master', component: StaffMaster, data: { roles: ['Admin', 'HR'] } },
+      { path: 'master-data', component: MasterDataComponent, data: { roles: ['Admin', 'HR'] } },
     ],
   },
   {
     path: 'employee',
     component: EmployeeShell,
-    canActivate: [authGuard, employeeOnlyGuard],
+    canActivate: [authGuard, roleGuard],
+    canActivateChild: [roleChildGuard],
+    data: { roles: ['Employee'] },
     children: [
       { path: '', redirectTo: 'attendance', pathMatch: 'full' },
-      { path: 'attendance', component: Attendance },
-      { path: 'leave-management', component: LeaveManagement },
-      { path: 'reports', component: Reports },
-      { path: 'notifications', component: Notifications },
-      { path: 'my-payroll', component: MyPayroll },
+      { path: 'attendance', component: Attendance, data: { roles: ['Employee'] } },
+      { path: 'leave-management', component: LeaveManagement, data: { roles: ['Employee'] } },
+      { path: 'reports', component: Reports, data: { roles: ['Employee'] } },
+      { path: 'notifications', component: Notifications, data: { roles: ['Employee'] } },
+      { path: 'my-payroll', component: MyPayroll, data: { roles: ['Employee'] } },
     ],
   },
   { path: '**', redirectTo: 'login' },

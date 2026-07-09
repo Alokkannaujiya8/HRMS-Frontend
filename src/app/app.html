@@ -1,9 +1,14 @@
 @if (authService.loggedInSignal()) {
   <nav class="navbar">
     <div class="logo">
-      {{ title() }}
+      <span class="brand-mark">Neo</span>
       <span class="role-chip">{{ userRoleLabel }} Login</span>
     </div>
+    <button type="button" class="menu-toggle" aria-label="Toggle menu">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
     <div class="nav-links">
       @if (canViewHrModules) {
         <a routerLink="/hr/employees" routerLinkActive="active">Employees</a>
@@ -29,6 +34,13 @@
         <a routerLink="/departments" routerLinkActive="active">Departments</a>
         <a routerLink="/register" routerLinkActive="active">Admin Users</a>
       }
+    </div>
+    <div class="top-actions">
+      <label class="search-box">
+        <input type="search" placeholder="search here..." />
+      </label>
+      <span class="icon-btn">!</span>
+      <span class="avatar">{{ userRoleLabel.charAt(0) }}</span>
       <button class="logout-btn" (click)="onLogout()">Logout</button>
     </div>
   </nav>

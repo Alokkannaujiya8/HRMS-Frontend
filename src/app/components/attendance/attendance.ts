@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { EmployeeRecord } from '../../models/employee.model';
-import { AttendanceEntry, AttendanceStatus } from '../../models/hr-ops.model';
+import { AttendanceDayType, AttendanceEntry, AttendanceStatus } from '../../models/hr-ops.model';
 import { Employee } from '../../services/employee';
 import { HrOperations } from '../../services/hr-operations';
+import { OvertimeCalculator } from '../../services/overtime-calculator';
 
 interface AttendanceRow {
   employeeId: number;
@@ -11,6 +12,15 @@ interface AttendanceRow {
   checkIn: string;
   checkOut: string;
   notes: string;
+  dayType: AttendanceDayType;
+  standardWorkingHours: number;
+  monthlyWorkingDays: number;
+  workedHours: number;
+  overtimeHours: number;
+  overtimeAmount: number;
+  hourlySalary: number;
+  overtimeMultiplier: number;
+  isLate: boolean;
 }
 
 @Component({
@@ -25,6 +35,7 @@ export class Attendance implements OnInit {
   rows: AttendanceRow[] = [];
   logs: AttendanceEntry[] = [];
   statusOptions: AttendanceStatus[] = ['Present', 'Absent', 'WFH', 'Half Day'];
+  dayTypeOptions: AttendanceDayType[] = ['Regular', 'Weekend', 'Holiday'];
   userRole = localStorage.getItem('role') ?? 'Employee';
   username = (localStorage.getItem('username') ?? '').trim().toLowerCase();
   currentEmployee: EmployeeRecord | null = null;
@@ -34,6 +45,7 @@ export class Attendance implements OnInit {
   constructor(
     private employeeService: Employee,
     private hrOps: HrOperations,
+    private overtimeCalculator: OvertimeCalculator,
   ) {}
 
   ngOnInit(): void {
@@ -68,6 +80,39 @@ export class Attendance implements OnInit {
     return this.logs.filter((log) => log.employeeId === this.currentEmployee?.id);
   }
 
+  get totalWorkedHours(): number {
+    return this.visibleRows.reduce((sum, row) => sum + row.workedHours, 0);
+  }
+
+  get totalOvertimeHours(): number {
+    return this.visibleRows.reduce((sum, row) => sum + row.overtimeHours, 0);
+  }
+
+  get totalOvertimeAmount(): number {
+    return this.visibleRows.reduce((sum, row) => sum + row.overtimeAmount, 0);
+  }
+
+  get lateCount(): number {
+    return this.visibleRows.filter((row) => row.isLate).length;
+  }
+
+  get activeTodayCount(): number {
+    return this.visibleRows.filter((row) => row.status === 'Present' || row.status === 'WFH').length;
+  }
+
+  get workProgress(): number {
+    const targetHours = Math.max(this.visibleRows.length * 9, 1);
+    return Math.min((this.totalWorkedHours / targetHours) * 100, 100);
+  }
+
+  get overtimeProgress(): number {
+    return Math.min((this.totalOvertimeHours / 20) * 100, 100);
+  }
+
+  get activityLogs(): AttendanceEntry[] {
+    return this.visibleLogs.slice(0, 7);
+  }
+
   loadEmployees(): void {
     this.employeeService.getEmployees().subscribe({
       next: (data) => {
@@ -99,6 +144,7 @@ export class Attendance implements OnInit {
     }
 
     rowsToSave.forEach((row) => {
+      this.recalculateRow(row);
       const saved = this.hrOps.upsertAttendance({
         employeeId: row.employeeId,
         employeeName: row.employeeName,
@@ -108,12 +154,20 @@ export class Attendance implements OnInit {
         checkOut: row.checkOut,
         notes: row.notes.trim(),
         markedBy: actor,
+        dayType: row.dayType,
+        standardWorkingHours: row.standardWorkingHours,
+        monthlyWorkingDays: row.monthlyWorkingDays,
+        workedHours: row.workedHours,
+        overtimeHours: row.overtimeHours,
+        overtimeMultiplier: row.overtimeMultiplier,
+        hourlySalary: row.hourlySalary,
+        overtimeAmount: row.overtimeAmount,
       });
       this.hrOps.addAudit({
         action: 'Attendance Updated',
         module: 'Attendance',
         changedBy: actor,
-        details: `${saved.employeeName} marked ${saved.status} for ${this.selectedDate}.`,
+        details: `${saved.employeeName} marked ${saved.status} for ${this.selectedDate}. OT ${saved.overtimeHours ?? 0} hrs, Rs ${saved.overtimeAmount ?? 0}.`,
       });
     });
 
@@ -130,15 +184,48 @@ export class Attendance implements OnInit {
 
     this.rows = this.employees.map((employee) => {
       const existing = existingEntries.find((entry) => entry.employeeId === employee.id);
-      return {
+      const dayType = existing?.dayType ?? this.overtimeCalculator.inferDayType(this.selectedDate);
+      const row: AttendanceRow = {
         employeeId: employee.id,
         employeeName: employee.name,
         status: existing?.status ?? 'Present',
         checkIn: existing?.checkIn ?? '09:30',
         checkOut: existing?.checkOut ?? '18:30',
         notes: existing?.notes ?? '',
+        dayType,
+        standardWorkingHours: existing?.standardWorkingHours ?? 9,
+        monthlyWorkingDays: existing?.monthlyWorkingDays ?? 26,
+        workedHours: existing?.workedHours ?? 0,
+        overtimeHours: existing?.overtimeHours ?? 0,
+        overtimeAmount: existing?.overtimeAmount ?? 0,
+        hourlySalary: existing?.hourlySalary ?? 0,
+        overtimeMultiplier: existing?.overtimeMultiplier ?? 1,
+        isLate: false,
       };
+      this.recalculateRow(row);
+      return row;
     });
+  }
+
+  recalculateRow(row: AttendanceRow): void {
+    const employee = this.employees.find((item) => item.id === row.employeeId);
+    const calculated = this.overtimeCalculator.calculateDaily({
+      date: this.selectedDate,
+      checkIn: row.checkIn,
+      checkOut: row.checkOut,
+      status: row.status,
+      monthlySalary: employee?.salary ?? 0,
+      standardWorkingHours: Number(row.standardWorkingHours) || 9,
+      monthlyWorkingDays: Number(row.monthlyWorkingDays) || 26,
+      dayType: row.dayType,
+    });
+
+    row.workedHours = calculated.workedHours;
+    row.overtimeHours = calculated.overtimeHours;
+    row.overtimeAmount = calculated.overtimeAmount;
+    row.hourlySalary = calculated.hourlySalary;
+    row.overtimeMultiplier = calculated.overtimeMultiplier;
+    row.isLate = this.overtimeCalculator.isLate(row.checkIn);
   }
 
   private loadLogs(): void {

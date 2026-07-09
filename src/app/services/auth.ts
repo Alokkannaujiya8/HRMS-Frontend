@@ -5,12 +5,14 @@ import { Router } from '@angular/router';
 import {
   LoginRequest,
   LoginResponse,
+  Permission,
   RefreshTokenRequest,
   RefreshTokenResponse,
   RegisterRequest,
   RegisterResponse,
   UserRole,
 } from '../models/auth.model';
+import { ROLE_LANDING_ROUTES, ROLE_PERMISSIONS } from '../config/access-policy';
 
 @Injectable({
   providedIn: 'root',
@@ -70,6 +72,29 @@ export class Auth {
     return this.checkToken();
   }
 
+  getCurrentRole(): UserRole | undefined {
+    return this.normalizeRole(localStorage.getItem('role') ?? undefined);
+  }
+
+  getLandingRoute(role = localStorage.getItem('role') ?? ''): string {
+    const normalizedRole = this.normalizeRole(role);
+    return normalizedRole ? ROLE_LANDING_ROUTES[normalizedRole] : '/login';
+  }
+
+  hasRole(allowedRoles: UserRole[]): boolean {
+    const role = this.getCurrentRole();
+    return !!role && allowedRoles.includes(role);
+  }
+
+  hasPermission(permission: string): boolean {
+    const normalized = permission.trim() as Permission;
+    if (!normalized) {
+      return false;
+    }
+
+    return this.getTokenPermissions().includes(normalized) || this.getRolePermissions().includes(normalized);
+  }
+
   getAccessToken(): string {
     return localStorage.getItem('token') ?? '';
   }
@@ -113,6 +138,73 @@ export class Auth {
       return 'Employee';
     }
     return undefined;
+  }
+
+  private getRolePermissions(): Permission[] {
+    const role = this.getCurrentRole();
+    return role ? ROLE_PERMISSIONS[role] : [];
+  }
+
+  private getTokenPermissions(): Permission[] {
+    const payload = this.decodeJwtPayload(this.getAccessToken());
+    if (!payload) {
+      return [];
+    }
+
+    const candidates: unknown[] = [
+      payload['permissions'],
+      payload['permission'],
+      payload['perms'],
+      payload['scp'],
+      payload['scope'],
+    ];
+
+    return candidates
+      .flatMap((item) => this.toStringArray(item))
+      .map((item) => item.trim())
+      .filter((item): item is Permission => this.isKnownPermission(item));
+  }
+
+  private decodeJwtPayload(token: string): Record<string, unknown> | null {
+    const parts = token.split('.');
+    if (parts.length < 2) {
+      return null;
+    }
+
+    try {
+      const base64 = parts[1].replace(/-/g, '+').replace(/_/g, '/');
+      const decoded = atob(base64);
+      return JSON.parse(decoded) as Record<string, unknown>;
+    } catch {
+      return null;
+    }
+  }
+
+  private toStringArray(value: unknown): string[] {
+    if (!value) {
+      return [];
+    }
+
+    if (Array.isArray(value)) {
+      return value.filter((item): item is string => typeof item === 'string');
+    }
+
+    if (typeof value === 'string') {
+      if (value.includes(' ')) {
+        return value.split(' ').filter(Boolean);
+      }
+      if (value.includes(',')) {
+        return value.split(',').map((item) => item.trim()).filter(Boolean);
+      }
+      return [value];
+    }
+
+    return [];
+  }
+
+  private isKnownPermission(value: string): value is Permission {
+    const permissions = Object.values(ROLE_PERMISSIONS).flat();
+    return permissions.includes(value as Permission);
   }
 
   private handleError(error: HttpErrorResponse, operation: string): Observable<never> {

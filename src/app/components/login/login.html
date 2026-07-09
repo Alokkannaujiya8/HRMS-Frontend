@@ -16,7 +16,16 @@
 
       <div class="input-group">
         <label>Password</label>
-        <input type="password" [(ngModel)]="loginObj.password" placeholder="Enter your password" />
+        <div class="password-field">
+          <input
+            [type]="showPassword ? 'text' : 'password'"
+            [(ngModel)]="loginObj.password"
+            placeholder="Enter your password"
+          />
+          <button type="button" (click)="togglePasswordVisibility()">
+            {{ showPassword ? 'Hide' : 'Show' }}
+          </button>
+        </div>
       </div>
 
       <button class="login-btn" type="button" (click)="onLogin()">Login</button>

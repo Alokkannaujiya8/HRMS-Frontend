@@ -1,4 +1,5 @@
 export type AttendanceStatus = 'Present' | 'Absent' | 'WFH' | 'Half Day';
+export type AttendanceDayType = 'Regular' | 'Weekend' | 'Holiday';
 
 export interface AttendanceEntry {
   id: number;
@@ -11,6 +12,14 @@ export interface AttendanceEntry {
   notes: string;
   markedBy: string;
   markedAt: string;
+  dayType?: AttendanceDayType;
+  standardWorkingHours?: number;
+  monthlyWorkingDays?: number;
+  workedHours?: number;
+  overtimeHours?: number;
+  overtimeMultiplier?: number;
+  hourlySalary?: number;
+  overtimeAmount?: number;
 }
 
 export type LeaveStatus = 'Pending' | 'Approved' | 'Rejected';

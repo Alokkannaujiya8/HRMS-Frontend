@@ -16,7 +16,30 @@
 
     <div class="input-group">
       <label>Password</label>
-      <input type="password" [(ngModel)]="registerObj.password" placeholder="Create a password">
+      <div class="password-field">
+        <input
+          [type]="showPassword ? 'text' : 'password'"
+          [(ngModel)]="registerObj.password"
+          placeholder="Create a password"
+        >
+        <button type="button" (click)="togglePasswordVisibility()">
+          {{ showPassword ? 'Hide' : 'Show' }}
+        </button>
+      </div>
+    </div>
+
+    <div class="input-group">
+      <label>Confirm Password</label>
+      <div class="password-field">
+        <input
+          [type]="showConfirmPassword ? 'text' : 'password'"
+          [(ngModel)]="confirmPassword"
+          placeholder="Re-enter password"
+        >
+        <button type="button" (click)="toggleConfirmPasswordVisibility()">
+          {{ showConfirmPassword ? 'Hide' : 'Show' }}
+        </button>
+      </div>
     </div>
 
     <div class="input-group">

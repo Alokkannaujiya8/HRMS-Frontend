@@ -3,6 +3,7 @@ import { EmployeeRecord } from '../../models/employee.model';
 import { AttendanceEntry, LeaveRequest } from '../../models/hr-ops.model';
 import { Employee } from '../../services/employee';
 import { HrOperations } from '../../services/hr-operations';
+import { MonthlyPayrollSummary, OvertimeCalculator } from '../../services/overtime-calculator';
 
 @Component({
   selector: 'app-reports',
@@ -14,6 +15,7 @@ export class Reports implements OnInit {
   employees: EmployeeRecord[] = [];
   attendance: AttendanceEntry[] = [];
   leaveRequests: LeaveRequest[] = [];
+  payrollSummaries: MonthlyPayrollSummary[] = [];
   selectedMonth = new Date().toISOString().slice(0, 7);
   userRole = localStorage.getItem('role') ?? 'Employee';
   username = (localStorage.getItem('username') ?? '').trim().toLowerCase();
@@ -24,6 +26,7 @@ export class Reports implements OnInit {
   constructor(
     private employeeService: Employee,
     private hrOps: HrOperations,
+    private overtimeCalculator: OvertimeCalculator,
   ) {}
 
   ngOnInit(): void {
@@ -42,13 +45,30 @@ export class Reports implements OnInit {
     return this.visibleLeaves.filter((entry) => entry.fromDate.startsWith(this.selectedMonth));
   }
 
+  get visiblePayrollSummaries(): MonthlyPayrollSummary[] {
+    return this.payrollSummaries.filter((summary) =>
+      this.visibleEmployees.some((employee) => employee.id === summary.employeeId),
+    );
+  }
+
   get monthlySalaryExpense(): number {
-    const source = this.canExportAll
-      ? this.employees
-      : this.currentEmployee
-        ? [this.currentEmployee]
-        : [];
-    return source.reduce((sum, employee) => sum + (employee.salary ?? 0), 0);
+    return this.visiblePayrollSummaries.reduce((sum, summary) => sum + summary.monthlySalary, 0);
+  }
+
+  get monthlyOvertimeExpense(): number {
+    return this.visiblePayrollSummaries.reduce((sum, summary) => sum + summary.overtimeAmount, 0);
+  }
+
+  get payrollTotalExpense(): number {
+    return this.visiblePayrollSummaries.reduce((sum, summary) => sum + summary.totalSalary, 0);
+  }
+
+  get totalOvertimeHours(): number {
+    return this.visiblePayrollSummaries.reduce((sum, summary) => sum + summary.totalOvertimeHours, 0);
+  }
+
+  get lateEmployees(): number {
+    return this.visiblePayrollSummaries.filter((summary) => summary.lateDays > 0).length;
   }
 
   get visibleEmployees(): EmployeeRecord[] {
@@ -107,17 +127,72 @@ export class Reports implements OnInit {
       return;
     }
 
-    const headers = ['Date', 'Employee', 'Status', 'CheckIn', 'CheckOut', 'MarkedBy'];
+    const headers = [
+      'Date',
+      'Employee',
+      'Status',
+      'DayType',
+      'CheckIn',
+      'CheckOut',
+      'WorkedHours',
+      'OvertimeHours',
+      'HourlySalary',
+      'OvertimeAmount',
+      'MarkedBy',
+    ];
     const rows = this.filteredAttendance.map((entry) => [
       entry.date,
       entry.employeeName,
       entry.status,
+      entry.dayType ?? 'Regular',
       entry.checkIn,
       entry.checkOut,
+      entry.workedHours ?? 0,
+      entry.overtimeHours ?? 0,
+      entry.hourlySalary ?? 0,
+      entry.overtimeAmount ?? 0,
       entry.markedBy,
     ]);
     this.downloadCsv(`attendance-${this.selectedMonth}.csv`, headers, rows);
     this.logReportingAction(`Attendance CSV exported for ${this.selectedMonth}`);
+  }
+
+  downloadPayrollReport(): void {
+    if (!this.canExportAll) {
+      this.errorMessage = 'Only Admin/HR can export payroll reports.';
+      return;
+    }
+
+    const headers = [
+      'Employee',
+      'MonthlySalary',
+      'StandardMonthlyHours',
+      'HourlySalary',
+      'WorkedHours',
+      'OvertimeHours',
+      'WeekendOTHours',
+      'HolidayOTHours',
+      'OvertimeAmount',
+      'TotalSalary',
+      'LateDays',
+      'LeaveDays',
+    ];
+    const rows = this.visiblePayrollSummaries.map((summary) => [
+      summary.employeeName,
+      summary.monthlySalary,
+      summary.standardMonthlyHours,
+      summary.hourlySalary,
+      summary.totalWorkedHours,
+      summary.totalOvertimeHours,
+      summary.weekendOtHours,
+      summary.holidayOtHours,
+      summary.overtimeAmount,
+      summary.totalSalary,
+      summary.lateDays,
+      summary.leaveDays,
+    ]);
+    this.downloadCsv(`payroll-overtime-${this.selectedMonth}.csv`, headers, rows);
+    this.logReportingAction(`Payroll overtime CSV exported for ${this.selectedMonth}`);
   }
 
   downloadPdfSummary(): void {
@@ -147,15 +222,19 @@ export class Reports implements OnInit {
           <h1>HR Summary (${this.selectedMonth})</h1>
           <p>Total Employees: ${this.visibleEmployees.length}</p>
           <p>Monthly Salary Expense: Rs ${this.monthlySalaryExpense}</p>
+          <p>Total OT Hours: ${this.totalOvertimeHours}</p>
+          <p>Overtime Expense: Rs ${this.monthlyOvertimeExpense}</p>
+          <p>Total Salary Including OT: Rs ${this.payrollTotalExpense}</p>
+          <p>Late Employees: ${this.lateEmployees}</p>
           <p>Attendance Records: ${this.filteredAttendance.length}</p>
           <p>Leave Requests: ${this.filteredLeaves.length}</p>
           <table>
-            <thead><tr><th>Employee</th><th>Email</th><th>Salary</th></tr></thead>
+            <thead><tr><th>Employee</th><th>Salary</th><th>OT Hours</th><th>OT Amount</th><th>Total Salary</th></tr></thead>
             <tbody>
-              ${this.visibleEmployees
+              ${this.visiblePayrollSummaries
                 .map(
-                  (employee) =>
-                    `<tr><td>${employee.name}</td><td>${employee.email}</td><td>Rs ${employee.salary ?? 0}</td></tr>`,
+                  (summary) =>
+                    `<tr><td>${summary.employeeName}</td><td>Rs ${summary.monthlySalary}</td><td>${summary.totalOvertimeHours}</td><td>Rs ${summary.overtimeAmount}</td><td>Rs ${summary.totalSalary}</td></tr>`,
                 )
                 .join('')}
             </tbody>
@@ -176,11 +255,16 @@ export class Reports implements OnInit {
       next: (employees) => {
         this.employees = employees ?? [];
         this.resolveCurrentEmployee();
+        this.rebuildPayrollSummaries();
       },
       error: (err: Error) => {
         this.errorMessage = err.message;
       },
     });
+  }
+
+  onMonthChange(): void {
+    this.rebuildPayrollSummaries();
   }
 
   private downloadCsv(fileName: string, headers: string[], rows: Array<Array<string | number>>): void {
@@ -204,6 +288,14 @@ export class Reports implements OnInit {
     });
     this.message = details;
     this.errorMessage = '';
+  }
+
+  private rebuildPayrollSummaries(): void {
+    this.payrollSummaries = this.overtimeCalculator.createMonthlySummaries(
+      this.employees,
+      this.attendance,
+      this.selectedMonth,
+    );
   }
 
   private resolveCurrentEmployee(): void {
