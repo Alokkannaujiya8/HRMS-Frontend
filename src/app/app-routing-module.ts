@@ -22,6 +22,7 @@ import { StaffMaster } from './components/staff-master/staff-master';
 import { MasterDataComponent } from './components/master-data/master-data';
 import { StaffBankDetails } from './components/staff-bank-details/staff-bank-details';
 import { EmployeeShell } from './components/employee-shell/employee-shell';
+import { AssetManagementComponent } from './components/asset-management/asset-management';
 
 const routes: Routes = [
   {
@@ -114,6 +115,7 @@ const routes: Routes = [
       { path: 'staff-bank-details', component: StaffBankDetails, data: { roles: ['Admin', 'HR'] } },
       { path: 'staff-master', component: StaffMaster, data: { roles: ['Admin', 'HR'] } },
       { path: 'master-data', component: MasterDataComponent, data: { roles: ['Admin', 'HR'] } },
+      { path: 'assets', component: AssetManagementComponent, data: { roles: ['Admin', 'HR'] } },
     ],
   },
   {

@@ -1,0 +1,379 @@
+<section class="feature-page">
+  <div class="feature-header">
+    <div>
+      <h1>IT Asset Management</h1>
+      <p class="breadcrumb">Dashboard / Assets</p>
+    </div>
+    <p>Admin / HR view: track and manage company devices, software licenses, and hardware allocations.</p>
+  </div>
+
+  @if (successMessage) {
+    <div class="alert success">{{ successMessage }}</div>
+  }
+
+  @if (errorMessage) {
+    <div class="alert error">{{ errorMessage }}</div>
+  }
+
+  <!-- Filters & Controls -->
+  <div class="panel controls">
+    <div class="filter-group">
+      <label>
+        Search
+        <input type="text" placeholder="Search by name, tag, serial..." [(ngModel)]="searchTerm" />
+      </label>
+
+      <label>
+        Category
+        <select [(ngModel)]="selectedCategory">
+          @for (cat of categories; track cat) {
+            <option [value]="cat">{{ cat }}</option>
+          }
+        </select>
+      </label>
+
+      <label>
+        Status
+        <select [(ngModel)]="selectedStatus">
+          @for (stat of statuses; track stat) {
+            <option [value]="stat">{{ stat }}</option>
+          }
+        </select>
+      </label>
+    </div>
+
+    <button type="button" class="btn-primary" (click)="openAddModal()">+ Add Asset</button>
+  </div>
+
+  <!-- Asset Table -->
+  <div class="panel table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Asset Tag</th>
+          <th>Asset Name</th>
+          <th>Category</th>
+          <th>Serial Number</th>
+          <th>Value</th>
+          <th>Status</th>
+          <th>Assigned To</th>
+          <th style="width: 250px;">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (asset of filteredAssets; track asset.id) {
+          <tr>
+            <td><strong>{{ asset.assetTag }}</strong></td>
+            <td>{{ asset.name }}</td>
+            <td><span class="pill-info">{{ asset.category }}</span></td>
+            <td>{{ asset.serialNumber || 'N/A' }}</td>
+            <td>{{ asset.value ? 'Rs ' + (asset.value | number:'1.2-2') : 'N/A' }}</td>
+            <td>
+              <span class="pill" [class.success]="asset.status === 'Available'" 
+                               [class.info]="asset.status === 'Assigned'"
+                               [class.warn]="asset.status === 'UnderRepair'"
+                               [class.muted]="asset.status === 'Retired'">
+                {{ asset.status }}
+              </span>
+            </td>
+            <td>
+              @if (asset.status === 'Assigned' && asset.assignedToEmployeeName) {
+                <span class="assigned-user">👤 {{ asset.assignedToEmployeeName }}</span>
+              } @else {
+                <span class="unassigned-text">-</span>
+              }
+            </td>
+            <td>
+              <div class="action-buttons">
+                @if (asset.status === 'Available') {
+                  <button type="button" class="btn-small btn-success" (click)="openAssignModal(asset)">Assign</button>
+                } @else if (asset.status === 'Assigned') {
+                  <button type="button" class="btn-small btn-warn" (click)="openReturnModal(asset)">Return</button>
+                }
+                
+                <button type="button" class="btn-small btn-outline" (click)="openEditModal(asset)">Edit</button>
+                <button type="button" class="btn-small btn-info" (click)="openHistoryDialog(asset)">History</button>
+                <button type="button" class="btn-small btn-danger" [disabled]="asset.status === 'Assigned'" (click)="deleteAsset(asset)">Delete</button>
+              </div>
+            </td>
+          </tr>
+        } @empty {
+          <tr>
+            <td colspan="8" class="empty">No assets registered yet or matching the filters.</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <!-- MODALS -->
+
+  <!-- Add Asset Modal -->
+  @if (showAddForm) {
+    <div class="modal-backdrop">
+      <div class="modal-card">
+        <div class="modal-header">
+          <h2>Add New Asset</h2>
+          <button type="button" class="close-btn" (click)="closeAddModal()">&times;</button>
+        </div>
+        <form (ngSubmit)="submitAddAsset()">
+          <div class="modal-body">
+            <div class="form-row">
+              <label>
+                Asset Tag (Unique ID)*
+                <input type="text" name="tag" [(ngModel)]="newAsset.assetTag" required placeholder="e.g. AST-101" />
+              </label>
+              <label>
+                Asset Name*
+                <input type="text" name="name" [(ngModel)]="newAsset.name" required placeholder="e.g. Dell Latitude 5420" />
+              </label>
+            </div>
+            
+            <div class="form-row">
+              <label>
+                Category*
+                <select name="category" [(ngModel)]="newAsset.category" required>
+                  <option value="Hardware">Hardware</option>
+                  <option value="Software">Software</option>
+                  <option value="Accessory">Accessory</option>
+                </select>
+              </label>
+              <label>
+                Serial Number
+                <input type="text" name="serial" [(ngModel)]="newAsset.serialNumber" placeholder="e.g. SN-89237213" />
+              </label>
+            </div>
+
+            <div class="form-row">
+              <label>
+                Purchase Date
+                <input type="date" name="purchaseDate" [(ngModel)]="newAsset.purchaseDate" />
+              </label>
+              <label>
+                Value (Rs)
+                <input type="number" name="value" [(ngModel)]="newAsset.value" placeholder="e.g. 75000" />
+              </label>
+            </div>
+
+            <label>
+              Description / Specs
+              <textarea name="description" [(ngModel)]="newAsset.description" rows="3" placeholder="Processor, RAM, configuration details..."></textarea>
+            </label>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn-secondary" (click)="closeAddModal()">Cancel</button>
+            <button type="submit" class="btn-primary">Add Asset</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  }
+
+  <!-- Edit Asset Modal -->
+  @if (showEditForm) {
+    <div class="modal-backdrop">
+      <div class="modal-card">
+        <div class="modal-header">
+          <h2>Edit Asset Details</h2>
+          <button type="button" class="close-btn" (click)="closeEditModal()">&times;</button>
+        </div>
+        <form (ngSubmit)="submitEditAsset()">
+          <div class="modal-body">
+            <div class="form-row">
+              <label>
+                Asset Tag (Unique ID)*
+                <input type="text" name="tag" [(ngModel)]="editAsset.assetTag" required />
+              </label>
+              <label>
+                Asset Name*
+                <input type="text" name="name" [(ngModel)]="editAsset.name" required />
+              </label>
+            </div>
+            
+            <div class="form-row">
+              <label>
+                Category*
+                <select name="category" [(ngModel)]="editAsset.category" required>
+                  <option value="Hardware">Hardware</option>
+                  <option value="Software">Software</option>
+                  <option value="Accessory">Accessory</option>
+                </select>
+              </label>
+              <label>
+                Serial Number
+                <input type="text" name="serial" [(ngModel)]="editAsset.serialNumber" />
+              </label>
+            </div>
+
+            <div class="form-row">
+              <label>
+                Purchase Date
+                <input type="date" name="purchaseDate" [(ngModel)]="editAsset.purchaseDate" />
+              </label>
+              <label>
+                Value (Rs)
+                <input type="number" name="value" [(ngModel)]="editAsset.value" />
+              </label>
+            </div>
+
+            <div class="form-row">
+              <label>
+                Status*
+                <select name="status" [(ngModel)]="editAsset.status" required [disabled]="editAsset.status === 'Assigned'">
+                  <option value="Available">Available</option>
+                  <option value="UnderRepair">Under Repair</option>
+                  <option value="Retired">Retired</option>
+                  @if (editAsset.status === 'Assigned') {
+                    <option value="Assigned">Assigned (Manage via Return)</option>
+                  }
+                </select>
+              </label>
+            </div>
+
+            <label>
+              Description / Specs
+              <textarea name="description" [(ngModel)]="editAsset.description" rows="3"></textarea>
+            </label>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn-secondary" (click)="closeEditModal()">Cancel</button>
+            <button type="submit" class="btn-primary">Save Changes</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  }
+
+  <!-- Assign Asset Modal -->
+  @if (showAssignForm) {
+    <div class="modal-backdrop">
+      <div class="modal-card">
+        <div class="modal-header">
+          <h2>Assign Asset</h2>
+          <button type="button" class="close-btn" (click)="closeAssignModal()">&times;</button>
+        </div>
+        <form (ngSubmit)="submitAssignAsset()">
+          <div class="modal-body">
+            <label>
+              Select Employee*
+              <select name="employeeId" [(ngModel)]="assignData.employeeId" required>
+                @for (emp of employees; track emp.id) {
+                  <option [value]="emp.id">{{ emp.name }} ({{ emp.email }})</option>
+                } @empty {
+                  <option value="0">No active employees found</option>
+                }
+              </select>
+            </label>
+
+            <label>
+              Condition on Assignment*
+              <input type="text" name="condition" [(ngModel)]="assignData.conditionOnAssign" required placeholder="e.g. Excellent / Brand New / Working" />
+            </label>
+
+            <label>
+              Notes
+              <textarea name="notes" [(ngModel)]="assignData.notes" rows="3" placeholder="Any additional notes..."></textarea>
+            </label>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn-secondary" (click)="closeAssignModal()">Cancel</button>
+            <button type="submit" class="btn-primary btn-success">Assign Asset</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  }
+
+  <!-- Return Asset Modal -->
+  @if (showReturnForm) {
+    <div class="modal-backdrop">
+      <div class="modal-card">
+        <div class="modal-header">
+          <h2>Return Asset</h2>
+          <button type="button" class="close-btn" (click)="closeReturnModal()">&times;</button>
+        </div>
+        <form (ngSubmit)="submitReturnAsset()">
+          <div class="modal-body">
+            <label>
+              Condition on Return*
+              <input type="text" name="condition" [(ngModel)]="returnData.conditionOnReturn" required placeholder="e.g. Good / Scratches on lid / Damaged" />
+            </label>
+
+            <label>
+              Notes / Comments
+              <textarea name="notes" [(ngModel)]="returnData.notes" rows="3" placeholder="Return details or issues..."></textarea>
+            </label>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn-secondary" (click)="closeReturnModal()">Cancel</button>
+            <button type="submit" class="btn-primary btn-warn">Return Asset</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  }
+
+  <!-- Asset History Dialog -->
+  @if (showHistoryDialog && selectedAssetDetail) {
+    <div class="modal-backdrop">
+      <div class="modal-card modal-large">
+        <div class="modal-header">
+          <h2>Asset Allocation History - {{ selectedAssetDetail.assetTag }}</h2>
+          <button type="button" class="close-btn" (click)="closeHistoryDialog()">&times;</button>
+        </div>
+        <div class="modal-body">
+          <div class="asset-info-grid">
+            <div><strong>Name:</strong> {{ selectedAssetDetail.name }}</div>
+            <div><strong>Category:</strong> {{ selectedAssetDetail.category }}</div>
+            <div><strong>Serial Number:</strong> {{ selectedAssetDetail.serialNumber || 'N/A' }}</div>
+            <div><strong>Current Status:</strong> 
+              <span class="pill" [class.success]="selectedAssetDetail.status === 'Available'" 
+                               [class.info]="selectedAssetDetail.status === 'Assigned'"
+                               [class.warn]="selectedAssetDetail.status === 'UnderRepair'"
+                               [class.muted]="selectedAssetDetail.status === 'Retired'">
+                {{ selectedAssetDetail.status }}
+              </span>
+            </div>
+          </div>
+
+          <hr class="divider" />
+
+          <h3>Assignment Logs</h3>
+          <div class="table-wrap mini-table">
+            <table>
+              <thead>
+                <tr>
+                  <th>Employee</th>
+                  <th>Assigned Date</th>
+                  <th>Returned Date</th>
+                  <th>Assign Cond.</th>
+                  <th>Return Cond.</th>
+                  <th>Notes</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (log of selectedAssetDetail.assignmentHistory; track log.id) {
+                  <tr>
+                    <td>👤 {{ log.employeeName }}</td>
+                    <td>{{ log.assignedDate | date:'mediumDate' }}</td>
+                    <td>{{ log.returnedDate ? (log.returnedDate | date:'mediumDate') : 'Currently Held' }}</td>
+                    <td>{{ log.conditionOnAssign || '-' }}</td>
+                    <td>{{ log.conditionOnReturn || '-' }}</td>
+                    <td class="notes-cell" [title]="log.notes || ''">{{ log.notes || '-' }}</td>
+                  </tr>
+                } @empty {
+                  <tr>
+                    <td colspan="6" class="empty">This asset has never been assigned to any employee.</td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn-primary" (click)="closeHistoryDialog()">Close</button>
+        </div>
+      </div>
+    </div>
+  }
+</section>

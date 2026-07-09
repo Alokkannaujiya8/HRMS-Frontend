@@ -30,6 +30,7 @@ import { StaffMaster } from './components/staff-master/staff-master';
 import { MasterDataComponent } from './components/master-data/master-data';
 import { StaffBankDetails } from './components/staff-bank-details/staff-bank-details';
 import { EmployeeShell } from './components/employee-shell/employee-shell';
+import { AssetManagementComponent } from './components/asset-management/asset-management';
 
 @NgModule({
   declarations: [
@@ -59,6 +60,7 @@ import { EmployeeShell } from './components/employee-shell/employee-shell';
     StaffMaster,
     MasterDataComponent,
     EmployeeShell,
+    AssetManagementComponent,
   ],
   imports: [BrowserModule, AppRoutingModule, FormsModule, ReactiveFormsModule],
   providers: [provideHttpClient(withInterceptors([authInterceptor]))],
