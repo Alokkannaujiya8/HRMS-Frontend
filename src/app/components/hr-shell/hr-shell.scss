@@ -55,9 +55,12 @@
   left: 22px;
   width: 18px;
   height: 18px;
-  border: 2px solid currentColor;
-  border-radius: 5px;
+  border: none;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
   opacity: 0.9;
+  top: calc(50% - 9px);
 }
 
 .left-menu a.active,
