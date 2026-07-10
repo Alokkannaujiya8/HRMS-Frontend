@@ -3,33 +3,33 @@
     <h3>{{ panelTitle }}</h3>
 
     <p class="menu-group">Core HR</p>
-    <a routerLink="/hr/dashboard" routerLinkActive="active">HR Dashboard</a>
-    <a routerLink="/hr/employees" routerLinkActive="active">Employee Directory</a>
+    <a routerLink="/hr/dashboard" routerLinkActive="active" class="menu-dashboard">HR Dashboard</a>
+    <a routerLink="/hr/employees" routerLinkActive="active" class="menu-directory">Employee Directory</a>
 
     <p class="menu-group">Staff & Master</p>
-    <a routerLink="/hr/staff-list" routerLinkActive="active">Staff List</a>
-    <a routerLink="/hr/staff-list" routerLinkActive="active">Employee Details</a>
-    <a routerLink="/hr/staff-master" routerLinkActive="active">Staff Master</a>
-    <a routerLink="/hr/staff-bank-details" routerLinkActive="active">Staff Bank Details</a>
-    <a routerLink="/hr/salary-management" routerLinkActive="active">Salary Management</a>
-    <a routerLink="/hr/master-data" routerLinkActive="active">Master Data</a>
-    <a routerLink="/hr/assets" routerLinkActive="active">Asset Management</a>
+    <a routerLink="/hr/staff-list" routerLinkActive="active" class="menu-staff-list">Staff List</a>
+    <a routerLink="/hr/staff-list" routerLinkActive="active" class="menu-employee-details">Employee Details</a>
+    <a routerLink="/hr/staff-master" routerLinkActive="active" class="menu-staff-master">Staff Master</a>
+    <a routerLink="/hr/staff-bank-details" routerLinkActive="active" class="menu-bank">Staff Bank Details</a>
+    <a routerLink="/hr/salary-management" routerLinkActive="active" class="menu-salary">Salary Management</a>
+    <a routerLink="/hr/master-data" routerLinkActive="active" class="menu-master-data">Master Data</a>
+    <a routerLink="/hr/assets" routerLinkActive="active" class="menu-assets">Asset Management</a>
     @if (isAdmin) {
-      <a routerLink="/departments" routerLinkActive="active">Departments</a>
+      <a routerLink="/departments" routerLinkActive="active" class="menu-departments">Departments</a>
     }
 
     <p class="menu-group">Attendance & Leave</p>
-    <a routerLink="/hr/attendance" routerLinkActive="active">Attendance</a>
-    <a routerLink="/hr/leave-management" routerLinkActive="active">Leave Management</a>
+    <a routerLink="/hr/attendance" routerLinkActive="active" class="menu-attendance">Attendance</a>
+    <a routerLink="/hr/leave-management" routerLinkActive="active" class="menu-leave">Leave Management</a>
 
     <p class="menu-group">Audit & Reports</p>
-    <a routerLink="/hr/audit-trail" routerLinkActive="active">Audit Trail</a>
-    <a routerLink="/hr/reports" routerLinkActive="active">Reports</a>
-    <a routerLink="/hr/notifications" routerLinkActive="active">Notifications</a>
+    <a routerLink="/hr/audit-trail" routerLinkActive="active" class="menu-audit">Audit Trail</a>
+    <a routerLink="/hr/reports" routerLinkActive="active" class="menu-reports">Reports</a>
+    <a routerLink="/hr/notifications" routerLinkActive="active" class="menu-notifications">Notifications</a>
 
     <p class="menu-group">Payroll & Admin</p>
-    <a routerLink="/hr/my-payroll" routerLinkActive="active">My Payroll</a>
-    <a routerLink="/register" routerLinkActive="active">User Registration</a>
+    <a routerLink="/hr/my-payroll" routerLinkActive="active" class="menu-payroll">My Payroll</a>
+    <a routerLink="/register" routerLinkActive="active" class="menu-registration">User Registration</a>
   </aside>
 
   <div class="content-area">
