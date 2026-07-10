@@ -69,6 +69,11 @@
           border-color: var(--brand, #38bdf8);
           box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.15);
         }
+
+        option {
+          background-color: var(--surface, #0f172a);
+          color: var(--text-main, #e2e8f0);
+        }
       }
     }
   }
@@ -360,6 +365,11 @@
         &:focus {
           border-color: var(--brand, #38bdf8);
           box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.15);
+        }
+
+        option {
+          background-color: var(--surface, #0f172a);
+          color: var(--text-main, #e2e8f0);
         }
       }
     }
