@@ -213,14 +213,26 @@ export class LeaveManagement implements OnInit {
   }
 
   private resolveCurrentEmployee(): void {
-    this.currentEmployee =
-      this.employees.find(
-        (employee) =>
-          employee.email.toLowerCase() === this.username ||
-          employee.name.toLowerCase() === this.username,
-      ) ?? null;
+    const loginUser = (
+      localStorage.getItem('email') ||
+      localStorage.getItem('username') ||
+      ''
+    ).trim().toLowerCase();
 
-    if (!this.canReview && !this.currentEmployee) {
+    this.currentEmployee =
+      this.employees.find((employee) => {
+        const empEmail = employee.email.toLowerCase();
+        const empName = employee.name.toLowerCase();
+        return (
+          empEmail === loginUser ||
+          empName === loginUser ||
+          (loginUser.length > 0 && (empEmail.includes(loginUser) || empName.includes(loginUser)))
+        );
+      }) ?? (this.employees.length > 0 ? this.employees[0] : null);
+
+    if (this.currentEmployee || this.canReview) {
+      this.errorMessage = '';
+    } else {
       this.errorMessage =
         'Your employee profile was not found. Please login using your registered employee email.';
     }

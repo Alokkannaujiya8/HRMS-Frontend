@@ -1,51 +1,9 @@
 @if (authService.loggedInSignal()) {
-  <nav class="navbar">
-    <div class="logo">
-      <span class="brand-mark">Neo</span>
-      <span class="role-chip">{{ userRoleLabel }} Login</span>
-    </div>
-    <button type="button" class="menu-toggle" aria-label="Toggle menu">
-      <span></span>
-      <span></span>
-      <span></span>
-    </button>
-    <div class="nav-links">
-      @if (canViewHrModules) {
-        <a routerLink="/hr/employees" routerLinkActive="active">Employees</a>
-        <a routerLink="/hr/attendance" routerLinkActive="active">Attendance</a>
-        <a routerLink="/hr/leave-management" routerLinkActive="active">Leave</a>
-        <a routerLink="/hr/audit-trail" routerLinkActive="active">Audit Trail</a>
-        <a routerLink="/hr/reports" routerLinkActive="active">Reports</a>
-        <a routerLink="/hr/notifications" routerLinkActive="active">Notifications</a>
-        <a routerLink="/hr/my-payroll" routerLinkActive="active">My Payroll</a>
-        <a routerLink="/hr/dashboard" routerLinkActive="active">HR Modules</a>
-      }
-
-      @if (canViewEmployeeModules) {
-        <a routerLink="/employee/attendance" routerLinkActive="active">Attendance</a>
-        <a routerLink="/employee/leave-management" routerLinkActive="active">Leave</a>
-        <a routerLink="/employee/reports" routerLinkActive="active">My Reports</a>
-        <a routerLink="/employee/notifications" routerLinkActive="active">Notifications</a>
-        <a routerLink="/employee/my-payroll" routerLinkActive="active">My Payroll</a>
-        <a routerLink="/employee" routerLinkActive="active">Employee Modules</a>
-      }
-
-      @if (isAdmin) {
-        <a routerLink="/departments" routerLinkActive="active">Departments</a>
-        <a routerLink="/register" routerLinkActive="active">Admin Users</a>
-      }
-    </div>
-    <div class="top-actions">
-      <label class="search-box">
-        <input type="search" placeholder="search here..." />
-      </label>
-      <span class="icon-btn">!</span>
-      <span class="avatar">{{ userRoleLabel.charAt(0) }}</span>
-      <button class="logout-btn" (click)="onLogout()">Logout</button>
-    </div>
-  </nav>
+  <app-navbar></app-navbar>
 }
 
 <div class="main-content">
   <router-outlet></router-outlet>
 </div>
+
+<app-toast-container></app-toast-container>

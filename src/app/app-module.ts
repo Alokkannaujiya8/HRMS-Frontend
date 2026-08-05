@@ -32,9 +32,24 @@ import { StaffBankDetails } from './components/staff-bank-details/staff-bank-det
 import { EmployeeShell } from './components/employee-shell/employee-shell';
 import { AssetManagementComponent } from './components/asset-management/asset-management';
 
+import { SidebarComponent } from './components/sidebar/sidebar.component';
+import { NavbarComponent } from './components/navbar/navbar.component';
+import { AnalyticsCharts } from './components/analytics-charts/analytics-charts';
+import { DataTableComponent } from './components/data-table/data-table.component';
+import { ToastContainerComponent } from './components/toast/toast.component';
+import { EmployeeGlassCardComponent } from './components/employee-glass-card/employee-glass-card';
+import { SkeletonLoaderComponent } from './components/skeleton-loader/skeleton-loader';
+
 @NgModule({
   declarations: [
     App,
+    SidebarComponent,
+    NavbarComponent,
+    AnalyticsCharts,
+    DataTableComponent,
+    ToastContainerComponent,
+    EmployeeGlassCardComponent,
+    SkeletonLoaderComponent,
     EmployeeTest,
     Login,
     Register,

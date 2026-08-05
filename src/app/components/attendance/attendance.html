@@ -1,14 +1,20 @@
 <section class="feature-page">
   <div class="feature-header">
     <div>
-      <h1>Attendance</h1>
+      <h1 class="page-title-bold">Attendance</h1>
       <p class="breadcrumb">Dashboard / Attendance</p>
     </div>
-    @if (canManageAll) {
-      <p>Admin / HR view: attendance logs, overtime and payroll-ready totals.</p>
-    } @else {
-      <p>Employee view: self check-in/check-out and personal log history.</p>
-    }
+    <div class="header-actions">
+      <button type="button" class="btn-checkin" (click)="saveAttendance()">
+        🟢 Check In
+      </button>
+      <button type="button" class="btn-checkout" (click)="saveAttendance()">
+        🔴 Check Out
+      </button>
+      <button type="button" class="btn-mark" (click)="saveAttendance()">
+        📝 Mark Attendance
+      </button>
+    </div>
   </div>
 
   @if (successMessage) {
@@ -33,9 +39,14 @@
         <span>{{ totalWorkedHours | number:'1.1-2' }}</span>
         <small>hrs</small>
       </div>
-      <button type="button" class="btn-primary" (click)="saveAttendance()">
-        {{ canManageAll ? 'Save Attendance' : 'Save Punch' }}
-      </button>
+      <div class="action-button-group">
+        <button type="button" class="btn-checkin" (click)="saveAttendance()">
+          🟢 Check In
+        </button>
+        <button type="button" class="btn-checkout" (click)="saveAttendance()">
+          🔴 Check Out
+        </button>
+      </div>
       <div class="split-metrics">
         <div>
           <span>Late</span>
@@ -84,7 +95,11 @@
             </div>
           </div>
         } @empty {
-          <p class="empty">No activity yet.</p>
+          <div class="empty-state-box">
+            <span class="empty-icon">📋</span>
+            <p class="empty-title">No activity found</p>
+            <span class="empty-subtitle">Click Check-In to start today's attendance logs.</span>
+          </div>
         }
       </div>
     </div>
@@ -95,8 +110,8 @@
       Attendance Date
       <input type="date" [(ngModel)]="selectedDate" (change)="onDateChange()" />
     </label>
-    <button type="button" class="btn-primary" (click)="saveAttendance()">
-      {{ canManageAll ? 'Save Attendance' : 'Check-in / Check-out Save' }}
+    <button type="button" class="btn-mark" (click)="saveAttendance()">
+      📝 Save Attendance Log
     </button>
   </div>
 
@@ -166,7 +181,15 @@
             <td><input type="text" [(ngModel)]="row.notes" placeholder="Optional notes" /></td>
           </tr>
         } @empty {
-          <tr><td colspan="12" class="empty">No attendance rows available.</td></tr>
+          <tr>
+            <td colspan="12">
+              <div class="empty-state-box">
+                <span class="empty-icon">📋</span>
+                <p class="empty-title">No attendance found</p>
+                <span class="empty-subtitle">Click Check-In to start today's attendance.</span>
+              </div>
+            </td>
+          </tr>
         }
       </tbody>
     </table>
@@ -204,7 +227,15 @@
             <td>{{ log.markedBy }}</td>
           </tr>
         } @empty {
-          <tr><td colspan="10" class="empty">No logs found for selected date.</td></tr>
+          <tr>
+            <td colspan="10">
+              <div class="empty-state-box">
+                <span class="empty-icon">📋</span>
+                <p class="empty-title">No logs found for selected date</p>
+                <span class="empty-subtitle">Check-in or mark attendance to populate logs.</span>
+              </div>
+            </td>
+          </tr>
         }
       </tbody>
     </table>

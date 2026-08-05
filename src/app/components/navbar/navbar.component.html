@@ -1,0 +1,168 @@
+<header class="enterprise-navbar">
+  <!-- Brand & Breadcrumb Section -->
+  <div class="nav-left">
+    <div class="company-brand">
+      <span class="brand-logo">💎</span>
+      <span class="brand-name">NeoHRM Enterprise</span>
+    </div>
+    <div class="breadcrumb-trail">
+      <span class="home-icon">🏠</span>
+      <span class="trail-text">{{ breadcrumb }}</span>
+    </div>
+  </div>
+
+  <!-- Global Command Palette Search Trigger Bar -->
+  <div class="nav-center">
+    <button class="global-search-trigger" (click)="toggleCommandPalette()">
+      <span class="search-icon">🔍</span>
+      <span class="search-placeholder">Quick search employee, attendance, payroll...</span>
+      <kbd class="search-shortcut">Ctrl+K</kbd>
+    </button>
+  </div>
+
+  <!-- Action Controls, Time & Profile -->
+  <div class="nav-right">
+    <!-- Live Clock Ticker -->
+    <div class="live-clock-badge">
+      <span class="clock-icon">🕒</span>
+      <div class="clock-details">
+        <span class="time-text">{{ currentTime }}</span>
+        <span class="date-text">{{ currentDate }}</span>
+      </div>
+    </div>
+
+    <!-- Fullscreen Toggle -->
+    <button class="icon-control-btn" (click)="toggleFullscreen()" [title]="isFullscreen ? 'Exit Fullscreen' : 'Fullscreen'">
+      <span>{{ isFullscreen ? '📉' : '📺' }}</span>
+    </button>
+
+    <!-- Theme Switcher Button -->
+    <button class="icon-control-btn" (click)="toggleTheme()" [title]="'Current Theme: ' + themeMode">
+      <span>{{ themeMode === 'dark' ? '🌙' : '☀️' }}</span>
+    </button>
+
+    <!-- SignalR Notification Bell Dropdown -->
+    <div class="notification-wrapper">
+      <button class="icon-control-btn bell-btn" (click)="toggleNotifications()" title="Notifications Drawer">
+        <span>🔔</span>
+        @if (unreadCount > 0) {
+          <span class="badge-pulse">{{ unreadCount }}</span>
+        }
+      </button>
+
+      <!-- Notification Dropdown Drawer -->
+      @if (showNotificationDropdown) {
+        <div class="dropdown-panel notification-dropdown">
+          <div class="dropdown-header">
+            <div>
+              <h4>Notifications</h4>
+              <span class="count-chip">{{ unreadCount }} unread</span>
+            </div>
+            @if (unreadCount > 0) {
+              <button class="mark-read-btn" (click)="markAllAsRead()">Mark all as read</button>
+            }
+          </div>
+          <div class="dropdown-body">
+            @for (notif of notifications; track notif.title) {
+              <div class="notification-item">
+                <div class="notif-badge-icon">
+                  @switch (notif.type) {
+                    @case ('LeaveApproved') { <span>🏖️</span> }
+                    @case ('AttendanceUpdated') { <span>⏱️</span> }
+                    @case ('PayrollGenerated') { <span>💰</span> }
+                    @case ('AssetAssigned') { <span>💻</span> }
+                    @default { <span>⚡</span> }
+                  }
+                </div>
+                <div class="notif-content">
+                  <span class="notif-title">{{ notif.title }}</span>
+                  <p class="notif-msg">{{ notif.message }}</p>
+                  <span class="notif-time">{{ notif.timestamp }}</span>
+                </div>
+              </div>
+            } @empty {
+              <div class="empty-state">
+                <span>✨ No new notifications</span>
+              </div>
+            }
+          </div>
+        </div>
+      }
+    </div>
+
+    <!-- User Profile & Role Badge Dropdown -->
+    <div class="profile-wrapper">
+      <button class="profile-trigger-btn" (click)="toggleProfile()">
+        <div class="avatar-ring">👤</div>
+        <div class="user-meta">
+          <span class="meta-name">{{ username }}</span>
+          <span class="role-pill" [class.admin]="userRole.toLowerCase() === 'admin'">
+            {{ userRole === 'Admin' ? 'HR Executive' : 'Employee' }}
+          </span>
+        </div>
+        <span class="chevron-down">▼</span>
+      </button>
+
+      <!-- User Profile Dropdown Menu -->
+      @if (showProfileDropdown) {
+        <div class="dropdown-panel profile-dropdown">
+          <div class="user-card-header">
+            <div class="lg-avatar">👤</div>
+            <div class="user-card-info">
+              <p class="user-card-name">{{ username }}</p>
+              <span class="user-card-role">{{ userRole }} Access</span>
+            </div>
+          </div>
+          <div class="dropdown-divider"></div>
+          <a routerLink="/hr/my-payroll" class="dropdown-item">
+            <span>💳</span> My Payroll & Payslips
+          </a>
+          <a routerLink="/hr/notifications" class="dropdown-item">
+            <span>📩</span> Notification Settings
+          </a>
+          <div class="dropdown-divider"></div>
+          <button class="dropdown-item logout-item" (click)="logout()">
+            <span>🚪</span> Sign Out Session
+          </button>
+        </div>
+      }
+    </div>
+  </div>
+</header>
+
+<!-- Command Palette Modal Dialog (Ctrl + K) -->
+@if (showCommandPalette) {
+  <div class="command-palette-backdrop" (click)="showCommandPalette = false">
+    <div class="command-palette-modal" (click)="$event.stopPropagation()">
+      <div class="modal-search-header">
+        <span class="modal-search-icon">🔍</span>
+        <input
+          type="text"
+          [(ngModel)]="commandSearchQuery"
+          (input)="filterCommands()"
+          placeholder="Type a command or search..."
+          class="command-palette-input"
+          autofocus
+        />
+        <kbd class="modal-esc-key">ESC</kbd>
+      </div>
+
+      <div class="command-results-list">
+        @for (item of filteredCommands; track item.title) {
+          <div class="command-item" (click)="executeCommand(item.route)">
+            <span class="item-icon">{{ item.icon }}</span>
+            <div class="item-meta">
+              <span class="item-title">{{ item.title }}</span>
+              <span class="item-category">{{ item.category }}</span>
+            </div>
+            <span class="item-jump">Jump ➔</span>
+          </div>
+        } @empty {
+          <div class="no-commands-found">
+            <span>🔍 No matching commands found</span>
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+}

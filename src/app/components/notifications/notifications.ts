@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal, WritableSignal } from '@angular/core';
 import { NotificationEvent } from '../../models/hr-ops.model';
 import { HrOperations } from '../../services/hr-operations';
 
@@ -9,11 +9,11 @@ import { HrOperations } from '../../services/hr-operations';
   styleUrl: './notifications.scss',
 })
 export class Notifications implements OnInit {
-  notifications: NotificationEvent[] = [];
-  recipient = '';
-  title = '';
-  message = '';
-  provider: 'SMTP' | 'SendGrid' = 'SMTP';
+  notifications: WritableSignal<NotificationEvent[]> = signal<NotificationEvent[]>([]);
+  recipient: WritableSignal<string> = signal<string>('');
+  title: WritableSignal<string> = signal<string>('');
+  message: WritableSignal<string> = signal<string>('');
+  provider: WritableSignal<'SMTP' | 'SendGrid'> = signal<'SMTP' | 'SendGrid'>('SMTP');
   userRole = localStorage.getItem('role') ?? 'Employee';
 
   constructor(private hrOps: HrOperations) {}
@@ -23,28 +23,27 @@ export class Notifications implements OnInit {
   }
 
   sendTestEmail(): void {
-    if (!this.recipient.trim() || !this.title.trim() || !this.message.trim()) {
+    const rec = this.recipient().trim();
+    const t = this.title().trim();
+    const m = this.message().trim();
+
+    if (!rec || !t || !m) {
       return;
     }
 
-    this.hrOps.queueEmail(
-      this.recipient.trim(),
-      this.title.trim(),
-      this.message.trim(),
-      this.provider,
-    );
+    this.hrOps.queueEmail(rec, t, m, this.provider());
     this.hrOps.addAudit({
       action: 'Notification Sent',
       module: 'Notification',
       changedBy: this.userRole,
-      details: `Email sent to ${this.recipient.trim()} using ${this.provider}.`,
+      details: `Email sent to ${rec} using ${this.provider()}.`,
     });
-    this.title = '';
-    this.message = '';
+    this.title.set('');
+    this.message.set('');
     this.refresh();
   }
 
   refresh(): void {
-    this.notifications = this.hrOps.getNotifications();
+    this.notifications.set(this.hrOps.getNotifications());
   }
 }

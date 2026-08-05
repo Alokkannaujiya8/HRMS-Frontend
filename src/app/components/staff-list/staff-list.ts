@@ -4,8 +4,9 @@ import { EmployeeRecord } from '../../models/employee.model';
 import { StaffProfile } from '../../models/staff.model';
 import { Employee } from '../../services/employee';
 import { StaffData } from '../../services/staff-data';
+import { ColumnDefinition } from '../data-table/data-table.component';
 
-interface StaffRow {
+export interface StaffRow {
   id: number;
   name: string;
   mobile: string;
@@ -13,6 +14,7 @@ interface StaffRow {
   division: string;
   designation: string;
   salary: number;
+  [key: string]: any;
 }
 
 @Component({
@@ -24,9 +26,16 @@ interface StaffRow {
 export class StaffList implements OnInit {
   employees: EmployeeRecord[] = [];
   profiles: StaffProfile[] = [];
-  search = '';
-  divisionFilter = '';
-  designationFilter = '';
+
+  tableColumns: ColumnDefinition[] = [
+    { field: 'id', header: 'ID', sortable: true, filterable: true, width: '70px' },
+    { field: 'name', header: 'Staff Name', sortable: true, filterable: true },
+    { field: 'email', header: 'Email Address', sortable: true, filterable: true },
+    { field: 'mobile', header: 'Mobile Number', sortable: true, filterable: true },
+    { field: 'division', header: 'Division', sortable: true, filterable: true },
+    { field: 'designation', header: 'Designation', sortable: true, filterable: true },
+    { field: 'salary', header: 'Monthly Salary', sortable: true, filterable: true, type: 'currency' },
+  ];
 
   constructor(
     private employeeService: Employee,
@@ -59,30 +68,8 @@ export class StaffList implements OnInit {
     });
   }
 
-  get filteredRows(): StaffRow[] {
-    return this.staffRows.filter((row) => {
-      const query = this.search.trim().toLowerCase();
-      const matchesSearch =
-        !query ||
-        row.name.toLowerCase().includes(query) ||
-        row.email.toLowerCase().includes(query) ||
-        row.mobile.toLowerCase().includes(query);
-      const matchesDivision = !this.divisionFilter || row.division === this.divisionFilter;
-      const matchesDesignation = !this.designationFilter || row.designation === this.designationFilter;
-      return matchesSearch && matchesDivision && matchesDesignation;
-    });
-  }
-
-  get divisions(): string[] {
-    return [...new Set(this.staffRows.map((row) => row.division))];
-  }
-
-  get designations(): string[] {
-    return [...new Set(this.staffRows.map((row) => row.designation))];
-  }
-
-  viewProfile(id: number): void {
-    this.router.navigate(['/hr/staff', id]);
+  onRowClick(row: StaffRow): void {
+    this.router.navigate(['/hr/staff', row.id]);
   }
 
   editEmployee(id: number): void {

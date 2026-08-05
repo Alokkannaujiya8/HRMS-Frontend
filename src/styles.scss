@@ -1,17 +1,39 @@
 :root {
+  --primary: #0ea5e9;
+  --secondary: #6366f1;
+  --surface: #0f172a;
+  --surface-alt: #1e293b;
+  --text-primary: #f8fafc;
+  --text-secondary: #cbd5e1;
+  --text-muted: #94a3b8;
+  --border: rgba(56, 189, 248, 0.18);
+  --success: #22c55e;
+  --warning: #f97316;
+  --danger: #ef4444;
+
   --bg-950: #020617;
   --bg-900: #0b1220;
-  --surface: #0f172a;
   --surface-soft: #111d34;
   --surface-elevated: #16233c;
   --text-main: #e2e8f0;
-  --text-muted: #94a3b8;
   --line: #22314d;
   --brand: #38bdf8;
   --brand-deep: #0ea5e9;
   --ok: #22c55e;
-  --danger: #f87171;
   --shadow-lg: 0 18px 36px rgba(29, 78, 137, 0.1);
+}
+
+body.light-theme {
+  --surface: #ffffff;
+  --surface-alt: #f8fafc;
+  --surface-soft: #f1f5f9;
+  --text-primary: #0f172a;
+  --text-secondary: #334155;
+  --text-main: #0f172a;
+  --text-muted: #64748b;
+  --border: rgba(0, 0, 0, 0.12);
+  background: #f8fafc !important;
+  color: var(--text-primary) !important;
 }
 
 * {
@@ -211,11 +233,134 @@ select option {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect x='2' y='2' width='20' height='20' rx='5' stroke='%23e0f2fe' stroke-width='2' fill='none'/%3E%3Crect x='5' y='6' width='14' height='12' rx='1' stroke='%23e0f2fe' stroke-width='1.8' fill='none'/%3E%3Cpath d='M12 9v6M14.5 10h-4a1.5 1.5 0 0 0 0 3h3a1.5 1.5 0 0 1 0 3H10' stroke='%23e0f2fe' stroke-width='1.5' stroke-linecap='round' fill='none'/%3E%3C/svg%3E");
 }
 
-/* User Registration */
-.left-menu a.menu-registration::before {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect x='2' y='2' width='20' height='20' rx='5' stroke='%23c8d4e8' stroke-width='2' fill='none'/%3E%3Cpath d='M5 17v-0.5A2.5 2.5 0 0 1 7.5 14h3a2.5 2.5 0 0 1 2.5 2.5v0.5' stroke='%23c8d4e8' stroke-width='1.8' fill='none' stroke-linecap='round'/%3E%3Ccircle cx='9' cy='9' r='2' stroke='%23c8d4e8' stroke-width='1.8' fill='none'/%3E%3Cpath d='M15 9h4M17 7v4' stroke='%23c8d4e8' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
+
+/* Responsive Media Breakpoint Rules */
+@media (min-width: 1440px) {
+  .main-content {
+    padding: 28px 36px;
+  }
 }
-.left-menu a.active.menu-registration::before,
-.left-menu a:hover.menu-registration::before {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect x='2' y='2' width='20' height='20' rx='5' stroke='%23e0f2fe' stroke-width='2' fill='none'/%3E%3Cpath d='M5 17v-0.5A2.5 2.5 0 0 1 7.5 14h3a2.5 2.5 0 0 1 2.5 2.5v0.5' stroke='%23e0f2fe' stroke-width='1.8' fill='none' stroke-linecap='round'/%3E%3Ccircle cx='9' cy='9' r='2' stroke='%23e0f2fe' stroke-width='1.8' fill='none'/%3E%3Cpath d='M15 9h4M17 7v4' stroke='%23e0f2fe' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
+
+@media (max-width: 1200px) {
+  .enterprise-navbar {
+    padding: 0 16px;
+  }
+  .nav-center {
+    max-width: 320px;
+  }
 }
+
+@media (max-width: 992px) {
+  .live-clock-badge {
+    display: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .enterprise-navbar {
+    height: auto;
+    padding: 12px 16px;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .nav-center {
+    order: 3;
+    width: 100%;
+    max-width: 100%;
+    margin: 0;
+  }
+}
+
+
+/* Global Micro-Animations */
+
+/* 1. Button Press Ripple */
+button, .btn, .action-btn {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+
+  &:active {
+    transform: scale(0.97);
+  }
+
+  &::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 5px;
+    height: 5px;
+    background: rgba(255, 255, 255, 0.4);
+    opacity: 0;
+    border-radius: 100%;
+    transform: scale(1, 1) translate(-50%);
+    transform-origin: 50% 50%;
+  }
+
+  &:focus:not(:active)::after {
+    animation: ripple 0.6s ease-out;
+  }
+}
+
+@keyframes ripple {
+  0% { transform: scale(0, 0); opacity: 0.5; }
+  100% { transform: scale(40, 40); opacity: 0; }
+}
+
+/* 2. Route View Page Fade & Slide */
+.main-content {
+  animation: pageFadeIn 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes pageFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 3. Table Row Stagger Fade-In */
+.data-row {
+  animation: rowFadeIn 0.3s cubic-bezier(0.4, 0, 0.2, 1) backwards;
+
+  @for $i from 1 through 20 {
+    &:nth-child(#{$i}) {
+      animation-delay: #{$i * 0.04}s;
+    }
+  }
+}
+
+@keyframes rowFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 4. Dialog & Modal Backdrop Scale-In */
+.modal-dialog, .dialog-card {
+  animation: dialogScaleIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes dialogScaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.92) translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+

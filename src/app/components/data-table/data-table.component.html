@@ -1,0 +1,142 @@
+<div class="enterprise-table-card">
+  <!-- Table Header & Controls Bar -->
+  <div class="table-controls-bar">
+    <div class="title-meta">
+      <h3 class="table-title">{{ title }}</h3>
+      <span class="table-subtitle">{{ subtitle }}</span>
+    </div>
+
+    <div class="action-tools">
+      <!-- Global Search -->
+      <div class="search-box-wrapper">
+        <span class="search-icon">🔍</span>
+        <input
+          type="text"
+          [(ngModel)]="globalSearchQuery"
+          (input)="onGlobalSearchChange()"
+          placeholder="Global table search..."
+          class="global-search-input"
+        />
+        <button *ngIf="globalSearchQuery" class="clear-btn" (click)="globalSearchQuery = ''; onGlobalSearchChange()">✕</button>
+      </div>
+
+      <!-- Export Buttons -->
+      <button class="export-btn csv" (click)="exportToCsv()" title="Export CSV file">
+        <span>📄</span> CSV
+      </button>
+      <button class="export-btn excel" (click)="triggerExcelExport()" title="Export Excel (.xlsx) file">
+        <span>📊</span> Excel
+      </button>
+    </div>
+  </div>
+
+  <!-- Responsive Table Container -->
+  <div class="table-responsive-wrapper">
+    <table class="enterprise-table">
+      <!-- Sticky Table Header -->
+      <thead class="sticky-header">
+        <tr>
+          <th
+            *ngFor="let col of columns"
+            [style.width]="col.width || 'auto'"
+            [class.sortable]="col.sortable !== false"
+            (click)="col.sortable !== false && onSort(col.field)"
+          >
+            <div class="th-content">
+              <span>{{ col.header }}</span>
+              <span class="sort-indicator" *ngIf="col.sortable !== false">
+                <ng-container *ngIf="sortColumn === col.field">
+                  {{ sortDirection === 'asc' ? '▲' : '▼' }}
+                </ng-container>
+                <ng-container *ngIf="sortColumn !== col.field">
+                  <span class="sort-neutral">↕</span>
+                </ng-container>
+              </span>
+            </div>
+          </th>
+        </tr>
+
+        <!-- Column Filters Row -->
+        <tr class="column-filter-row">
+          <th *ngFor="let col of columns">
+            <input
+              *ngIf="col.filterable !== false"
+              type="text"
+              [placeholder]="'Filter ' + col.header + '...'"
+              class="col-filter-input"
+              (input)="onColumnFilterChange(col.field, $any($event.target).value)"
+            />
+          </th>
+        </tr>
+      </thead>
+
+      <!-- Table Body -->
+      <tbody>
+        <tr *ngIf="paginatedData.length === 0" class="empty-data-row">
+          <td [attr.colspan]="columns.length">
+            <div class="no-records">
+              <span class="no-records-icon">🔍</span>
+              <p>No matching records found</p>
+            </div>
+          </td>
+        </tr>
+
+        <tr
+          *ngFor="let row of paginatedData"
+          class="data-row"
+          (click)="rowClick.emit(row)"
+        >
+          <td *ngFor="let col of columns">
+            <ng-container [ngSwitch]="col.type">
+              <!-- Currency Formatting -->
+              <span *ngSwitchCase="'currency'" class="cell-currency">
+                ₹ {{ row[col.field] | number:'1.0-2' }}
+              </span>
+
+              <!-- Status Badge Formatting -->
+              <span *ngSwitchCase="'badge'" class="cell-badge" [class.active]="row[col.field] === 'Active' || row[col.field] === 'Present' || row[col.field] === 'Approved'">
+                {{ row[col.field] }}
+              </span>
+
+              <!-- Date Formatting -->
+              <span *ngSwitchCase="'date'" class="cell-date">
+                {{ row[col.field] | date:'shortDate' }}
+              </span>
+
+              <!-- Standard Text Output -->
+              <span *ngSwitchDefault class="cell-text">
+                {{ row[col.field] }}
+              </span>
+            </ng-container>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Interactive Pagination Footer -->
+  <div class="table-pagination-footer">
+    <div class="pagination-range">
+      Showing <strong>{{ startRecordIndex }}</strong> to <strong>{{ endRecordIndex }}</strong> of <strong>{{ filteredData.length }}</strong> records
+    </div>
+
+    <div class="pagination-controls">
+      <label class="page-size-selector">
+        <span>Rows per page:</span>
+        <select [ngModel]="pageSize" (ngModelChange)="onPageSizeChange($event)" class="size-select">
+          <option *ngFor="let option of pageSizeOptions" [value]="option">{{ option }}</option>
+        </select>
+      </label>
+
+      <div class="page-buttons">
+        <button class="page-nav-btn" [disabled]="currentPage === 1" (click)="goToPage(currentPage - 1)">
+          ❮ Prev
+        </button>
+        <span class="page-number-indicator">Page {{ currentPage }} of {{ totalPages }}</span>
+        <button class="page-nav-btn" [disabled]="currentPage === totalPages" (click)="goToPage(currentPage + 1)">
+          Next ❯
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

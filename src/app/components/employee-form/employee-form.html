@@ -1,64 +1,214 @@
-<div class="form-container">
-  <h3>{{ isEditing ? 'Edit Employee' : 'Add New Employee' }}</h3>
+<div class="enterprise-form-card">
+  <div class="form-header">
+    <h3 class="form-title">{{ isEditing ? 'Edit Employee Record' : 'Register New Employee' }}</h3>
+    <span class="form-subtitle">Complete personal details, assign department, role, shift, and generate login credentials</span>
+  </div>
 
-  <app-photo-upload
-    [existingPhotoUrl]="currentEmployee.photoUrl || ''"
-    (fileSelected)="onPhotoSelected($event)"
-  ></app-photo-upload>
+  <!-- Photo Avatar Upload Section -->
+  <div class="avatar-upload-container">
+    <app-photo-upload
+      [existingPhotoUrl]="currentEmployee.photoUrl || ''"
+      (fileSelected)="onPhotoSelected($event)"
+    ></app-photo-upload>
+    @if (photoPreviewUrl) {
+      <div class="photo-preview-chip">
+        <span>New Photo Selected</span>
+      </div>
+    }
+  </div>
 
-  <div class="form-row">
-    <label class="file-label">
-      Employee Document
-      <input type="file" (change)="onDocumentChange($event)" accept=".pdf,.doc,.docx,.png,.jpg,.jpeg" />
+  <!-- Document Upload Box -->
+  <div class="file-upload-box">
+    <label class="file-drop-area">
+      <span class="upload-icon">📁</span>
+      <div class="upload-text">
+        <span class="primary-text">Upload Employee Document</span>
+        <span class="secondary-text">PDF, DOCX, PNG, JPG (Max 5MB)</span>
+      </div>
+      <input type="file" (change)="onDocumentChange($event)" accept=".pdf,.doc,.docx,.png,.jpg,.jpeg" class="hidden-file-input" />
     </label>
-    <div class="file-info">
-      @if (selectedDocumentName) {
-        <span>Selected: {{ selectedDocumentName }}</span>
-        <button type="button" class="btn-cancel" (click)="removeDocument()">Remove</button>
-      } @else if (currentEmployee.documentUrl) {
-        <a [href]="getDocumentUrl()" target="_blank" rel="noopener">
-          View Current Document
-        </a>
+
+    <!-- Document File Preview Badge -->
+    @if (selectedDocumentName || currentEmployee.documentUrl) {
+      <div class="file-status-preview">
+        <div class="file-info-chip">
+          <span class="doc-icon">📄</span>
+          @if (selectedDocumentName) {
+            <span class="doc-name">Selected: {{ selectedDocumentName }}</span>
+          }
+          @if (!selectedDocumentName && currentEmployee.documentUrl) {
+            <a [href]="getDocumentUrl()" target="_blank" rel="noopener" class="doc-link">
+              View Existing Document
+            </a>
+          }
+        </div>
+        @if (selectedDocumentName) {
+          <button type="button" class="remove-doc-btn" (click)="removeDocument()">✕ Remove</button>
+        }
+      </div>
+    }
+  </div>
+
+  <!-- Grid Form Fields -->
+  <div class="form-grid">
+    <!-- Field 1: Full Name -->
+    <div class="form-field">
+      <label class="field-label">Full Name <span class="required-star">*</span></label>
+      <div class="input-wrapper">
+        <span class="input-icon">👤</span>
+        <input
+          type="text"
+          [(ngModel)]="currentEmployee.name"
+          placeholder="e.g. Alok Kannaujiya"
+          required
+          class="form-input"
+          [class.invalid]="currentEmployee.name !== undefined && !currentEmployee.name.trim()"
+        />
+      </div>
+      @if (currentEmployee.name !== undefined && !currentEmployee.name.trim()) {
+        <span class="field-error-text">Full name is mandatory.</span>
       }
+    </div>
+
+    <!-- Field 2: Email Address (For Login) -->
+    <div class="form-field">
+      <label class="field-label">Email Address (Login ID) <span class="required-star">*</span></label>
+      <div class="input-wrapper">
+        <span class="input-icon">✉️</span>
+        <input
+          type="email"
+          [(ngModel)]="currentEmployee.email"
+          placeholder="e.g. alok@company.com"
+          required
+          class="form-input"
+          [class.invalid]="emailValue.length > 0 && !isEmailValid"
+        />
+      </div>
+      @if (emailValue.length > 0 && !isEmailValid) {
+        <span class="field-error-text">Please enter a valid email format.</span>
+      }
+    </div>
+
+    <!-- Field 3: Mobile Number -->
+    <div class="form-field">
+      <label class="field-label">Mobile Number</label>
+      <div class="input-wrapper">
+        <span class="input-icon">📱</span>
+        <input
+          type="text"
+          [(ngModel)]="currentEmployee.mobile"
+          placeholder="+91 9876543210"
+          class="form-input"
+        />
+      </div>
+    </div>
+
+    <!-- Field 4: Salary -->
+    <div class="form-field">
+      <label class="field-label">Salary (Monthly ₹)</label>
+      <div class="input-wrapper">
+        <span class="input-icon">₹</span>
+        <input
+          type="number"
+          [(ngModel)]="currentEmployee.salary"
+          placeholder="e.g. 75000"
+          class="form-input"
+        />
+      </div>
+    </div>
+
+    <!-- Field 5: Department Select Dropdown -->
+    <div class="form-field">
+      <label class="field-label">Assign Department <span class="required-star">*</span></label>
+      <div class="input-wrapper">
+        <span class="input-icon">🏢</span>
+        <select
+          [(ngModel)]="currentEmployee.departmentId"
+          required
+          class="form-select"
+          [class.invalid]="!currentEmployee.departmentId"
+        >
+          <option [ngValue]="null" disabled>Select Department *</option>
+          @for (dept of departments; track dept.id) {
+            <option [value]="dept.id">{{ dept.name }}</option>
+          }
+        </select>
+      </div>
+      @if (!currentEmployee.departmentId) {
+        <span class="field-error-text">Department selection is mandatory.</span>
+      }
+    </div>
+
+    <!-- Field 6: Assign Role (RBAC) -->
+    <div class="form-field">
+      <label class="field-label">Assign Role <span class="required-star">*</span></label>
+      <div class="input-wrapper">
+        <span class="input-icon">🛡️</span>
+        <select [(ngModel)]="currentEmployee.role" class="form-select">
+          @for (role of rolesList; track role) {
+            <option [value]="role">{{ role }}</option>
+          }
+        </select>
+      </div>
+    </div>
+
+    <!-- Field 7: Assign Work Shift -->
+    <div class="form-field">
+      <label class="field-label">Assign Work Shift</label>
+      <div class="input-wrapper">
+        <span class="input-icon">⏰</span>
+        <select [(ngModel)]="currentEmployee.shift" class="form-select">
+          @for (shift of shiftsList; track shift) {
+            <option [value]="shift">{{ shift }}</option>
+          }
+        </select>
+      </div>
+    </div>
+
+    <!-- Field 8: Joining Date -->
+    <div class="form-field">
+      <label class="field-label">Joining Date</label>
+      <div class="input-wrapper">
+        <span class="input-icon">📅</span>
+        <input
+          type="date"
+          [(ngModel)]="currentEmployee.joinDate"
+          class="form-input"
+        />
+      </div>
     </div>
   </div>
 
-  <div class="form-row">
-    <input type="text" [(ngModel)]="currentEmployee.name" placeholder="Full Name *" required />
-    <input type="email" [(ngModel)]="currentEmployee.email" placeholder="Email Address *" required />
-    @if (emailValue && !isEmailValid) {
-      <span class="field-error">Please enter a valid email address.</span>
-    }
-    <input type="text" [(ngModel)]="currentEmployee.mobile" placeholder="Mobile Number" />
-    <input type="number" [(ngModel)]="currentEmployee.salary" placeholder="Salary (Rs)" />
-
-    <select [(ngModel)]="currentEmployee.departmentId" required>
-      <option [ngValue]="null" disabled>Select Department *</option>
-      @for (dept of departments; track dept.id) {
-        <option [value]="dept.id">{{ dept.name }}</option>
-      }
-    </select>
-
-    <input type="date" [(ngModel)]="currentEmployee.joinDate" />
+  <!-- Create Login Credentials Toggle Option -->
+  <div class="login-toggle-box">
+    <label class="toggle-checkbox-label">
+      <input type="checkbox" [(ngModel)]="currentEmployee.createLogin" class="toggle-checkbox" />
+      <span class="checkbox-custom"></span>
+      <div class="toggle-meta">
+        <strong>Generate System Login Credentials</strong>
+        <span>Automatically creates user account & initializes attendance log for this employee</span>
+      </div>
+    </label>
   </div>
 
-  <div class="form-actions">
+  <!-- Form Actions Bar -->
+  <div class="form-actions-bar">
     <button
-      class="btn btn-primary d-inline-flex align-items-center gap-2"
+      class="submit-btn"
       type="button"
       (click)="save()"
       [disabled]="!canSave"
     >
       @if (isLoading) {
-        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-        <span>Sending Email...</span>
-      } @else {
-        <span>{{ isEditing ? 'Update Employee' : 'Save Employee' }}</span>
+        <span class="button-spinner"></span>
       }
+      <span>{{ isLoading ? 'Processing Record...' : (isEditing ? 'Update Employee' : 'Save & Initialize Attendance') }}</span>
     </button>
 
     @if (isEditing) {
-      <button class="btn-cancel" type="button" (click)="cancel()">Cancel</button>
+      <button class="cancel-btn" type="button" (click)="cancel()">
+        Cancel
+      </button>
     }
   </div>
 </div>

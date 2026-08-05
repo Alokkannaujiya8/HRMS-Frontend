@@ -1,14 +1,5 @@
 <section class="employee-shell">
-  <aside class="left-menu">
-    <h3>Employee Modules</h3>
-
-    <p class="menu-group">My Workspace</p>
-    <a routerLink="/employee/attendance" routerLinkActive="active" class="menu-attendance">Attendance</a>
-    <a routerLink="/employee/leave-management" routerLinkActive="active" class="menu-leave">Leave</a>
-    <a routerLink="/employee/reports" routerLinkActive="active" class="menu-reports">My Reports</a>
-    <a routerLink="/employee/notifications" routerLinkActive="active" class="menu-notifications">Notifications</a>
-    <a routerLink="/employee/my-payroll" routerLinkActive="active" class="menu-payroll">My Payroll</a>
-  </aside>
+  <app-sidebar></app-sidebar>
 
   <div class="content-area">
     <router-outlet></router-outlet>

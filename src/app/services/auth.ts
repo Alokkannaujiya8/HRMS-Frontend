@@ -21,6 +21,7 @@ export class Auth {
   private readonly apiUrl = 'https://localhost:7147/api/auth';
   private readonly httpWithoutInterceptor: HttpClient;
 
+  
   loggedInSignal = signal<boolean>(this.checkToken());
 
   constructor(

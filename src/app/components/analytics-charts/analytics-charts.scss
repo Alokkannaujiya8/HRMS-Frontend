@@ -1,0 +1,121 @@
+.analytics-charts-dashboard {
+  padding: 8px 4px;
+}
+
+/* Header */
+.charts-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+
+  .page-title {
+    margin: 0;
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: #f8fafc;
+    letter-spacing: -0.5px;
+  }
+
+  .page-subtitle {
+    margin: 4px 0 0;
+    font-size: 0.88rem;
+    color: #94a3b8;
+  }
+
+  .period-selector {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #cbd5e1;
+    font-size: 0.85rem;
+    font-weight: 600;
+
+    .period-dropdown {
+      background: rgba(15, 23, 42, 0.8);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      color: #38bdf8;
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-weight: 700;
+      outline: none;
+    }
+  }
+}
+
+/* Grid Layout */
+.charts-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+
+.chart-card {
+  background: rgba(15, 23, 42, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  padding: 20px;
+  backdrop-filter: blur(12px);
+  box-shadow: 0 10px 30px rgba(2, 6, 23, 0.3);
+  display: flex;
+  flex-direction: column;
+
+  &.span-2 {
+    grid-column: span 2;
+  }
+
+  .chart-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+
+    .header-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+
+      .chart-icon {
+        font-size: 1.2rem;
+      }
+
+      h3 {
+        margin: 0;
+        font-size: 1.05rem;
+        font-weight: 700;
+        color: #f8fafc;
+      }
+    }
+
+    .chart-badge {
+      font-size: 0.72rem;
+      font-weight: 800;
+      padding: 3px 10px;
+      border-radius: 12px;
+
+      &.cyan { background: rgba(56, 189, 248, 0.15); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.3); }
+      &.blue { background: rgba(99, 102, 241, 0.15); color: #818cf8; border: 1px solid rgba(99, 102, 241, 0.3); }
+      &.purple { background: rgba(168, 85, 247, 0.15); color: #c084fc; border: 1px solid rgba(168, 85, 247, 0.3); }
+      &.orange { background: rgba(249, 115, 22, 0.15); color: #fb923c; border: 1px solid rgba(249, 115, 22, 0.3); }
+      &.green { background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3); }
+    }
+  }
+
+  .chart-container {
+    position: relative;
+    height: 280px;
+    width: 100%;
+  }
+}
+
+@media (max-width: 900px) {
+  .charts-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .chart-card.span-2 {
+    grid-column: span 1;
+  }
+}

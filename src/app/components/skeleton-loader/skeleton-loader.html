@@ -1,0 +1,32 @@
+@if (type === 'card') {
+  <div class="skeleton-card-grid">
+    @for (i of countArray; track i) {
+      <div class="skeleton-card">
+        <div class="skeleton-circle"></div>
+        <div class="skeleton-line-lg"></div>
+        <div class="skeleton-line-sm"></div>
+      </div>
+    }
+  </div>
+}
+
+@if (type === 'table') {
+  <div class="skeleton-table">
+    <div class="skeleton-header"></div>
+    @for (i of countArray; track i) {
+      <div class="skeleton-table-row">
+        <div class="skeleton-cell"></div>
+        <div class="skeleton-cell"></div>
+        <div class="skeleton-cell"></div>
+        <div class="skeleton-cell"></div>
+      </div>
+    }
+  </div>
+}
+
+@if (type === 'chart') {
+  <div class="skeleton-chart-box">
+    <div class="skeleton-line-lg"></div>
+    <div class="skeleton-chart-bar-area"></div>
+  </div>
+}

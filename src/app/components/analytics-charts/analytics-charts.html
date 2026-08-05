@@ -1,0 +1,90 @@
+<section class="analytics-charts-dashboard">
+  <div class="charts-header">
+    <div>
+      <h1 class="page-title">Executive HR Analytics & BI Visualizations</h1>
+      <p class="page-subtitle">Interactive Chart.js visual analytics for workforce, attendance, leave, and payroll</p>
+    </div>
+    <div class="header-controls">
+      <label class="period-selector">
+        <span>Fiscal Year:</span>
+        <select [(ngModel)]="selectedPeriod" class="period-dropdown">
+          <option value="2026">2026 (Current)</option>
+          <option value="2025">2025</option>
+        </select>
+      </label>
+    </div>
+  </div>
+
+  <!-- Charts Grid Container -->
+  <div class="charts-grid">
+    <!-- Chart 1: Line Chart (Attendance & Punctuality) -->
+    <div class="chart-card span-2">
+      <div class="chart-card-header">
+        <div class="header-title">
+          <span class="chart-icon">📈</span>
+          <h3>Monthly Attendance & Punctuality Trend</h3>
+        </div>
+        <span class="chart-badge cyan">Line Chart</span>
+      </div>
+      <div class="chart-container">
+        <canvas #lineChartCanvas></canvas>
+      </div>
+    </div>
+
+    <!-- Chart 2: Pie Chart (Department Distribution) -->
+    <div class="chart-card">
+      <div class="chart-card-header">
+        <div class="header-title">
+          <span class="chart-icon">🥧</span>
+          <h3>Department Workforce Share</h3>
+        </div>
+        <span class="chart-badge blue">Pie Chart</span>
+      </div>
+      <div class="chart-container">
+        <canvas #pieChartCanvas></canvas>
+      </div>
+    </div>
+
+    <!-- Chart 3: Doughnut Chart (Leave Breakdown) -->
+    <div class="chart-card">
+      <div class="chart-card-header">
+        <div class="header-title">
+          <span class="chart-icon">🍩</span>
+          <h3>Leave Requests Category Share</h3>
+        </div>
+        <span class="chart-badge purple">Doughnut</span>
+      </div>
+      <div class="chart-container">
+        <canvas #doughnutChartCanvas></canvas>
+      </div>
+    </div>
+
+    <!-- Chart 4: Bar Chart (Payroll vs Overtime Expense) -->
+    <div class="chart-card span-2">
+      <div class="chart-card-header">
+        <div class="header-title">
+          <span class="chart-icon">📊</span>
+          <h3>Monthly Base Salary vs. Overtime Expense</h3>
+        </div>
+        <span class="chart-badge orange">Bar Chart</span>
+      </div>
+      <div class="chart-container">
+        <canvas #barChartCanvas></canvas>
+      </div>
+    </div>
+
+    <!-- Chart 5: Area Chart (Growth & Attrition Trajectory) -->
+    <div class="chart-card span-2">
+      <div class="chart-card-header">
+        <div class="header-title">
+          <span class="chart-icon">🌊</span>
+          <h3>Talent Acquisition Growth vs. Attrition Trajectory</h3>
+        </div>
+        <span class="chart-badge green">Area Chart</span>
+      </div>
+      <div class="chart-container">
+        <canvas #areaChartCanvas></canvas>
+      </div>
+    </div>
+  </div>
+</section>

@@ -13,6 +13,9 @@ export interface EmployeeRecord {
   joinDate: string | null;
   photoUrl: string | null;
   documentUrl: string | null;
+  role?: string | null;
+  shift?: string | null;
+  createLogin?: boolean;
 }
 
 export type EmployeeUpsertPayload = Omit<EmployeeRecord, 'id'> & { id?: number };
@@ -26,4 +29,7 @@ export const EMPTY_EMPLOYEE: EmployeeUpsertPayload = {
   joinDate: '',
   photoUrl: '',
   documentUrl: '',
+  role: 'Employee',
+  shift: 'Day Shift (09:00 AM - 06:00 PM)',
+  createLogin: true,
 };

@@ -9,22 +9,22 @@
     <div class="form-grid">
       <label>
         Recipient (Email/Name)
-        <input type="text" [(ngModel)]="recipient" placeholder="employee@company.com" />
+        <input type="text" [ngModel]="recipient()" (ngModelChange)="recipient.set($event)" placeholder="employee@company.com" />
       </label>
       <label>
         Provider
-        <select [(ngModel)]="provider">
+        <select [ngModel]="provider()" (ngModelChange)="provider.set($event)">
           <option value="SMTP">SMTP</option>
           <option value="SendGrid">SendGrid</option>
         </select>
       </label>
       <label class="full">
         Title
-        <input type="text" [(ngModel)]="title" placeholder="Subject" />
+        <input type="text" [ngModel]="title()" (ngModelChange)="title.set($event)" placeholder="Subject" />
       </label>
       <label class="full">
         Message
-        <textarea rows="3" [(ngModel)]="message" placeholder="Notification message"></textarea>
+        <textarea rows="3" [ngModel]="message()" (ngModelChange)="message.set($event)" placeholder="Notification message"></textarea>
       </label>
     </div>
     <button type="button" class="btn-primary" (click)="sendTestEmail()">Send Notification</button>
@@ -44,7 +44,7 @@
         </tr>
       </thead>
       <tbody>
-        @for (item of notifications; track item.id) {
+        @for (item of notifications(); track item.id) {
           <tr>
             <td>{{ item.createdAt | date:'medium' }}</td>
             <td>{{ item.type }}</td>

@@ -1,0 +1,48 @@
+<div class="modern-glass-card">
+  <!-- Top Row: Avatar, Name & Status Badge -->
+  <div class="card-header-row">
+    <div class="avatar-box">
+      <img *ngIf="employee.photoUrl" [src]="employee.photoUrl" [alt]="employee.name" class="avatar-img" />
+      <div *ngIf="!employee.photoUrl" class="avatar-initials">{{ avatarInitial }}</div>
+      <span
+        class="status-pulse-dot"
+        [class.active]="employee.status === 'Active'"
+        [class.on-leave]="employee.status === 'On Leave'"
+        [class.inactive]="employee.status === 'Inactive'"
+      ></span>
+    </div>
+
+    <div class="status-badge-chip" [class.active]="employee.status === 'Active'" [class.on-leave]="employee.status === 'On Leave'">
+      {{ employee.status }}
+    </div>
+  </div>
+
+  <!-- Employee Info Row -->
+  <div class="employee-info-box">
+    <h4 class="emp-name">{{ employee.name }}</h4>
+    <span class="emp-designation">{{ employee.designation || 'Associate' }}</span>
+    <span class="emp-email">✉️ {{ employee.email }}</span>
+    <span *ngIf="employee.mobile" class="emp-mobile">📱 {{ employee.mobile }}</span>
+  </div>
+
+  <!-- Department & Tag Pill -->
+  <div class="department-tag-bar">
+    <span class="dept-pill">🏢 {{ employee.department }}</span>
+    <span *ngIf="employee.salary" class="salary-pill">₹ {{ employee.salary | number:'1.0-0' }}</span>
+  </div>
+
+  <!-- Actions Bar -->
+  <div class="card-actions-bar">
+    <button class="action-btn primary" (click)="onView()" title="View Employee Profile">
+      <span>👁️ Profile</span>
+    </button>
+
+    <button class="action-btn outline" (click)="onEdit()" title="Edit Employee Details">
+      <span>✏️ Edit</span>
+    </button>
+
+    <button class="action-btn icon-only" (click)="onQuickAction('message')" title="Send Message">
+      <span>💬</span>
+    </button>
+  </div>
+</div>

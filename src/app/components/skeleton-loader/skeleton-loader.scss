@@ -1,0 +1,149 @@
+.loader-wrapper {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Progress Bar */
+.progress-bar-track {
+  width: 100%;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 4px;
+  overflow: hidden;
+  position: relative;
+
+  .progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #38bdf8, #818cf8);
+    transition: width 0.3s ease;
+
+    &.indeterminate {
+      width: 40%;
+      position: absolute;
+      animation: indeterminateProgress 1.5s infinite cubic-bezier(0.65, 0.815, 0.735, 0.395);
+    }
+  }
+}
+
+@keyframes indeterminateProgress {
+  0% { left: -40%; width: 30%; }
+  50% { left: 40%; width: 60%; }
+  100% { left: 100%; width: 30%; }
+}
+
+/* Dual Ring Spinner */
+.spinner-overlay {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 30px;
+  gap: 12px;
+
+  .dual-ring-spinner {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    border: 4px solid transparent;
+    border-top-color: #38bdf8;
+    border-bottom-color: #6366f1;
+    animation: dualSpin 1s linear infinite;
+  }
+
+  .spinner-text {
+    font-size: 0.85rem;
+    color: #94a3b8;
+    font-weight: 700;
+  }
+}
+
+@keyframes dualSpin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Skeleton Animation Shimmer */
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+%shimmer-base {
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.04) 25%, rgba(255, 255, 255, 0.1) 50%, rgba(255, 255, 255, 0.04) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.6s infinite;
+}
+
+/* Skeleton Card Grid */
+.skeleton-card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 16px;
+
+  .skeleton-card {
+    background: rgba(15, 23, 42, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 16px;
+    padding: 18px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+
+    .skeleton-circle {
+      width: 46px;
+      height: 46px;
+      border-radius: 50%;
+      @extend %shimmer-base;
+    }
+
+    .skeleton-lines {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+
+      .skeleton-line {
+        height: 12px;
+        border-radius: 6px;
+        @extend %shimmer-base;
+
+        &.title { width: 70%; height: 14px; }
+        &.short { width: 45%; }
+        &.md { width: 85%; }
+      }
+    }
+  }
+}
+
+/* Skeleton Table Rows */
+.skeleton-table {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background: rgba(15, 23, 42, 0.7);
+  border-radius: 12px;
+  padding: 16px;
+
+  .skeleton-header-row {
+    height: 36px;
+    border-radius: 8px;
+    @extend %shimmer-base;
+  }
+
+  .skeleton-table-row {
+    display: flex;
+    gap: 12px;
+
+    .skeleton-cell {
+      height: 24px;
+      border-radius: 6px;
+      @extend %shimmer-base;
+
+      &.sm { width: 15%; }
+      &.md { width: 30%; }
+      &.lg { width: 50%; }
+    }
+  }
+}

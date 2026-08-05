@@ -1,0 +1,24 @@
+<div class="toast-container">
+  @for (toast of toasts$ | async; track toast.id) {
+  <div class="toast-banner" [class.success]="toast.type === 'success'" [class.error]="toast.type === 'error'"
+    [class.warning]="toast.type === 'warning'" [class.info]="toast.type === 'info'">
+    <div class="toast-icon">
+      @switch (toast.type) {
+      @case ('success') { <span>✅</span> }
+      @case ('error') { <span>🚨</span> }
+      @case ('warning') { <span>⚠️</span> }
+      @case ('info') { <span>ℹ️</span> }
+      @default { <span>ℹ️</span> }
+      }
+    </div>
+
+    <div class="toast-content">
+      <h5 class="toast-title">{{ toast.title }}</h5>
+      <p class="toast-message">{{ toast.message }}</p>
+    </div>
+
+    <button class="toast-dismiss-btn" (click)="dismiss(toast.id)">✕</button>
+  </div>
+  }
+</div>
+

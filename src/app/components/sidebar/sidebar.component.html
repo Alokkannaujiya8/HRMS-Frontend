@@ -1,0 +1,133 @@
+<aside class="enterprise-sidebar" [class.collapsed]="isCollapsed">
+  <!-- Sidebar Header & Collapse Toggle -->
+  <div class="sidebar-header">
+    @if (!isCollapsed) {
+      <div class="logo-box">
+        <span class="logo-icon">⚡</span>
+        <span class="logo-title">HRMS Portal</span>
+      </div>
+    }
+    <button class="collapse-toggle-btn" (click)="toggleCollapse()" [attr.aria-label]="isCollapsed ? 'Expand Sidebar' : 'Collapse Sidebar'">
+      <span class="toggle-icon">{{ isCollapsed ? '❯' : '❮' }}</span>
+    </button>
+  </div>
+
+  <!-- Search Input Box -->
+  @if (!isCollapsed) {
+    <div class="sidebar-search">
+      <div class="search-input-wrapper">
+        <span class="search-icon">🔍</span>
+        <input
+          type="text"
+          [(ngModel)]="searchQuery"
+          (input)="filterMenu()"
+          placeholder="Search employee, attendance, payroll..."
+          class="search-input"
+        />
+        @if (searchQuery) {
+          <button class="clear-search-btn" (click)="searchQuery = ''; filterMenu()">✕</button>
+        }
+      </div>
+    </div>
+  }
+
+  <!-- Navigation Menu List -->
+  <nav class="sidebar-nav">
+    @for (group of filteredGroups; track group.groupName) {
+      <div class="nav-group">
+        @if (!isCollapsed) {
+          <p class="group-title">{{ group.groupName }}</p>
+        }
+
+        @for (item of group.items; track item.title) {
+          <div class="nav-item-wrapper">
+            <!-- Regular Link without Submenu -->
+            @if (!item.subItems) {
+              <a
+                [routerLink]="item.disabled ? null : item.route"
+                (click)="onItemClick(item, $event)"
+                routerLinkActive="active"
+                class="nav-link"
+                [class.disabled]="item.disabled"
+                [title]="isCollapsed ? item.title : ''"
+              >
+                <span class="nav-icon-box">
+                  <span class="nav-emoji-icon">{{ item.emoji }}</span>
+                </span>
+                @if (!isCollapsed) {
+                  <span class="nav-label">
+                    {{ item.title }}
+                    @if (item.title === 'Notifications' && unreadNotifications > 0) {
+                      ({{ unreadNotifications }})
+                    }
+                  </span>
+                }
+
+                <!-- Badge Counters -->
+                @if (item.badge && !isCollapsed) {
+                  <span
+                    class="badge-counter"
+                    [class.cyan]="item.badgeColor === 'cyan'"
+                    [class.orange]="item.badgeColor === 'orange'"
+                    [class.purple]="item.badgeColor === 'purple'"
+                  >
+                    {{ item.badge }}
+                  </span>
+                }
+              </a>
+            }
+
+            <!-- Accordion Parent Link with Submenu -->
+            @if (item.subItems) {
+              <div>
+                <button class="nav-link parent-link" (click)="toggleSubMenu(item)" [title]="isCollapsed ? item.title : ''">
+                  <span class="nav-icon-box">
+                    <span class="nav-emoji-icon">{{ item.emoji }}</span>
+                  </span>
+                  @if (!isCollapsed) {
+                    <span class="nav-label">{{ item.title }}</span>
+                    <span class="chevron-icon" [class.rotated]="item.expanded">▼</span>
+                  }
+                </button>
+
+                <!-- Submenu Items -->
+                @if (item.expanded && !isCollapsed) {
+                  <div class="sub-menu">
+                    @for (sub of item.subItems; track sub.title) {
+                      <a
+                        [routerLink]="sub.route"
+                        routerLinkActive="active"
+                        class="nav-link sub-link"
+                      >
+                        <span class="sub-dot">•</span>
+                        <span class="nav-label">{{ sub.title }}</span>
+                      </a>
+                    }
+                  </div>
+                }
+              </div>
+            }
+          </div>
+        }
+      </div>
+    }
+  </nav>
+
+  <!-- Bottom Profile Section -->
+  <div class="sidebar-profile-card">
+    <div class="avatar-wrapper">
+      <div class="profile-avatar">👤</div>
+      <span class="online-status-dot" title="Online">●</span>
+    </div>
+    @if (!isCollapsed) {
+      <div class="profile-info">
+        <span class="profile-name">{{ username }}</span>
+        <span class="profile-role-badge">{{ userRole === 'Admin' ? 'HR Executive' : 'Employee' }}</span>
+        <span class="online-status-text">Online ●</span>
+      </div>
+    }
+    <button class="logout-action-btn" (click)="logout()" [title]="'Logout session'">
+      <span>🚪</span>
+    </button>
+  </div>
+</aside>
