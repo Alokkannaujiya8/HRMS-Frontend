@@ -25,6 +25,46 @@
   }
 }
 
+/* 5-Status Asset Metric Cards Grid */
+.asset-metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 16px;
+  margin-bottom: 1.5rem;
+
+  .metric-card {
+    background: rgba(15, 23, 42, 0.8);
+    border: 1px solid rgba(56, 189, 248, 0.15);
+    border-radius: 16px;
+    padding: 16px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    backdrop-filter: blur(14px);
+    box-shadow: 0 10px 25px rgba(2, 6, 23, 0.35);
+    transition: all 0.25s ease;
+
+    &:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 14px 30px rgba(14, 165, 233, 0.2);
+    }
+
+    .m-icon { font-size: 1.6rem; }
+    .m-content {
+      display: flex;
+      flex-direction: column;
+      .m-val { font-size: 1.4rem; font-weight: 900; color: #f8fafc; }
+      .m-lbl { font-size: 0.78rem; font-weight: 700; color: #94a3b8; }
+    }
+
+    &.track { border-top: 3.5px solid #38bdf8; }
+    &.assigned { border-top: 3.5px solid #22c55e; }
+    &.returned { border-top: 3.5px solid #a855f7; }
+    &.damaged { border-top: 3.5px solid #fb923c; }
+    &.lost { border-top: 3.5px solid #f43f5e; }
+  }
+}
+
 .controls {
   display: flex;
   justify-content: space-between;

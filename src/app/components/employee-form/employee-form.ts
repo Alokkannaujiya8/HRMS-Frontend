@@ -2,6 +2,7 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { Department, EmployeeUpsertPayload, EMPTY_EMPLOYEE } from '../../models/employee.model';
 import { buildFileUrl } from '../../utils/file-url';
 import { ToastService } from '../../services/toast.service';
+import { HrOperations } from '../../services/hr-operations';
 
 @Component({
   selector: 'app-employee-form',
@@ -25,14 +26,17 @@ export class EmployeeForm {
   selectedDocumentName = '';
   photoPreviewUrl: string | null = null;
 
-  rolesList = ['Employee', 'HR', 'Admin'];
+  rolesList = ['Employee', 'Manager', 'HR', 'Admin'];
   shiftsList = [
     'Day Shift (09:00 AM - 06:00 PM)',
     'Night Shift (09:00 PM - 06:00 AM)',
     'Flexible Shift'
   ];
 
-  constructor(private toastService: ToastService) {}
+  constructor(
+    private toastService: ToastService,
+    private hrOps: HrOperations
+  ) {}
 
   get emailValue(): string {
     return this.currentEmployee.email?.trim() ?? '';
@@ -93,13 +97,28 @@ export class EmployeeForm {
       return;
     }
 
-    const loginMsg = this.currentEmployee.createLogin ? ' Login credentials generated & attendance initialized.' : '';
-    this.toastService.showSuccess(
-      this.isEditing
-        ? 'Employee record updated successfully!'
-        : `New employee onboarded! Assigned Role: ${this.currentEmployee.role ?? 'Employee'}, Shift: ${this.currentEmployee.shift ?? 'Day Shift'}.${loginMsg}`,
-      'Employee Onboarded'
-    );
+    const randomDigits = Math.floor(100 + Math.random() * 900);
+    const empId = `EMP000${randomDigits}`; // e.g. EMP000245
+    const username = this.emailValue.split('@')[0].toLowerCase(); // e.g. alok
+    const tempPassword = 'Neo@12345'; // Default temporary password pattern
+
+    if (!this.isEditing && this.currentEmployee.createLogin) {
+      const emailSubject = 'Welcome to NeoHR';
+      const emailBody = `Welcome to NeoHR\n\nUsername :\n${username}\n\nPassword :\n${tempPassword}\n\nLogin URL\nhttps://company.com/login`;
+
+      this.hrOps.queueEmail(this.emailValue, emailSubject, emailBody, 'SMTP');
+
+      this.toastService.showSuccess(
+        `Welcome email sent to ${this.emailValue}! Username: ${username} | Temp Pass: ${tempPassword}`,
+        'Welcome to NeoHR Email Dispatched'
+      );
+    } else {
+      this.toastService.showSuccess(
+        this.isEditing ? 'Employee record updated successfully!' : 'New employee registered successfully!',
+        'Record Saved'
+      );
+    }
+
     this.onSave.emit();
   }
 

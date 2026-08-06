@@ -42,29 +42,12 @@ export class SidebarComponent implements OnInit, OnDestroy {
 
   menuGroups: MenuGroup[] = [
     {
-      groupName: 'Main Navigation',
-      items: [
-        {
-          title: 'Dashboard',
-          icon: 'dashboard',
-          emoji: '🏠',
-          route: '/hr/dashboard',
-          badge: '8 Pending',
-          badgeColor: 'cyan',
-          roles: ['admin', 'hr', 'employee']
-        }
-      ]
-    },
-    {
-      groupName: 'Core HR & Operations',
+      groupName: 'HR Workspace',
       items: [
         { title: 'Employees', icon: 'groups', emoji: '👥', route: '/hr/employees', roles: ['admin', 'hr'] },
-        { title: 'Attendance', icon: 'how_to_reg', emoji: '📅', route: '/hr/attendance', roles: ['admin', 'hr'] },
+        { title: 'Payroll', icon: 'payments', emoji: '💰', route: '/hr/salary-management', roles: ['admin', 'hr'] },
         { title: 'Leave', icon: 'event_busy', emoji: '📄', route: '/hr/leave-management', badge: 3, badgeColor: 'cyan', roles: ['admin', 'hr'] },
-        { title: 'Payroll', icon: 'receipt_long', emoji: '💰', route: '/hr/my-payroll', roles: ['admin', 'hr'] },
-        { title: 'Salary Management', icon: 'payments', emoji: '💵', route: '/hr/salary-management', roles: ['admin', 'hr'] },
-        { title: 'Departments', icon: 'corporate_fare', emoji: '🏢', route: '/departments', roles: ['admin'] },
-        { title: 'Assets', icon: 'inventory_2', emoji: '📦', route: '/hr/assets', badge: 'Alerts', badgeColor: 'orange', roles: ['admin', 'hr'] },
+        { title: 'Attendance', icon: 'how_to_reg', emoji: '📅', route: '/hr/attendance', roles: ['admin', 'hr'] },
         {
           title: 'Reports',
           icon: 'analytics',
@@ -79,14 +62,32 @@ export class SidebarComponent implements OnInit, OnDestroy {
             { title: 'Employee Audit', icon: 'badge', emoji: '👥', route: '/hr/reports' },
             { title: 'Assets Inventory', icon: 'inventory_2', emoji: '📦', route: '/hr/reports' }
           ]
-        },
-        { title: 'Recruitment', icon: 'target', emoji: '🎯', disabled: true, badge: 'Soon', badgeColor: 'purple', roles: ['admin'] },
-        { title: 'Performance', icon: 'star', emoji: '⭐', disabled: true, badge: 'Soon', badgeColor: 'purple', roles: ['admin'] }
+        }
       ]
     },
     {
-      groupName: 'System Configuration',
+      groupName: 'Manager Workspace',
       items: [
+        { title: 'Dashboard', icon: 'dashboard', emoji: '🏠', route: '/hr/dashboard', badge: '8 Pending', badgeColor: 'cyan', roles: ['manager', 'admin', 'hr'] },
+        { title: 'Team Attendance', icon: 'groups', emoji: '⏱️', route: '/hr/attendance', roles: ['manager', 'admin', 'hr'] },
+        { title: 'Leave Approval', icon: 'verified', emoji: '✅', route: '/hr/leave-management', badge: 'Approval', badgeColor: 'orange', roles: ['manager', 'admin', 'hr'] }
+      ]
+    },
+    {
+      groupName: 'Employee Workspace',
+      items: [
+        { title: 'My Attendance', icon: 'how_to_reg', emoji: '⏱️', route: '/employee/attendance', roles: ['employee', 'admin', 'hr', 'manager'] },
+        { title: 'My Leave', icon: 'event_busy', emoji: '🏖️', route: '/hr/leave-management', roles: ['employee', 'admin', 'hr', 'manager'] },
+        { title: 'My Payroll', icon: 'receipt_long', emoji: '🧾', route: '/hr/my-payroll', roles: ['employee', 'admin', 'hr', 'manager'] },
+        { title: 'Profile', icon: 'account_circle', emoji: '👤', route: '/hr/staff-master', roles: ['employee', 'admin', 'hr', 'manager'] },
+        { title: 'Notifications', icon: 'notifications', emoji: '🔔', route: '/hr/notifications', roles: ['employee', 'admin', 'hr', 'manager'] }
+      ]
+    },
+    {
+      groupName: 'Administration & System',
+      items: [
+        { title: 'Departments', icon: 'corporate_fare', emoji: '🏢', route: '/departments', roles: ['admin'] },
+        { title: 'Asset Management', icon: 'inventory_2', emoji: '📦', route: '/hr/assets', badge: 'Alerts', badgeColor: 'orange', roles: ['admin'] },
         {
           title: 'Master Data',
           icon: 'settings',
@@ -99,19 +100,11 @@ export class SidebarComponent implements OnInit, OnDestroy {
             { title: 'Designations', icon: 'badge', emoji: '🪪', route: '/hr/master-data' },
             { title: 'Holiday Calendar', icon: 'event', emoji: '🗓️', route: '/hr/master-data' },
             { title: 'Shift Management', icon: 'schedule', emoji: '⏰', route: '/hr/master-data' },
-            { title: 'Role Permissions', icon: 'security', emoji: '🛡️', route: '/hr/master-data' },
-            { title: 'System Settings', icon: 'tune', emoji: '🔧', route: '/hr/master-data' }
+            { title: 'Role Permissions', icon: 'security', emoji: '🛡️', route: '/hr/master-data' }
           ]
-        }
-      ]
-    },
-    {
-      groupName: 'Employee Workspace',
-      items: [
-        { title: 'Employee Portal', icon: 'person', emoji: '👤', route: '/employee/attendance', roles: ['employee'] },
-        { title: 'My Payroll', icon: 'receipt_long', emoji: '🧾', route: '/hr/my-payroll', roles: ['employee'] },
-        { title: 'Notifications', icon: 'notifications', emoji: '🔔', route: '/hr/notifications', roles: ['admin', 'hr', 'employee'] },
-        { title: 'Profile', icon: 'account_circle', emoji: '👤', route: '/hr/staff-master', roles: ['admin', 'hr', 'employee'] }
+        },
+        { title: 'Recruitment', icon: 'target', emoji: '🎯', disabled: true, badge: 'Soon', badgeColor: 'purple', roles: ['admin'] },
+        { title: 'Performance', icon: 'star', emoji: '⭐', disabled: true, badge: 'Soon', badgeColor: 'purple', roles: ['admin'] }
       ]
     }
   ];

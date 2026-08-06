@@ -15,6 +15,45 @@
     <div class="alert error">{{ errorMessage }}</div>
   }
 
+  <!-- 5-Status Asset Metric Cards Grid -->
+  <div class="asset-metrics-grid">
+    <div class="metric-card track">
+      <span class="m-icon">📦</span>
+      <div class="m-content">
+        <span class="m-val">{{ totalTrackedCount }}</span>
+        <span class="m-lbl">Track Total</span>
+      </div>
+    </div>
+    <div class="metric-card assigned">
+      <span class="m-icon">👤</span>
+      <div class="m-content">
+        <span class="m-val">{{ assignedCount }}</span>
+        <span class="m-lbl">Assigned</span>
+      </div>
+    </div>
+    <div class="metric-card returned">
+      <span class="m-icon">🔄</span>
+      <div class="m-content">
+        <span class="m-val">{{ returnedCount }}</span>
+        <span class="m-lbl">Returned / Available</span>
+      </div>
+    </div>
+    <div class="metric-card damaged">
+      <span class="m-icon">🛠️</span>
+      <div class="m-content">
+        <span class="m-val">{{ damagedCount }}</span>
+        <span class="m-lbl">Damaged / Repair</span>
+      </div>
+    </div>
+    <div class="metric-card lost">
+      <span class="m-icon">⚠️</span>
+      <div class="m-content">
+        <span class="m-val">{{ lostCount }}</span>
+        <span class="m-lbl">Lost / Retired</span>
+      </div>
+    </div>
+  </div>
+
   <!-- Filters & Controls -->
   <div class="panel controls">
     <div class="filter-group">

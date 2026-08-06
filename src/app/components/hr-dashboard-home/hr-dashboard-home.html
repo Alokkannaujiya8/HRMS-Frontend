@@ -10,7 +10,7 @@
     </div>
   </div>
 
-  <!-- Top 6 Summary Cards Grid -->
+  <!-- Top Real-time Executive Metric Summary Grid -->
   <div class="summary-cards-grid">
     <!-- Card 1: Employees -->
     <div class="summary-card blue-theme">
@@ -19,60 +19,90 @@
         <span class="trend-pill positive">▲ +12%</span>
       </div>
       <div class="card-content">
-        <span class="metric-number">{{ totalEmployees > 0 ? totalEmployees : 135 }}</span>
+        <span class="metric-number">{{ totalEmployees }}</span>
         <span class="metric-name">Employees</span>
       </div>
       <div class="card-bottom">
-        <span class="sub-label">Today</span>
+        <span class="sub-label">Active Headcount</span>
       </div>
     </div>
 
-    <!-- Card 2: Attendance -->
+    <!-- Card 2: Present -->
     <div class="summary-card green-theme">
       <div class="card-top">
-        <span class="card-icon">📅</span>
-        <span class="trend-pill success">▲ 95%</span>
+        <span class="card-icon">✅</span>
+        <span class="trend-pill success">▲ 85%</span>
       </div>
       <div class="card-content">
-        <span class="metric-number">{{ todayAttendance > 0 ? todayAttendance : 118 }}</span>
-        <span class="metric-name">Attendance</span>
+        <span class="metric-number">{{ todayAttendance }}</span>
+        <span class="metric-name">Present</span>
       </div>
       <div class="card-bottom">
         <span class="sub-label">Present Today</span>
       </div>
     </div>
 
-    <!-- Card 3: Leave -->
-    <div class="summary-card purple-theme">
+    <!-- Card 3: Absent -->
+    <div class="summary-card orange-theme">
       <div class="card-top">
-        <span class="card-icon">📄</span>
-        <span class="trend-pill purple">Approved</span>
+        <span class="card-icon">⚠️</span>
+        <span class="trend-pill warning">Unexcused</span>
       </div>
       <div class="card-content">
-        <span class="metric-number">{{ onLeaveEmployees }}</span>
-        <span class="metric-name">Leave</span>
+        <span class="metric-number">{{ absentEmployees }}</span>
+        <span class="metric-name">Absent</span>
       </div>
       <div class="card-bottom">
-        <span class="sub-label">Scheduled Absence</span>
+        <span class="sub-label">HR Check-in Needed</span>
       </div>
     </div>
 
-    <!-- Card 4: Payroll -->
+    <!-- Card 4: Late -->
+    <div class="summary-card rose-theme">
+      <div class="card-top">
+        <span class="card-icon">⏱️</span>
+        <span class="trend-pill danger">Late Arrival</span>
+      </div>
+      <div class="card-content">
+        <span class="metric-number">{{ lateEmployees }}</span>
+        <span class="metric-name">Late</span>
+      </div>
+      <div class="card-bottom">
+        <span class="sub-label">Shift Delayed</span>
+      </div>
+    </div>
+
+    <!-- Card 5: Payroll Pending -->
     <div class="summary-card emerald-theme">
       <div class="card-top">
         <span class="card-icon">💰</span>
-        <span class="trend-pill emerald">Calculated</span>
+        <span class="trend-pill emerald">Action Req</span>
       </div>
       <div class="card-content">
-        <span class="metric-number">₹ {{ (payrollTotal / 100000) | number:'1.1-1' }}L</span>
-        <span class="metric-name">Payroll</span>
+        <span class="metric-number">{{ pendingPayrollCount }}</span>
+        <span class="metric-name">Payroll Pending</span>
       </div>
       <div class="card-bottom">
-        <span class="sub-label">Monthly Total</span>
+        <span class="sub-label">Awaiting Approval</span>
       </div>
     </div>
 
-    <!-- Card 5: Assets -->
+    <!-- Card 6: Leaves Pending -->
+    <div class="summary-card purple-theme">
+      <div class="card-top">
+        <span class="card-icon">📄</span>
+        <span class="trend-pill purple">Pending</span>
+      </div>
+      <div class="card-content">
+        <span class="metric-number">{{ pendingLeaves }}</span>
+        <span class="metric-name">Leaves Pending</span>
+      </div>
+      <div class="card-bottom">
+        <span class="sub-label">Requests Awaiting</span>
+      </div>
+    </div>
+
+    <!-- Card 7: Assets Issued -->
     <div class="summary-card cyan-theme">
       <div class="card-top">
         <span class="card-icon">📦</span>
@@ -80,25 +110,10 @@
       </div>
       <div class="card-content">
         <span class="metric-number">{{ activeAssetsCount }}</span>
-        <span class="metric-name">Assets</span>
+        <span class="metric-name">Assets Issued</span>
       </div>
       <div class="card-bottom">
         <span class="sub-label">Active Hardware</span>
-      </div>
-    </div>
-
-    <!-- Card 6: Departments -->
-    <div class="summary-card indigo-theme">
-      <div class="card-top">
-        <span class="card-icon">🏢</span>
-        <span class="trend-pill indigo">Active</span>
-      </div>
-      <div class="card-content">
-        <span class="metric-number">{{ departmentsCount }}</span>
-        <span class="metric-name">Departments</span>
-      </div>
-      <div class="card-bottom">
-        <span class="sub-label">Org Divisions</span>
       </div>
     </div>
   </div>

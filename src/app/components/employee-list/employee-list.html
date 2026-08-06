@@ -43,8 +43,11 @@
           <td>{{ emp.joinDate | date:'mediumDate' }}</td>
           <td>
             @if (userRole === 'Admin' || userRole === 'HR') {
-              <button class="btn-edit" type="button" (click)="edit(emp)">Edit</button>
-              <button class="btn-delete" type="button" (click)="delete(emp.id)">Delete</button>
+              <div class="action-btn-group">
+                <button class="btn-edit" type="button" (click)="edit(emp)">Edit</button>
+                <button class="btn-cred" type="button" (click)="revealCredentials(emp)">🔑 Credentials</button>
+                <button class="btn-delete" type="button" (click)="delete(emp.id)">Delete</button>
+              </div>
             } @else {
               <span class="view-only-badge">View Only</span>
             }
@@ -64,3 +67,44 @@
     <button class="btn-page" type="button" (click)="nextPage()" [disabled]="currentPage >= totalPages">Next</button>
   </div>
 </div>
+
+<!-- Employee Credentials Summary Modal -->
+@if (activeCredentialsModal) {
+  <div class="cred-modal-backdrop" (click)="closeCredentialsModal()">
+    <div class="cred-modal-card" (click)="$event.stopPropagation()">
+      <div class="cred-modal-header">
+        <h3>🔐 Employee Account Credentials</h3>
+        <button type="button" class="close-x" (click)="closeCredentialsModal()">&times;</button>
+      </div>
+
+      <div class="cred-modal-body">
+        <p class="cred-subtitle">Login credentials generated for <strong>{{ activeCredentialsModal.name }}</strong></p>
+
+        <div class="cred-info-box">
+          <div class="cred-row">
+            <span>Employee ID:</span>
+            <strong>{{ activeCredentialsModal.employeeId }}</strong>
+          </div>
+          <div class="cred-row">
+            <span>Username:</span>
+            <strong>{{ activeCredentialsModal.username }}</strong>
+          </div>
+          <div class="cred-row">
+            <span>Password:</span>
+            <strong class="pass-val">{{ activeCredentialsModal.tempPassword }}</strong>
+          </div>
+          <div class="cred-row">
+            <span>Login URL:</span>
+            <a [href]="activeCredentialsModal.loginUrl" target="_blank" rel="noopener" class="url-link">{{ activeCredentialsModal.loginUrl }}</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="cred-modal-footer">
+        <button type="button" class="btn copy-btn" (click)="copyCredentialsText()">📋 Copy Details</button>
+        <button type="button" class="btn email-btn" (click)="resendEmailNotification()">✉️ Resend Email</button>
+        <button type="button" class="btn close-btn" (click)="closeCredentialsModal()">Close</button>
+      </div>
+    </div>
+  </div>
+}

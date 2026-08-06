@@ -1,111 +1,193 @@
-<section class="feature-page">
-  <div class="feature-header">
-    <h1>Leave Management</h1>
-    @if (canReview) {
-      <p>Admin / HR view: approve/reject employee leaves and track overall balance.</p>
-    } @else {
-      <p>Employee view: apply leave for self and check your leave balance/history.</p>
-    }
+<section class="leave-container">
+  <!-- Header -->
+  <div class="leave-header">
+    <div>
+      <h1 class="page-title">Leave Management Workspace</h1>
+      <p class="page-subtitle">Multi-tier Manager & HR Approvals, Leave Balance Tracking & Team Calendar</p>
+    </div>
   </div>
 
-  @if (successMessage) {
-    <div class="alert success">{{ successMessage }}</div>
-  }
-  @if (errorMessage) {
-    <div class="alert error">{{ errorMessage }}</div>
-  }
+  <!-- Feature 6: Leave Balance Cards -->
+  <div class="balance-cards-grid">
+    <div class="balance-card casual">
+      <span class="card-icon">🏖️</span>
+      <div class="card-info">
+        <span class="count">8 / 12</span>
+        <span class="label">Casual Leave (CL)</span>
+      </div>
+    </div>
+    <div class="balance-card sick">
+      <span class="card-icon">🏥</span>
+      <div class="card-info">
+        <span class="count">6 / 10</span>
+        <span class="label">Sick Leave (SL)</span>
+      </div>
+    </div>
+    <div class="balance-card earned">
+      <span class="card-icon">⭐</span>
+      <div class="card-info">
+        <span class="count">15 / 18</span>
+        <span class="label">Earned Leave (EL)</span>
+      </div>
+    </div>
+    <div class="balance-card total">
+      <span class="card-icon">📊</span>
+      <div class="card-info">
+        <span class="count">{{ selfLeaveBalance }} Days</span>
+        <span class="label">Total Available Balance</span>
+      </div>
+    </div>
+  </div>
 
-  <div class="grid">
-    <div class="panel">
-      <h3>Apply Leave</h3>
+  <div class="main-content-grid">
+    <!-- Feature 1: Apply Leave Form Card -->
+    <div class="glass-panel apply-panel">
+      <h3>📝 Apply for Leave</h3>
       @if (canReview) {
-        <label>
-          Employee
-          <select [(ngModel)]="selectedEmployeeId">
+        <div class="form-group">
+          <label>Select Employee:</label>
+          <select [(ngModel)]="selectedEmployeeId" class="form-input">
             @for (employee of employees; track employee.id) {
               <option [value]="employee.id">{{ employee.name }}</option>
             }
           </select>
-        </label>
+        </div>
       } @else {
-        <p class="muted">Applying as: <strong>{{ currentEmployee?.name || 'Unknown Employee' }}</strong></p>
+        <p class="applicant-tag">Applicant: <strong>{{ currentEmployee?.name || 'Logged User' }}</strong></p>
       }
-      <label>
-        Leave Type
-        <select [(ngModel)]="leaveType">
-          <option value="Casual">Casual</option>
-          <option value="Sick">Sick</option>
-          <option value="Earned">Earned</option>
+
+      <div class="form-group">
+        <label>Leave Type:</label>
+        <select [(ngModel)]="leaveType" class="form-input">
+          <option value="Casual">Casual Leave (CL)</option>
+          <option value="Sick">Sick Leave (SL)</option>
+          <option value="Earned">Earned Leave (EL)</option>
         </select>
-      </label>
-      <label>
-        From Date
-        <input type="date" [(ngModel)]="fromDate" />
-      </label>
-      <label>
-        To Date
-        <input type="date" [(ngModel)]="toDate" />
-      </label>
-      <label>
-        Reason
-        <textarea rows="3" [(ngModel)]="reason" placeholder="Reason for leave"></textarea>
-      </label>
-      <button type="button" class="btn-primary" (click)="applyLeave()">Submit Leave Request</button>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>From Date:</label>
+          <input type="date" [(ngModel)]="fromDate" class="form-input" />
+        </div>
+        <div class="form-group">
+          <label>To Date:</label>
+          <input type="date" [(ngModel)]="toDate" class="form-input" />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Reason for Leave:</label>
+        <textarea rows="3" [(ngModel)]="reason" placeholder="State reason..." class="form-textarea"></textarea>
+      </div>
+
+      <button type="button" class="btn primary submit-btn" (click)="applyLeave()">🚀 Submit Leave Request</button>
     </div>
 
-    <div class="panel">
-      <h3>Leave Balance</h3>
-      @if (canReview) {
-        <ul>
-          @for (employee of employees; track employee.id) {
-            <li>
-              <span>{{ employee.name }}</span>
-              <strong>{{ leaveBalanceByEmployee[employee.id] }} days left</strong>
-            </li>
-          }
-        </ul>
-      } @else {
-        <p class="self-balance">{{ selfLeaveBalance }} days left</p>
-      }
-    </div>
-  </div>
-
-  <div class="panel table-wrap">
-    <h3>Requests</h3>
-    <table>
-      <thead>
-        <tr>
-          <th>Employee</th>
-          <th>Type</th>
-          <th>From</th>
-          <th>To</th>
-          <th>Status</th>
-          <th>Reason</th>
-          <th>Action</th>
-        </tr>
-      </thead>
-      <tbody>
-        @for (leave of visibleLeaveRequests; track leave.id) {
-          <tr>
-            <td>{{ leave.employeeName }}</td>
-            <td>{{ leave.leaveType }}</td>
-            <td>{{ leave.fromDate }}</td>
-            <td>{{ leave.toDate }}</td>
-            <td><span class="badge" [class.pending]="leave.status === 'Pending'" [class.approved]="leave.status === 'Approved'" [class.rejected]="leave.status === 'Rejected'">{{ leave.status }}</span></td>
-            <td>{{ leave.reason }}</td>
-            <td>
-              @if (canReview && leave.status === 'Pending' && leave.employeeId !== currentEmployee?.id) {
-                <button type="button" class="btn-small approve" (click)="approveLeave(leave.id)">Approve</button>
-                <button type="button" class="btn-small reject" (click)="rejectLeave(leave.id)">Reject</button>
-              } @else {
-                <span class="muted">No Action</span>
-              }
-            </td>
-          </tr>
-        } @empty {
-          <tr><td colspan="7" class="empty">No leave requests yet.</td></tr>
+    <!-- Feature 7: Leave Calendar Grid -->
+    <div class="glass-panel calendar-panel">
+      <h3>📅 Team Leave Calendar (Current Month)</h3>
+      <div class="leave-calendar-grid">
+        @for (day of calendarDays; track day.date) {
+          <div class="cal-day-cell" [class.has-leave]="day.onLeaveNames.length > 0">
+            <span class="day-no">{{ day.dayNumber }}</span>
+            @if (day.onLeaveNames.length > 0) {
+              <div class="leave-badge-list">
+                @for (name of day.onLeaveNames; track name) {
+                  <span class="name-badge">🏖️ {{ name }}</span>
+                }
+              </div>
+            }
+          </div>
         }
-      </tbody>
-    </table>
+      </div>
+    </div>
   </div>
+
+  <!-- Feature 5: History & Approval Requests Audit Table -->
+  <div class="glass-panel history-table-panel">
+    <div class="panel-header">
+      <h3>📋 Leave Requests & Approval History</h3>
+    </div>
+
+    <div class="table-wrapper">
+      <table class="history-table">
+        <thead>
+          <tr>
+            <th>Employee</th>
+            <th>Type</th>
+            <th>From</th>
+            <th>To</th>
+            <th>Status</th>
+            <th>Reason</th>
+            <th>Approvals & Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (leave of visibleLeaveRequests; track leave.id) {
+            <tr>
+              <td>
+                <div class="emp-cell">
+                  <span class="avatar">👤</span>
+                  <strong>{{ leave.employeeName }}</strong>
+                </div>
+              </td>
+              <td><span class="type-pill">{{ leave.leaveType }}</span></td>
+              <td>{{ leave.fromDate }}</td>
+              <td>{{ leave.toDate }}</td>
+              <td>
+                <span
+                  class="status-badge"
+                  [class.pending]="leave.status === 'Pending'"
+                  [class.approved]="leave.status === 'Approved'"
+                  [class.rejected]="leave.status === 'Rejected'"
+                >
+                  {{ leave.status }}
+                </span>
+              </td>
+              <td>{{ leave.reason }}</td>
+              <td>
+                <div class="action-buttons-group">
+                  <!-- Feature 2: Manager Approval -->
+                  @if (canReview && leave.status === 'Pending') {
+                    <button type="button" class="btn manager-btn" (click)="approveManager(leave.id)">✅ Manager Approve</button>
+                  }
+                  <!-- Feature 3: HR Approval -->
+                  @if (isHrOrAdmin && leave.status === 'Pending') {
+                    <button type="button" class="btn hr-btn" (click)="approveHR(leave.id)">🛡️ HR Approve</button>
+                  }
+                  <!-- Feature 4: Reject -->
+                  @if (canReview && leave.status === 'Pending') {
+                    <button type="button" class="btn reject-btn" (click)="openRejectModal(leave.id)">❌ Reject</button>
+                  }
+                  @if (leave.status !== 'Pending') {
+                    <span class="completed-text">Completed by {{ leave.reviewedBy || 'HR' }}</span>
+                  }
+                </div>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="7" class="empty-text">📋 No leave request history found.</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Rejection Modal -->
+  @if (rejectingLeaveId) {
+    <div class="reject-modal-backdrop" (click)="rejectingLeaveId = null">
+      <div class="reject-modal-card" (click)="$event.stopPropagation()">
+        <h3>❌ Reject Leave Request</h3>
+        <p>State the reason for rejecting this leave request:</p>
+        <textarea rows="3" [(ngModel)]="rejectionReason" placeholder="Enter rejection reason..." class="form-textarea"></textarea>
+        <div class="modal-actions">
+          <button type="button" class="btn reject-btn" (click)="confirmReject()">Confirm Rejection</button>
+          <button type="button" class="btn outline" (click)="rejectingLeaveId = null">Cancel</button>
+        </div>
+      </div>
+    </div>
+  }
 </section>

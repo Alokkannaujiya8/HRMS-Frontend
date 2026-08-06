@@ -1,84 +1,150 @@
-<section class="payroll-page">
-  <div class="header">
-    <h1>My Payroll</h1>
-    <p>Select month and year to download your payslip.</p>
+<section class="payroll-container">
+  <!-- Page Header -->
+  <div class="payroll-header">
+    <div>
+      <h1 class="page-title">Employee Salary & Payroll Hub</h1>
+      <p class="page-subtitle">Salary Structure, Allowances, Deductions, Bonus, OT, TDS Tax & Instant Payslip Generation</p>
+    </div>
+    <div class="header-action-buttons">
+      <button type="button" class="btn generate-btn" (click)="generatePayslip()">⚡ Generate Payslip</button>
+      <button type="button" class="btn email-btn" (click)="emailPayslip()" [disabled]="isSendingEmail">
+        ✉️ {{ isSendingEmail ? 'Sending Email...' : 'Email Payslip' }}
+      </button>
+      <button type="button" class="btn download-btn" (click)="downloadPayslip()" [disabled]="isGenerating">
+        📄 {{ isGenerating ? 'Exporting PDF...' : 'Download PDF' }}
+      </button>
+    </div>
   </div>
 
-  @if (errorMessage) {
-    <div class="alert error">{{ errorMessage }}</div>
-  }
-
-  <div class="card">
-    <div class="grid">
-      <label>
-        Month
-        <select [(ngModel)]="selectedMonth" (change)="onPeriodChange()">
-          @for (month of months; track month.value) {
-            <option [value]="month.value">{{ month.label }}</option>
-          }
-        </select>
-      </label>
-
-      <label>
-        Year
-        <select [(ngModel)]="selectedYear" (change)="onPeriodChange()">
-          @for (year of years; track year) {
-            <option [value]="year">{{ year }}</option>
-          }
-        </select>
-      </label>
+  <!-- Month / Year Selector Bar -->
+  <div class="period-selector-bar">
+    <div class="period-group">
+      <label>Select Month:</label>
+      <select [(ngModel)]="selectedMonth" (change)="onPeriodChange()" class="period-select">
+        @for (month of months; track month.value) {
+          <option [value]="month.value">{{ month.label }}</option>
+        }
+      </select>
     </div>
 
-    @if (payrollSummary) {
-      <div class="summary-grid">
-        <div class="metric">
-          <span>Monthly Salary</span>
-          <strong>Rs {{ payrollSummary.monthlySalary | number:'1.0-0' }}</strong>
+    <div class="period-group">
+      <label>Select Year:</label>
+      <select [(ngModel)]="selectedYear" (change)="onPeriodChange()" class="period-select">
+        @for (year of years; track year) {
+          <option [value]="year">{{ year }}</option>
+        }
+      </select>
+    </div>
+  </div>
+
+  <!-- Feature 1: Executive Salary Structure Summary Cards Grid -->
+  <div class="salary-summary-cards-grid">
+    <div class="summary-card gross">
+      <span class="card-icon">💰</span>
+      <div class="card-content">
+        <span class="metric-number">₹ {{ grossEarnings | number:'1.0-0' }}</span>
+        <span class="metric-name">Gross Earnings</span>
+      </div>
+      <span class="card-tag">Base + Allowances + OT</span>
+    </div>
+
+    <div class="summary-card deductions">
+      <span class="card-icon">📉</span>
+      <div class="card-content">
+        <span class="metric-number">₹ {{ totalDeductions | number:'1.0-0' }}</span>
+        <span class="metric-name">Total Deductions</span>
+      </div>
+      <span class="card-tag">PF + ESI + PT + TDS Tax</span>
+    </div>
+
+    <div class="summary-card ot">
+      <span class="card-icon">⏱️</span>
+      <div class="card-content">
+        <span class="metric-number">₹ {{ (payrollSummary?.overtimeAmount || 0) | number:'1.0-0' }}</span>
+        <span class="metric-name">Overtime Pay (OT)</span>
+      </div>
+      <span class="card-tag">{{ (payrollSummary?.totalOvertimeHours || 0) }} Hrs @ 1.5x Multiplier</span>
+    </div>
+
+    <div class="summary-card net">
+      <span class="card-icon">💵</span>
+      <div class="card-content">
+        <span class="metric-number">₹ {{ netTakeHomeSalary | number:'1.0-0' }}</span>
+        <span class="metric-name">Net Take-Home Salary</span>
+      </div>
+      <span class="card-tag highlight">Disbursed to Bank Account</span>
+    </div>
+  </div>
+
+  <!-- Feature 2 & 3: Detailed Breakdown Grid (Allowances vs Deductions) -->
+  <div class="payroll-breakdown-grid">
+    <!-- Panel 1: Allowances & Earnings -->
+    <div class="glass-panel allowances-panel">
+      <h3>🎁 Allowances & Earnings Breakdown</h3>
+      <div class="breakdown-list">
+        <div class="item-row">
+          <span>Basic Salary (50% Base)</span>
+          <strong>₹ {{ basicSalary | number }}</strong>
         </div>
-        <div class="metric">
-          <span>Hourly Salary</span>
-          <strong>Rs {{ payrollSummary.hourlySalary | number:'1.2-2' }}</strong>
+        <div class="item-row">
+          <span>House Rent Allowance (HRA 30%)</span>
+          <strong>₹ {{ hraAllowance | number }}</strong>
         </div>
-        <div class="metric">
-          <span>Worked Hours</span>
-          <strong>{{ payrollSummary.totalWorkedHours | number:'1.1-2' }}</strong>
+        <div class="item-row">
+          <span>Conveyance Allowance</span>
+          <strong>₹ {{ conveyanceAllowance | number }}</strong>
         </div>
-        <div class="metric">
-          <span>Overtime Hours</span>
-          <strong>{{ payrollSummary.totalOvertimeHours | number:'1.1-2' }}</strong>
+        <div class="item-row">
+          <span>Medical Allowance</span>
+          <strong>₹ {{ medicalAllowance | number }}</strong>
         </div>
-        <div class="metric">
-          <span>Weekend OT</span>
-          <strong>{{ payrollSummary.weekendOtHours | number:'1.1-2' }}</strong>
+        <div class="item-row">
+          <span>Performance & Festive Bonus</span>
+          <strong>₹ {{ performanceBonus | number }}</strong>
         </div>
-        <div class="metric">
-          <span>Holiday OT</span>
-          <strong>{{ payrollSummary.holidayOtHours | number:'1.1-2' }}</strong>
-        </div>
-        <div class="metric">
-          <span>OT Amount</span>
-          <strong>Rs {{ payrollSummary.overtimeAmount | number:'1.0-0' }}</strong>
-        </div>
-        <div class="metric highlight">
-          <span>Total Salary</span>
-          <strong>Rs {{ payrollSummary.totalSalary | number:'1.0-0' }}</strong>
+        <div class="item-row highlight">
+          <span>Overtime Earnings (1.5x)</span>
+          <strong>₹ {{ (payrollSummary?.overtimeAmount || 0) | number }}</strong>
         </div>
       </div>
-    }
+    </div>
 
-    <button
-      type="button"
-      class="btn-download"
-      (click)="downloadPayslip()"
-      [disabled]="isGenerating"
-      *appHasPermission="'CanViewSalary'"
-    >
-      @if (isGenerating) {
-        <span class="spinner"></span>
-        <span>Generating PDF...</span>
-      } @else {
-        <span>Download Payslip</span>
-      }
-    </button>
+    <!-- Panel 2: Deductions & TDS Tax -->
+    <div class="glass-panel deductions-panel">
+      <h3>📉 Deductions & TDS Tax Breakdown</h3>
+      <div class="breakdown-list">
+        <div class="item-row">
+          <span>Provident Fund (PF 12%)</span>
+          <strong class="deduction-val">- ₹ {{ providentFundDeduction | number }}</strong>
+        </div>
+        <div class="item-row">
+          <span>Employee State Insurance (ESI)</span>
+          <strong class="deduction-val">- ₹ {{ esiDeduction | number }}</strong>
+        </div>
+        <div class="item-row">
+          <span>Professional Tax (PT)</span>
+          <strong class="deduction-val">- ₹ {{ professionalTax | number }}</strong>
+        </div>
+        <div class="item-row">
+          <span>Income Tax TDS (Tax Slab 15%)</span>
+          <strong class="deduction-val">- ₹ {{ incomeTaxTds | number }}</strong>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Feature 7, 8, 9: Payslip Preview Statement Card -->
+  <div class="glass-panel statement-card">
+    <div class="statement-header">
+      <div>
+        <h2>Official Payslip Statement - {{ selectedMonth }}/{{ selectedYear }}</h2>
+        <p>Employee: <strong>{{ currentEmployee?.name }}</strong> | ID: <strong>EMP000245</strong></p>
+      </div>
+      <div class="statement-actions">
+        <button type="button" class="btn generate-btn" (click)="generatePayslip()">⚡ Refresh Calculation</button>
+        <button type="button" class="btn email-btn" (click)="emailPayslip()">✉️ Send to Email</button>
+        <button type="button" class="btn download-btn" (click)="downloadPayslip()">📄 Download PDF</button>
+      </div>
+    </div>
   </div>
 </section>

@@ -5,6 +5,20 @@ import { StaffProfile } from '../../models/staff.model';
 import { Employee } from '../../services/employee';
 import { StaffData } from '../../services/staff-data';
 
+export type ProfileTab =
+  | 'Photo'
+  | 'Basic Info'
+  | 'Emergency Contact'
+  | 'Education'
+  | 'Experience'
+  | 'Documents'
+  | 'Salary'
+  | 'Bank Details'
+  | 'Attendance'
+  | 'Leave'
+  | 'Assets'
+  | 'Performance';
+
 @Component({
   selector: 'app-employee-details',
   standalone: false,
@@ -14,6 +28,23 @@ import { StaffData } from '../../services/staff-data';
 export class EmployeeDetails implements OnInit {
   employee: EmployeeRecord | null = null;
   profile: StaffProfile | null = null;
+
+  activeTab: ProfileTab = 'Basic Info';
+  tabs: ProfileTab[] = [
+    'Photo',
+    'Basic Info',
+    'Emergency Contact',
+    'Education',
+    'Experience',
+    'Documents',
+    'Salary',
+    'Bank Details',
+    'Attendance',
+    'Leave',
+    'Assets',
+    'Performance',
+  ];
+
   skillInput = '';
   remarkInput = '';
   message = '';
@@ -36,6 +67,10 @@ export class EmployeeDetails implements OnInit {
         this.profile = this.staffData.getProfile(id);
       },
     });
+  }
+
+  selectTab(tab: ProfileTab): void {
+    this.activeTab = tab;
   }
 
   generateLetter(type: 'Appointment' | 'Appraisal'): void {

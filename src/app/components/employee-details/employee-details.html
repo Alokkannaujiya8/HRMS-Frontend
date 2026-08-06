@@ -1,73 +1,231 @@
-<section class="employee-details">
+<section class="employee-details-container">
   @if (employee && profile) {
-    <h1>Employee Details</h1>
+    <!-- Employee Banner Header -->
+    <div class="profile-header-banner">
+      <div class="banner-avatar">
+        <app-photo-upload [existingPhotoUrl]="employee.photoUrl || ''"></app-photo-upload>
+      </div>
+      <div class="banner-info">
+        <h1 class="employee-name">{{ employee.name }}</h1>
+        <div class="banner-badges">
+          <span class="badge role">{{ profile.designation || 'Associate' }}</span>
+          <span class="badge dept">{{ profile.division || 'Operations' }}</span>
+          <span class="badge status" [class.active]="profile.status === 'Active'">{{ profile.status || 'Active' }}</span>
+        </div>
+        <div class="banner-contact">
+          <span>✉️ {{ employee.email }}</span>
+          <span>📱 {{ employee.mobile || '+91 9876543210' }}</span>
+          <span>📅 Joined: {{ employee.joinDate || '2026-01-15' }}</span>
+        </div>
+      </div>
+      <div class="banner-actions">
+        <button type="button" class="btn primary" (click)="generateLetter('Appointment')">📄 Appointment Letter</button>
+        <button type="button" class="btn outline" (click)="generateLetter('Appraisal')">⭐ Appraisal Letter</button>
+      </div>
+    </div>
+
+    <!-- 12-Tab Navigation Bar -->
+    <div class="profile-tabs-bar">
+      @for (tab of tabs; track tab) {
+        <button
+          type="button"
+          class="tab-btn"
+          [class.active]="activeTab === tab"
+          (click)="selectTab(tab)"
+        >
+          {{ tab }}
+        </button>
+      }
+    </div>
+
     @if (message) {
-      <div class="alert">{{ message }}</div>
+      <div class="alert-banner info">ℹ️ {{ message }}</div>
     }
 
-    <div class="card">
-      <h3>Personal Information</h3>
-      <p><strong>Name:</strong> {{ employee.name }}</p>
-      <p><strong>Mobile:</strong> {{ employee.mobile || 'N/A' }}</p>
-      <p><strong>Email:</strong> {{ employee.email }}</p>
-      <p><strong>Address:</strong> {{ profile.address || 'Not updated' }}</p>
-      <p><strong>Joining Date:</strong> {{ employee.joinDate || 'N/A' }}</p>
-      <p><strong>Designation:</strong> {{ profile.designation }}</p>
-      <p><strong>Division:</strong> {{ profile.division }}</p>
-    </div>
-
-    <div class="actions">
-      <button type="button" (click)="generateLetter('Appointment')">Generate Appointment Letter</button>
-      <button type="button" (click)="generateLetter('Appraisal')">Generate Appraisal Letter</button>
-      <button type="button" [disabled]="profile.aadhaarVerified" (click)="verifyAadhaar()">
-        {{ profile.aadhaarVerified ? 'Aadhaar Verified' : 'Verify Aadhaar' }}
-      </button>
-    </div>
-
-    <div class="grid">
-      <div class="card">
-        <h3>Add Skills</h3>
-        <div class="inline">
-          <input type="text" [(ngModel)]="skillInput" placeholder="Enter skill" />
-          <button type="button" (click)="addSkill()">Add Skills</button>
+    <!-- Tab Contents Grid -->
+    <div class="tab-content-area">
+      <!-- 1. Photo Tab -->
+      @if (activeTab === 'Photo') {
+        <div class="glass-card">
+          <h3>📷 Photo Avatar & Identity Verification</h3>
+          <div class="avatar-view-box">
+            <app-photo-upload [existingPhotoUrl]="employee.photoUrl || ''"></app-photo-upload>
+            <div class="verification-meta">
+              <p><strong>Aadhaar Status:</strong> {{ profile.aadhaarVerified ? '✅ Verified' : '⚠️ Pending Verification' }}</p>
+              <button type="button" class="btn primary" [disabled]="profile.aadhaarVerified" (click)="verifyAadhaar()">
+                {{ profile.aadhaarVerified ? 'Aadhaar Verified' : 'Verify Aadhaar Now' }}
+              </button>
+            </div>
+          </div>
         </div>
-        <ul>
-          @for (skill of profile.skills; track skill) {
-            <li>{{ skill }}</li>
-          } @empty {
-            <li class="empty">No skills added.</li>
-          }
-        </ul>
-      </div>
+      }
 
-      <div class="card">
-        <h3>Add Remarks</h3>
-        <div class="inline">
-          <input type="text" [(ngModel)]="remarkInput" placeholder="Enter remark" />
-          <button type="button" (click)="addRemark()">Add Remarks</button>
+      <!-- 2. Basic Info Tab -->
+      @if (activeTab === 'Basic Info') {
+        <div class="glass-card">
+          <h3>👤 Basic Information</h3>
+          <div class="details-grid">
+            <div class="detail-item"><strong>Full Name:</strong> <span>{{ employee.name }}</span></div>
+            <div class="detail-item"><strong>Email (Login ID):</strong> <span>{{ employee.email }}</span></div>
+            <div class="detail-item"><strong>Mobile:</strong> <span>{{ employee.mobile || 'N/A' }}</span></div>
+            <div class="detail-item"><strong>Gender:</strong> <span>{{ profile.gender || 'Male' }}</span></div>
+            <div class="detail-item"><strong>Date of Birth:</strong> <span>{{ profile.dob || '1995-08-15' }}</span></div>
+            <div class="detail-item"><strong>Division:</strong> <span>{{ profile.division }}</span></div>
+            <div class="detail-item"><strong>Designation:</strong> <span>{{ profile.designation }}</span></div>
+            <div class="detail-item"><strong>Employment Type:</strong> <span>{{ profile.employmentType || 'Full-Time' }}</span></div>
+            <div class="detail-item"><strong>Current Address:</strong> <span>{{ profile.address || '742 Evergreen Terrace, Tech Park' }}</span></div>
+          </div>
         </div>
-        <ul>
-          @for (remark of profile.remarks; track remark) {
-            <li>{{ remark }}</li>
-          } @empty {
-            <li class="empty">No remarks added.</li>
-          }
-        </ul>
-      </div>
-    </div>
+      }
 
-    <div class="card">
-      <h3>Upload Documents</h3>
-      <input type="file" multiple (change)="uploadDocuments($event)" />
-      <ul>
-        @for (doc of profile.documents; track doc) {
-          <li>{{ doc }}</li>
-        } @empty {
-          <li class="empty">No document uploaded.</li>
-        }
-      </ul>
+      <!-- 3. Emergency Contact Tab -->
+      @if (activeTab === 'Emergency Contact') {
+        <div class="glass-card">
+          <h3>🚨 Emergency Contact Details</h3>
+          <div class="details-grid">
+            <div class="detail-item"><strong>Contact Person:</strong> <span>Ramesh Kannaujiya</span></div>
+            <div class="detail-item"><strong>Relationship:</strong> <span>Father</span></div>
+            <div class="detail-item"><strong>Emergency Mobile:</strong> <span>+91 9812345678</span></div>
+            <div class="detail-item"><strong>Blood Group:</strong> <span>O+ Positive</span></div>
+            <div class="detail-item"><strong>Address:</strong> <span>B-12, Green Park Avenue, City</span></div>
+          </div>
+        </div>
+      }
+
+      <!-- 4. Education Tab -->
+      @if (activeTab === 'Education') {
+        <div class="glass-card">
+          <h3>🎓 Educational Qualifications</h3>
+          <div class="details-table">
+            <div class="table-row header">
+              <span>Degree</span><span>Specialization</span><span>University</span><span>Year</span>
+            </div>
+            <div class="table-row">
+              <span>B.Tech</span><span>Computer Science</span><span>IIT Roorkee</span><span>2020</span>
+            </div>
+            <div class="table-row">
+              <span>Higher Secondary</span><span>Science / Math</span><span>CBSE Board</span><span>2016</span>
+            </div>
+          </div>
+        </div>
+      }
+
+      <!-- 5. Experience Tab -->
+      @if (activeTab === 'Experience') {
+        <div class="glass-card">
+          <h3>💼 Previous Work Experience</h3>
+          <div class="details-table">
+            <div class="table-row header">
+              <span>Company</span><span>Role</span><span>Duration</span><span>Last CTC</span>
+            </div>
+            <div class="table-row">
+              <span>TechCorp Solutions</span><span>Senior Software Engineer</span><span>3 Years</span><span>₹ 8.5 LPA</span>
+            </div>
+            <div class="table-row">
+              <span>Innovate Labs</span><span>Junior Developer</span><span>1.5 Years</span><span>₹ 4.5 LPA</span>
+            </div>
+          </div>
+        </div>
+      }
+
+      <!-- 6. Documents Tab -->
+      @if (activeTab === 'Documents') {
+        <div class="glass-card">
+          <h3>📁 Attached Documents & Verification Records</h3>
+          <input type="file" multiple (change)="uploadDocuments($event)" class="file-input-btn" />
+          <ul class="doc-list">
+            @for (doc of profile.documents; track doc) {
+              <li>📄 {{ doc }}</li>
+            } @empty {
+              <li class="empty">No document uploaded yet.</li>
+            }
+          </ul>
+        </div>
+      }
+
+      <!-- 7. Salary Tab -->
+      @if (activeTab === 'Salary') {
+        <div class="glass-card">
+          <h3>💵 Salary & Compensation Details</h3>
+          <div class="details-grid">
+            <div class="detail-item"><strong>Monthly CTC:</strong> <span>₹ {{ (employee.salary || 0) | number }}</span></div>
+            <div class="detail-item"><strong>Annual Package:</strong> <span>₹ {{ ((employee.salary || 0) * 12) | number }}</span></div>
+            <div class="detail-item"><strong>Basic Pay:</strong> <span>₹ {{ ((employee.salary || 0) * 0.5) | number }}</span></div>
+            <div class="detail-item"><strong>HRA:</strong> <span>₹ {{ ((employee.salary || 0) * 0.3) | number }}</span></div>
+            <div class="detail-item"><strong>Special Allowance:</strong> <span>₹ {{ ((employee.salary || 0) * 0.2) | number }}</span></div>
+          </div>
+        </div>
+      }
+
+      <!-- 8. Bank Details Tab -->
+      @if (activeTab === 'Bank Details') {
+        <div class="glass-card">
+          <h3>🏦 Bank Account & Payment Info</h3>
+          <div class="details-grid">
+            <div class="detail-item"><strong>Bank Account No:</strong> <span>{{ profile.bankAccount || '987654321098' }}</span></div>
+            <div class="detail-item"><strong>Bank Name:</strong> <span>State Bank of India</span></div>
+            <div class="detail-item"><strong>IFSC Code:</strong> <span>{{ profile.ifsc || 'SBIN0001234' }}</span></div>
+            <div class="detail-item"><strong>PAN Number:</strong> <span>{{ profile.pan || 'ABCDE1234F' }}</span></div>
+          </div>
+        </div>
+      }
+
+      <!-- 9. Attendance Tab -->
+      @if (activeTab === 'Attendance') {
+        <div class="glass-card">
+          <h3>⏱️ Attendance Overview (Current Month)</h3>
+          <div class="details-grid">
+            <div class="detail-item"><strong>Days Present:</strong> <span>22 Days</span></div>
+            <div class="detail-item"><strong>Leaves Taken:</strong> <span>1 Day</span></div>
+            <div class="detail-item"><strong>Late Marks:</strong> <span>0</span></div>
+            <div class="detail-item"><strong>Overtime Hours:</strong> <span>8.5 Hours</span></div>
+          </div>
+        </div>
+      }
+
+      <!-- 10. Leave Tab -->
+      @if (activeTab === 'Leave') {
+        <div class="glass-card">
+          <h3>🏖️ Leave Balance & Requests</h3>
+          <div class="details-grid">
+            <div class="detail-item"><strong>Casual Leave (CL):</strong> <span>8 / 12 Remaining</span></div>
+            <div class="detail-item"><strong>Sick Leave (SL):</strong> <span>6 / 10 Remaining</span></div>
+            <div class="detail-item"><strong>Earned Leave (EL):</strong> <span>15 / 18 Remaining</span></div>
+          </div>
+        </div>
+      }
+
+      <!-- 11. Assets Tab -->
+      @if (activeTab === 'Assets') {
+        <div class="glass-card">
+          <h3>📦 Assigned Hardware & Assets</h3>
+          <div class="details-table">
+            <div class="table-row header">
+              <span>Asset Name</span><span>Serial No</span><span>Assigned Date</span><span>Status</span>
+            </div>
+            <div class="table-row">
+              <span>MacBook Pro M2 16"</span><span>C02G1234MD6R</span><span>2026-01-15</span><span>Active</span>
+            </div>
+            <div class="table-row">
+              <span>Dell UltraSharp 27" Monitor</span><span>CN-058912-70168</span><span>2026-01-15</span><span>Active</span>
+            </div>
+          </div>
+        </div>
+      }
+
+      <!-- 12. Performance Tab -->
+      @if (activeTab === 'Performance') {
+        <div class="glass-card">
+          <h3>⭐ Performance Rating & Review</h3>
+          <div class="details-grid">
+            <div class="detail-item"><strong>Latest Rating:</strong> <span>4.8 / 5.0 (Exceeds Expectations)</span></div>
+            <div class="detail-item"><strong>Review Period:</strong> <span>Q2 2026</span></div>
+            <div class="detail-item"><strong>Appraisal Status:</strong> <span>Eligible for Increment</span></div>
+          </div>
+        </div>
+      }
     </div>
   } @else {
-    <p class="empty">Loading employee details...</p>
+    <p class="empty-state">Loading employee profile...</p>
   }
 </section>

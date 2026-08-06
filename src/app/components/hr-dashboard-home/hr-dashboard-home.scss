@@ -61,10 +61,10 @@
   }
 }
 
-/* Equal Height 6 Summary Cards Grid */
+/* Equal Height Summary Cards Grid */
 .summary-cards-grid {
   display: grid;
-  grid-template-columns: repeat(6, 1fr);
+  grid-template-columns: repeat(7, 1fr);
   gap: 16px;
 }
 
@@ -91,6 +91,8 @@
 
   &.blue-theme { border-top: 3.5px solid #38bdf8; }
   &.green-theme { border-top: 3.5px solid #22c55e; }
+  &.orange-theme { border-top: 3.5px solid #f97316; }
+  &.rose-theme { border-top: 3.5px solid #f43f5e; }
   &.purple-theme { border-top: 3.5px solid #a855f7; }
   &.emerald-theme { border-top: 3.5px solid #10b981; }
   &.cyan-theme { border-top: 3.5px solid #06b6d4; }
@@ -113,6 +115,8 @@
 
       &.positive { color: #4ade80; background: rgba(34, 197, 94, 0.15); }
       &.success { color: #22c55e; background: rgba(34, 197, 94, 0.15); }
+      &.warning { color: #fb923c; background: rgba(249, 115, 22, 0.15); }
+      &.danger { color: #f43f5e; background: rgba(244, 63, 94, 0.15); }
       &.purple { color: #c084fc; background: rgba(168, 85, 247, 0.15); }
       &.emerald { color: #34d399; background: rgba(16, 185, 129, 0.15); }
       &.info { color: #38bdf8; background: rgba(56, 189, 248, 0.15); }

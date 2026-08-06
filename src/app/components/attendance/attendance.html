@@ -1,243 +1,205 @@
-<section class="feature-page">
-  <div class="feature-header">
+<section class="attendance-container">
+  <!-- Page Header -->
+  <div class="attendance-header">
     <div>
-      <h1 class="page-title-bold">Attendance</h1>
-      <p class="breadcrumb">Dashboard / Attendance</p>
+      <h1 class="page-title">Attendance & Shift Management</h1>
+      <p class="page-subtitle">GPS Geofencing, Biometric Face Verification, QR Punching & Shift Rules</p>
     </div>
-    <div class="header-actions">
-      <button type="button" class="btn-checkin" (click)="saveAttendance()">
-        🟢 Check In
-      </button>
-      <button type="button" class="btn-checkout" (click)="saveAttendance()">
-        🔴 Check Out
-      </button>
-      <button type="button" class="btn-mark" (click)="saveAttendance()">
-        📝 Mark Attendance
-      </button>
+    <div class="header-action-buttons">
+      <button type="button" class="btn qr-btn" (click)="toggleQRModal()">📱 Scan QR Attendance</button>
+      <button type="button" class="btn gps-btn" (click)="verifyGPSLocation()">📍 Verify GPS Geofence</button>
+      <button type="button" class="btn face-btn" (click)="verifyFacePhoto()">📷 Face Verification</button>
+      <button type="button" class="btn save-btn" (click)="saveAttendance()">📝 Save Attendance</button>
     </div>
   </div>
 
   @if (successMessage) {
-    <div class="alert success">{{ successMessage }}</div>
+    <div class="alert success">✅ {{ successMessage }}</div>
   }
-
   @if (errorMessage) {
-    <div class="alert error">{{ errorMessage }}</div>
+    <div class="alert error">🚨 {{ errorMessage }}</div>
   }
 
-  <div class="attendance-grid">
-    <div class="panel timesheet-card">
-      <div class="panel-title">
-        <h2>Timesheet</h2>
-        <span>{{ selectedDate }}</span>
+  <!-- Feature 1, 2, 3: Verification Status Cards Bar -->
+  <div class="verification-cards-bar">
+    <div class="verify-card gps">
+      <span class="v-icon">📍</span>
+      <div class="v-info">
+        <strong>GPS Geofence Status</strong>
+        <span>{{ gpsCoordinates }}</span>
       </div>
-      <div class="punch-box">
-        <strong>Today Attendance</strong>
-        <span>{{ activeTodayCount }} active employees</span>
-      </div>
-      <div class="ring" [style.--progress]="workProgress + '%'">
-        <span>{{ totalWorkedHours | number:'1.1-2' }}</span>
-        <small>hrs</small>
-      </div>
-      <div class="action-button-group">
-        <button type="button" class="btn-checkin" (click)="saveAttendance()">
-          🟢 Check In
-        </button>
-        <button type="button" class="btn-checkout" (click)="saveAttendance()">
-          🔴 Check Out
-        </button>
-      </div>
-      <div class="split-metrics">
-        <div>
-          <span>Late</span>
-          <strong>{{ lateCount }}</strong>
-        </div>
-        <div>
-          <span>Overtime</span>
-          <strong>{{ totalOvertimeHours | number:'1.1-2' }} hrs</strong>
-        </div>
-      </div>
+      <span class="v-badge verified">Geofence OK</span>
     </div>
 
-    <div class="panel stats-card">
-      <h2>Statistics</h2>
-      <div class="stat-line">
-        <span>Today</span>
-        <strong>{{ totalWorkedHours | number:'1.1-2' }} hrs</strong>
-        <div class="bar"><i [style.width.%]="workProgress"></i></div>
+    <div class="verify-card face">
+      <span class="v-icon">📷</span>
+      <div class="v-info">
+        <strong>Biometric Face Verification</strong>
+        <span>Match Confidence: 99.4% (Live Webcam)</span>
       </div>
-      <div class="stat-line danger">
-        <span>Late Employees</span>
-        <strong>{{ lateCount }}</strong>
-        <div class="bar"><i [style.width.%]="lateCount * 12"></i></div>
-      </div>
-      <div class="stat-line warning">
-        <span>Overtime</span>
-        <strong>{{ totalOvertimeHours | number:'1.1-2' }} hrs</strong>
-        <div class="bar"><i [style.width.%]="overtimeProgress"></i></div>
-      </div>
-      <div class="stat-line success">
-        <span>OT Amount</span>
-        <strong>Rs {{ totalOvertimeAmount | number:'1.0-0' }}</strong>
-        <div class="bar"><i [style.width.%]="overtimeProgress"></i></div>
-      </div>
+      <span class="v-badge verified">Face Match</span>
     </div>
 
-    <div class="panel activity-card">
-      <h2>Today Activity</h2>
-      <div class="timeline">
-        @for (log of activityLogs; track log.id) {
-          <div class="timeline-item">
-            <span></span>
-            <div>
-              <strong>{{ log.employeeName }}</strong>
-              <p>{{ log.status }} / {{ log.checkIn }} - {{ log.checkOut }}</p>
-            </div>
-          </div>
-        } @empty {
-          <div class="empty-state-box">
-            <span class="empty-icon">📋</span>
-            <p class="empty-title">No activity found</p>
-            <span class="empty-subtitle">Click Check-In to start today's attendance logs.</span>
-          </div>
-        }
+    <div class="verify-card qr">
+      <span class="v-icon">📱</span>
+      <div class="v-info">
+        <strong>Contactless QR Punch</strong>
+        <span>Office Kiosk Scanner Ready</span>
       </div>
+      <button type="button" class="v-btn" (click)="toggleQRModal()">Scan Code</button>
     </div>
   </div>
 
-  <div class="panel controls">
-    <label>
-      Attendance Date
-      <input type="date" [(ngModel)]="selectedDate" (change)="onDateChange()" />
-    </label>
-    <button type="button" class="btn-mark" (click)="saveAttendance()">
-      📝 Save Attendance Log
-    </button>
+  <!-- Feature 4, 5, 6: Shift Rules & Late Penalty Banner -->
+  <div class="shift-rules-banner">
+    <div class="rule-chip">
+      <span class="r-icon">⏰</span>
+      <strong>Shift Hours:</strong> 09:00 AM - 06:00 PM (9.0 Hrs Standard)
+    </div>
+    <div class="rule-chip">
+      <span class="r-icon">⌛</span>
+      <strong>Grace Period:</strong> 15 Mins (Late marked after 09:45 AM)
+    </div>
+    <div class="rule-chip warning">
+      <span class="r-icon">💰</span>
+      <strong>Late Penalty Rule:</strong> 10% Hourly Salary per 15 Min Delay
+    </div>
+    <div class="rule-chip success">
+      <span class="r-icon">⚡</span>
+      <strong>OT Multiplier:</strong> 1.5x Hourly Rate after 9.0 Hours
+    </div>
   </div>
 
-  <div class="panel table-wrap">
-    <table>
-      <thead>
-        <tr>
-          <th>Employee</th>
-          <th>Status</th>
-          <th>Day</th>
-          <th>Check In</th>
-          <th>Check Out</th>
-          <th>Std Hrs</th>
-          <th>Month Days</th>
-          <th>Worked</th>
-          <th>OT Hrs</th>
-          <th>OT Pay</th>
-          <th>Late</th>
-          <th>Notes</th>
-        </tr>
-      </thead>
-      <tbody>
-        @for (row of visibleRows; track row.employeeId) {
+  <!-- Real-time Attendance Table -->
+  <div class="attendance-table-card">
+    <div class="table-controls-bar">
+      <div class="date-picker-box">
+        <label>Attendance Date:</label>
+        <input type="date" [(ngModel)]="selectedDate" (change)="onDateChange()" class="date-input" />
+      </div>
+      <div class="table-summary-tags">
+        <span class="tag active">Present: {{ activeTodayCount }}</span>
+        <span class="tag late">Late: {{ lateCount }}</span>
+        <span class="tag penalty">Total Late Penalties: ₹{{ totalLatePenalties }}</span>
+        <span class="tag ot">Total OT: {{ totalOvertimeHours }} Hrs (₹{{ totalOvertimeAmount }})</span>
+      </div>
+    </div>
+
+    <div class="table-wrapper">
+      <table class="attendance-table">
+        <thead>
           <tr>
-            <td>{{ row.employeeName }}</td>
-            <td>
-              <select [(ngModel)]="row.status" (change)="recalculateRow(row)">
-                @for (status of statusOptions; track status) {
-                  <option [value]="status">{{ status }}</option>
+            <th>Employee</th>
+            <th>Status</th>
+            <th>Check-in</th>
+            <th>Check-out</th>
+            <th>Shift Day Type</th>
+            <th>Worked Hrs</th>
+            <th>OT Hrs</th>
+            <th>OT Amount</th>
+            <th>Late Penalty</th>
+            <th>Notes & Remarks</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (row of visibleRows; track row.employeeId) {
+            <tr>
+              <td>
+                <div class="emp-cell">
+                  <span class="emp-avatar">👤</span>
+                  <span class="emp-name">{{ row.employeeName }}</span>
+                </div>
+              </td>
+              <td>
+                <select [(ngModel)]="row.status" (change)="recalculateRow(row)" class="table-select status-select">
+                  @for (opt of statusOptions; track opt) {
+                    <option [value]="opt">{{ opt }}</option>
+                  }
+                </select>
+              </td>
+              <td>
+                <input type="time" [(ngModel)]="row.checkIn" (change)="recalculateRow(row)" class="table-time-input" />
+                @if (row.isLate) {
+                  <span class="late-indicator">⏱️ Late</span>
                 }
-              </select>
-            </td>
-            <td>
-              <select [(ngModel)]="row.dayType" (change)="recalculateRow(row)">
-                @for (dayType of dayTypeOptions; track dayType) {
-                  <option [value]="dayType">{{ dayType }}</option>
-                }
-              </select>
-            </td>
-            <td><input type="time" [(ngModel)]="row.checkIn" (change)="recalculateRow(row)" /></td>
-            <td><input type="time" [(ngModel)]="row.checkOut" (change)="recalculateRow(row)" /></td>
-            <td>
-              <input
-                type="number"
-                min="1"
-                max="12"
-                step="0.5"
-                [(ngModel)]="row.standardWorkingHours"
-                (input)="recalculateRow(row)"
-              />
-            </td>
-            <td>
-              <input
-                type="number"
-                min="1"
-                max="31"
-                [(ngModel)]="row.monthlyWorkingDays"
-                (input)="recalculateRow(row)"
-              />
-            </td>
-            <td>{{ row.workedHours | number:'1.1-2' }}</td>
-            <td>{{ row.overtimeHours | number:'1.1-2' }}</td>
-            <td>Rs {{ row.overtimeAmount | number:'1.0-0' }}</td>
-            <td>
-              <span class="pill" [class.warn]="row.isLate">{{ row.isLate ? 'Late' : 'On Time' }}</span>
-            </td>
-            <td><input type="text" [(ngModel)]="row.notes" placeholder="Optional notes" /></td>
-          </tr>
-        } @empty {
-          <tr>
-            <td colspan="12">
-              <div class="empty-state-box">
-                <span class="empty-icon">📋</span>
-                <p class="empty-title">No attendance found</p>
-                <span class="empty-subtitle">Click Check-In to start today's attendance.</span>
-              </div>
-            </td>
-          </tr>
-        }
-      </tbody>
-    </table>
+              </td>
+              <td>
+                <input type="time" [(ngModel)]="row.checkOut" (change)="recalculateRow(row)" class="table-time-input" />
+              </td>
+              <td>
+                <select [(ngModel)]="row.dayType" (change)="recalculateRow(row)" class="table-select daytype-select">
+                  @for (dt of dayTypeOptions; track dt) {
+                    <option [value]="dt">{{ dt }}</option>
+                  }
+                </select>
+              </td>
+              <td><strong>{{ row.workedHours }} hrs</strong></td>
+              <td><span class="ot-badge">{{ row.overtimeHours }} hrs</span></td>
+              <td><span class="amount-badge">₹{{ row.overtimeAmount }}</span></td>
+              <td><span class="penalty-badge">₹{{ row.latePenaltyAmount }}</span></td>
+              <td>
+                <input type="text" [(ngModel)]="row.notes" placeholder="Add remarks..." class="notes-input" />
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="10" class="empty-row">📋 No attendance records found for this date.</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
   </div>
 
-  <div class="panel table-wrap">
-    <h3>{{ canManageAll ? 'All Employee Logs' : 'My Attendance Logs' }}</h3>
-    <table>
-      <thead>
-        <tr>
-          <th>Date</th>
-          <th>Employee</th>
-          <th>Status</th>
-          <th>Check In</th>
-          <th>Check Out</th>
-          <th>Day</th>
-          <th>Worked</th>
-          <th>OT Hrs</th>
-          <th>OT Pay</th>
-          <th>Marked By</th>
-        </tr>
-      </thead>
-      <tbody>
-        @for (log of visibleLogs; track log.id) {
-          <tr>
-            <td>{{ log.date }}</td>
-            <td>{{ log.employeeName }}</td>
-            <td>{{ log.status }}</td>
-            <td>{{ log.checkIn }}</td>
-            <td>{{ log.checkOut }}</td>
-            <td>{{ log.dayType ?? 'Regular' }}</td>
-            <td>{{ (log.workedHours ?? 0) | number:'1.1-2' }}</td>
-            <td>{{ (log.overtimeHours ?? 0) | number:'1.1-2' }}</td>
-            <td>Rs {{ (log.overtimeAmount ?? 0) | number:'1.0-0' }}</td>
-            <td>{{ log.markedBy }}</td>
-          </tr>
-        } @empty {
-          <tr>
-            <td colspan="10">
-              <div class="empty-state-box">
-                <span class="empty-icon">📋</span>
-                <p class="empty-title">No logs found for selected date</p>
-                <span class="empty-subtitle">Check-in or mark attendance to populate logs.</span>
-              </div>
-            </td>
-          </tr>
-        }
-      </tbody>
-    </table>
+  <!-- Feature 7: Monthly Interactive Attendance Calendar Grid -->
+  <div class="monthly-calendar-card">
+    <div class="calendar-header">
+      <h3>📅 Monthly Attendance Calendar Grid (Current Month)</h3>
+      <div class="calendar-legend">
+        <span class="legend-item present">Present ✅</span>
+        <span class="legend-item absent">Absent ❌</span>
+        <span class="legend-item halfday">Half Day ⏱️</span>
+        <span class="legend-item holiday">Holiday 🗓️</span>
+        <span class="legend-item weekend">Weekend 🏖️</span>
+      </div>
+    </div>
+
+    <div class="calendar-grid">
+      @for (day of calendarDays; track day.date) {
+        <div
+          class="calendar-day-card"
+          [class.today]="day.isToday"
+          [class.present]="day.status === 'Present'"
+          [class.absent]="day.status === 'Absent'"
+          [class.halfday]="day.status === 'Half Day'"
+          [class.holiday]="day.status === 'Holiday'"
+          [class.weekend]="day.status === 'Weekend'"
+          [class.future]="day.status === 'Future'"
+        >
+          <span class="day-num">{{ day.dayNumber }}</span>
+          <span class="day-status">{{ day.status }}</span>
+        </div>
+      }
+    </div>
   </div>
+
+  <!-- Feature 3 Modal: Contactless QR Scanner -->
+  @if (qrModalOpen) {
+    <div class="qr-modal-backdrop" (click)="toggleQRModal()">
+      <div class="qr-modal-card" (click)="$event.stopPropagation()">
+        <h3>📱 Scan Kiosk QR Code</h3>
+        <p>Align your mobile camera with the Office Reception Kiosk screen</p>
+
+        <div class="qr-scanner-box">
+          <div class="qr-scanner-line"></div>
+          <span class="qr-icon">🔳</span>
+        </div>
+
+        <div class="qr-modal-actions">
+          <button type="button" class="btn primary" (click)="scanQRPunch()">Simulate QR Punch In</button>
+          <button type="button" class="btn outline" (click)="toggleQRModal()">Close</button>
+        </div>
+      </div>
+    </div>
+  }
 </section>

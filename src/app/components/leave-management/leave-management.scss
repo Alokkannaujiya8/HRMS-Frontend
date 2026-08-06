@@ -1,155 +1,222 @@
-.feature-page {
-  width: min(1200px, 100%);
-  margin: 0 auto;
-  color: #e2e8f0;
+.leave-container {
+  padding: 8px 4px;
 }
 
-.feature-header h1 {
-  margin: 0;
+.leave-header {
+  margin-bottom: 24px;
+
+  .page-title {
+    margin: 0;
+    font-size: 1.8rem;
+    font-weight: 900;
+    color: #f8fafc;
+  }
+
+  .page-subtitle {
+    margin: 4px 0 0;
+    font-size: 0.88rem;
+    color: #cbd5e1;
+  }
 }
 
-.feature-header p {
-  margin: 6px 0 16px;
-  color: #94a3b8;
-}
-
-.grid {
+/* Feature 6: Leave Balance Cards */
+.balance-cards-grid {
   display: grid;
-  grid-template-columns: 2fr 1fr;
-  gap: 14px;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 24px;
+
+  .balance-card {
+    background: rgba(15, 23, 42, 0.8);
+    border: 1px solid rgba(56, 189, 248, 0.15);
+    border-radius: 18px;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    backdrop-filter: blur(14px);
+    box-shadow: 0 10px 30px rgba(2, 6, 23, 0.4);
+
+    .card-icon { font-size: 1.8rem; }
+    .card-info {
+      display: flex;
+      flex-direction: column;
+      .count { font-size: 1.5rem; font-weight: 900; color: #f8fafc; }
+      .label { font-size: 0.8rem; font-weight: 700; color: #94a3b8; }
+    }
+
+    &.casual { border-top: 3.5px solid #38bdf8; }
+    &.sick { border-top: 3.5px solid #f43f5e; }
+    &.earned { border-top: 3.5px solid #a855f7; }
+    &.total { border-top: 3.5px solid #22c55e; }
+  }
+}
+
+.main-content-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.2fr;
+  gap: 20px;
+  margin-bottom: 24px;
+}
+
+.glass-panel {
+  background: rgba(15, 23, 42, 0.85);
+  border: 1px solid rgba(56, 189, 248, 0.15);
+  border-radius: 20px;
+  padding: 24px;
+  backdrop-filter: blur(16px);
+
+  h3 {
+    margin: 0 0 18px;
+    font-size: 1.15rem;
+    font-weight: 900;
+    color: #f8fafc;
+  }
+}
+
+/* Feature 1: Form Inputs */
+.form-group {
   margin-bottom: 14px;
-}
-
-.panel {
-  border: 1px solid rgba(148, 163, 184, 0.2);
-  border-radius: 14px;
-  background: rgba(15, 23, 42, 0.55);
-  padding: 14px;
-}
-
-label {
   display: flex;
   flex-direction: column;
   gap: 6px;
-  margin-bottom: 10px;
-}
 
-input,
-select,
-textarea {
-  border: 1px solid rgba(148, 163, 184, 0.35);
-  border-radius: 10px;
-  padding: 9px 10px;
-  background: rgba(2, 6, 23, 0.5);
-  color: #e2e8f0;
-}
+  label { font-size: 0.84rem; font-weight: 800; color: #cbd5e1; }
+  .form-input, .form-textarea {
+    background: #0f172a;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 10px;
+    padding: 10px 12px;
+    color: #fff;
+    font-size: 0.88rem;
 
-.btn-primary {
-  border: none;
-  border-radius: 10px;
-  padding: 10px 14px;
-  background: linear-gradient(135deg, #0284c7, #0369a1);
-  color: #fff;
-  font-weight: 700;
-  cursor: pointer;
-}
-
-ul {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-li {
-  display: flex;
-  justify-content: space-between;
-  border-bottom: 1px solid rgba(148, 163, 184, 0.16);
-  padding: 10px 0;
-}
-
-.table-wrap {
-  overflow: auto;
-}
-
-table {
-  width: 100%;
-  min-width: 850px;
-  border-collapse: collapse;
-}
-
-th,
-td {
-  padding: 10px;
-  border-bottom: 1px solid rgba(148, 163, 184, 0.15);
-}
-
-.badge {
-  border-radius: 999px;
-  font-size: 0.78rem;
-  padding: 4px 8px;
-}
-
-.pending {
-  background: rgba(234, 179, 8, 0.2);
-  color: #fde68a;
-}
-
-.approved {
-  background: rgba(34, 197, 94, 0.2);
-  color: #bbf7d0;
-}
-
-.rejected {
-  background: rgba(239, 68, 68, 0.2);
-  color: #fecaca;
-}
-
-.btn-small {
-  border: none;
-  border-radius: 8px;
-  padding: 6px 10px;
-  margin-right: 6px;
-  color: #fff;
-  cursor: pointer;
-}
-
-.approve {
-  background: #16a34a;
-}
-
-.reject {
-  background: #dc2626;
-}
-
-.muted,
-.empty {
-  color: #94a3b8;
-}
-
-.self-balance {
-  margin: 0;
-  font-size: 1.2rem;
-  font-weight: 800;
-}
-
-.alert {
-  border-radius: 12px;
-  padding: 10px 12px;
-  margin-bottom: 12px;
-}
-
-.success {
-  border: 1px solid rgba(74, 222, 128, 0.4);
-  background: rgba(21, 128, 61, 0.2);
-}
-
-.error {
-  border: 1px solid rgba(248, 113, 113, 0.4);
-  background: rgba(185, 28, 28, 0.2);
-}
-
-@media (max-width: 960px) {
-  .grid {
-    grid-template-columns: 1fr;
+    &:focus { border-color: #38bdf8; outline: none; }
   }
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.submit-btn {
+  width: 100%;
+  padding: 12px;
+  border-radius: 12px;
+  font-size: 0.9rem;
+  font-weight: 900;
+  cursor: pointer;
+  border: none;
+  background: linear-gradient(135deg, #0ea5e9, #6366f1);
+  color: #fff;
+  box-shadow: 0 4px 15px rgba(14, 165, 233, 0.3);
+}
+
+/* Feature 7: Leave Calendar */
+.leave-calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 8px;
+
+  .cal-day-cell {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 10px;
+    padding: 8px;
+    min-height: 55px;
+    display: flex;
+    flex-direction: column;
+
+    .day-no { font-size: 0.85rem; font-weight: 900; color: #94a3b8; }
+    .leave-badge-list {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      margin-top: 4px;
+      .name-badge { font-size: 0.68rem; font-weight: 800; color: #38bdf8; }
+    }
+
+    &.has-leave { background: rgba(56, 189, 248, 0.1); border-color: rgba(56, 189, 248, 0.3); }
+  }
+}
+
+/* Feature 5: History Table */
+.history-table {
+  width: 100%;
+  border-collapse: collapse;
+  color: #f1f5f9;
+
+  th {
+    background: rgba(56, 189, 248, 0.1);
+    color: #38bdf8;
+    padding: 12px 14px;
+    text-align: left;
+    font-size: 0.82rem;
+    font-weight: 800;
+  }
+
+  td {
+    padding: 12px 14px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    font-size: 0.88rem;
+
+    .emp-cell { display: flex; align-items: center; gap: 8px; }
+    .type-pill { font-weight: 800; color: #c084fc; }
+    .status-badge {
+      font-size: 0.76rem;
+      font-weight: 800;
+      padding: 3px 8px;
+      border-radius: 8px;
+      &.pending { background: rgba(249, 115, 22, 0.15); color: #fb923c; }
+      &.approved { background: rgba(34, 197, 94, 0.15); color: #4ade80; }
+      &.rejected { background: rgba(239, 68, 68, 0.15); color: #f87171; }
+    }
+  }
+}
+
+.action-buttons-group {
+  display: flex;
+  gap: 6px;
+
+  .btn {
+    padding: 6px 10px;
+    border-radius: 8px;
+    font-size: 0.76rem;
+    font-weight: 800;
+    cursor: pointer;
+    border: none;
+
+    &.manager-btn { background: rgba(34, 197, 94, 0.2); color: #4ade80; border: 1px solid rgba(34, 197, 94, 0.4); }
+    &.hr-btn { background: rgba(56, 189, 248, 0.2); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.4); }
+    &.reject-btn { background: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.4); }
+  }
+}
+
+.reject-modal-backdrop {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(2, 6, 23, 0.85);
+  backdrop-filter: blur(8px);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  .reject-modal-card {
+    background: #0f172a;
+    border: 1px solid rgba(239, 68, 68, 0.4);
+    border-radius: 20px;
+    padding: 24px;
+    width: 380px;
+    color: #fff;
+    h3 { margin: 0 0 8px; }
+    p { font-size: 0.84rem; color: #94a3b8; margin-bottom: 14px; }
+    .modal-actions { display: flex; gap: 10px; margin-top: 14px; }
+  }
+}
+
+@media (max-width: 1024px) {
+  .balance-cards-grid { grid-template-columns: repeat(2, 1fr); }
+  .main-content-grid { grid-template-columns: 1fr; }
 }

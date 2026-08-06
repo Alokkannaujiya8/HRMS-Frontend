@@ -1,159 +1,145 @@
-<section class="feature-page">
-  <div class="feature-header">
-    <h1>Reports</h1>
+<section class="reports-container">
+  <!-- Header -->
+  <div class="reports-header">
+    <div>
+      <h1 class="page-title">Business Intelligence & Executive Reports</h1>
+      <p class="page-subtitle">Export Organization Payroll, Attendance Logs & Employee Headcount (Excel, CSV, PDF)</p>
+    </div>
     @if (canExportAll) {
-      <p>Admin / HR view: organization reports export (Excel/CSV + PDF summary).</p>
-    } @else {
-      <p>Employee view: your own attendance and leave history.</p>
+      <div class="header-action-buttons">
+        <button type="button" class="btn excel-btn" (click)="exportExcel()">🟢 Export Excel (.xlsx)</button>
+        <button type="button" class="btn csv-btn" (click)="exportCSV()">🔵 Export CSV</button>
+        <button type="button" class="btn pdf-btn" (click)="exportPDF()">🔴 Export PDF Summary</button>
+      </div>
     }
   </div>
 
   @if (message) {
-    <div class="alert success">{{ message }}</div>
+    <div class="alert success">✅ {{ message }}</div>
   }
   @if (errorMessage) {
-    <div class="alert error">{{ errorMessage }}</div>
+    <div class="alert error">🚨 {{ errorMessage }}</div>
   }
 
-  <div class="panel controls">
-    <label>
-      Report Month
-      <input type="month" [(ngModel)]="selectedMonth" (change)="onMonthChange()" />
-    </label>
-    @if (canExportAll) {
-      <div class="btns">
-        <button type="button" class="btn" (click)="downloadExcelReport()">Employee Excel</button>
-        <button type="button" class="btn" (click)="downloadAttendanceExcel()">Attendance Excel</button>
-        <button type="button" class="btn payroll" (click)="downloadPayrollReport()">Payroll OT CSV</button>
-        <button type="button" class="btn pdf" (click)="downloadPdfSummary()">PDF Summary</button>
+  <!-- Report Month Filter Controls -->
+  <div class="month-selector-bar">
+    <div class="month-group">
+      <label>Select Report Month:</label>
+      <input type="month" [(ngModel)]="selectedMonth" (change)="onMonthChange()" class="month-input" />
+    </div>
+    <div class="export-summary-text">
+      @if (canExportAll) {
+        <span>Ready to export <strong>{{ visibleEmployees.length }}</strong> employee records for <strong>{{ selectedMonth }}</strong></span>
+      } @else {
+        <span>Viewing personal reporting history for <strong>{{ selectedMonth }}</strong></span>
+      }
+    </div>
+  </div>
+
+  <!-- Top Executive Metric Stats Grid -->
+  <div class="reports-stats-grid">
+    <div class="stat-card blue">
+      <span class="s-icon">👥</span>
+      <div class="s-content">
+        <span class="s-val">{{ visibleEmployees.length }}</span>
+        <span class="s-lbl">Total Employees</span>
       </div>
-    } @else {
-      <p class="muted">Exports are available only for Admin / HR.</p>
-    }
+    </div>
+
+    <div class="stat-card emerald">
+      <span class="s-icon">💰</span>
+      <div class="s-content">
+        <span class="s-val">₹ {{ monthlySalaryExpense | number:'1.0-0' }}</span>
+        <span class="s-lbl">Monthly Base Salary</span>
+      </div>
+    </div>
+
+    <div class="stat-card purple">
+      <span class="s-icon">⏱️</span>
+      <div class="s-content">
+        <span class="s-val">{{ totalOvertimeHours | number:'1.1-2' }} Hrs</span>
+        <span class="s-lbl">Total OT Hours</span>
+      </div>
+    </div>
+
+    <div class="stat-card cyan">
+      <span class="s-icon">💵</span>
+      <div class="s-content">
+        <span class="s-val">₹ {{ monthlyOvertimeExpense | number:'1.0-0' }}</span>
+        <span class="s-lbl">Overtime Expense</span>
+      </div>
+    </div>
+
+    <div class="stat-card indigo">
+      <span class="s-icon">📊</span>
+      <div class="s-content">
+        <span class="s-val">₹ {{ payrollTotalExpense | number:'1.0-0' }}</span>
+        <span class="s-lbl">Total Disbursed Payroll</span>
+      </div>
+    </div>
+
+    <div class="stat-card rose">
+      <span class="s-icon">⚠️</span>
+      <div class="s-content">
+        <span class="s-val">{{ lateEmployees }}</span>
+        <span class="s-lbl">Late Arrivals</span>
+      </div>
+    </div>
   </div>
 
-  <div class="stats">
-    <div class="card">
-      <h3>Total Employees</h3>
-      <p>{{ visibleEmployees.length }}</p>
+  <!-- Main Payroll & Attendance Report Table -->
+  <div class="glass-panel report-table-panel">
+    <div class="panel-header">
+      <h3>📋 Monthly Payroll & Overtime Breakdown Table</h3>
+      @if (canExportAll) {
+        <button type="button" class="btn csv-btn" (click)="exportCSV()">📄 Download Raw Dataset (CSV)</button>
+      }
     </div>
-    <div class="card">
-      <h3>Base Salary</h3>
-      <p>Rs {{ monthlySalaryExpense | number:'1.0-0' }}</p>
-    </div>
-    <div class="card">
-      <h3>Total OT Hours</h3>
-      <p>{{ totalOvertimeHours | number:'1.1-2' }}</p>
-    </div>
-    <div class="card">
-      <h3>OT Amount</h3>
-      <p>Rs {{ monthlyOvertimeExpense | number:'1.0-0' }}</p>
-    </div>
-    <div class="card">
-      <h3>Total Payroll</h3>
-      <p>Rs {{ payrollTotalExpense | number:'1.0-0' }}</p>
-    </div>
-    <div class="card">
-      <h3>Late Employees</h3>
-      <p>{{ lateEmployees }}</p>
-    </div>
-    <div class="card">
-      <h3>Leave Requests</h3>
-      <p>{{ filteredLeaves.length }}</p>
-    </div>
-  </div>
 
-  <div class="panel table-wrap">
-    <h3>Monthly Payroll and Overtime</h3>
-    <table>
-      <thead>
-        <tr>
-          <th>Employee</th>
-          <th>Monthly Salary</th>
-          <th>Hourly Salary</th>
-          <th>Worked Hrs</th>
-          <th>OT Hrs</th>
-          <th>Weekend OT</th>
-          <th>Holiday OT</th>
-          <th>OT Amount</th>
-          <th>Total Salary</th>
-          <th>Late Days</th>
-          <th>Leave Days</th>
-        </tr>
-      </thead>
-      <tbody>
-        @for (summary of visiblePayrollSummaries; track summary.employeeId) {
-          <tr>
-            <td>{{ summary.employeeName }}</td>
-            <td>Rs {{ summary.monthlySalary | number:'1.0-0' }}</td>
-            <td>Rs {{ summary.hourlySalary | number:'1.2-2' }}</td>
-            <td>{{ summary.totalWorkedHours | number:'1.1-2' }}</td>
-            <td>{{ summary.totalOvertimeHours | number:'1.1-2' }}</td>
-            <td>{{ summary.weekendOtHours | number:'1.1-2' }}</td>
-            <td>{{ summary.holidayOtHours | number:'1.1-2' }}</td>
-            <td>Rs {{ summary.overtimeAmount | number:'1.0-0' }}</td>
-            <td>Rs {{ summary.totalSalary | number:'1.0-0' }}</td>
-            <td>{{ summary.lateDays }}</td>
-            <td>{{ summary.leaveDays }}</td>
-          </tr>
-        } @empty {
-          <tr><td colspan="11" class="empty">No payroll data for this month.</td></tr>
-        }
-      </tbody>
-    </table>
-  </div>
-
-  @if (!canExportAll) {
-    <div class="panel table-wrap">
-      <h3>My Attendance History</h3>
-      <table>
+    <div class="table-wrapper">
+      <table class="report-table">
         <thead>
           <tr>
-            <th>Date</th>
-            <th>Status</th>
-            <th>Check In</th>
-            <th>Check Out</th>
+            <th>Employee Name</th>
+            <th>Monthly Base Salary</th>
+            <th>Hourly Salary</th>
+            <th>Worked Hrs</th>
+            <th>OT Hrs</th>
+            <th>Weekend OT</th>
+            <th>Holiday OT</th>
+            <th>OT Earnings</th>
+            <th>Total Payroll</th>
+            <th>Late Days</th>
+            <th>Leave Days</th>
           </tr>
         </thead>
         <tbody>
-          @for (entry of filteredAttendance; track entry.id) {
+          @for (summary of visiblePayrollSummaries; track summary.employeeId) {
             <tr>
-              <td>{{ entry.date }}</td>
-              <td>{{ entry.status }}</td>
-              <td>{{ entry.checkIn }}</td>
-              <td>{{ entry.checkOut }}</td>
+              <td>
+                <div class="emp-cell">
+                  <span class="avatar">👤</span>
+                  <strong>{{ summary.employeeName }}</strong>
+                </div>
+              </td>
+              <td>₹ {{ summary.monthlySalary | number:'1.0-0' }}</td>
+              <td>₹ {{ summary.hourlySalary | number:'1.2-2' }}</td>
+              <td>{{ summary.totalWorkedHours | number:'1.1-2' }} hrs</td>
+              <td><span class="ot-badge">{{ summary.totalOvertimeHours | number:'1.1-2' }} hrs</span></td>
+              <td>{{ summary.weekendOtHours | number:'1.1-2' }} hrs</td>
+              <td>{{ summary.holidayOtHours | number:'1.1-2' }} hrs</td>
+              <td><span class="amount-badge">₹ {{ summary.overtimeAmount | number:'1.0-0' }}</span></td>
+              <td><strong class="total-salary-text">₹ {{ summary.totalSalary | number:'1.0-0' }}</strong></td>
+              <td><span class="late-tag" [class.has-late]="summary.lateDays > 0">{{ summary.lateDays }} Days</span></td>
+              <td>{{ summary.leaveDays }} Days</td>
             </tr>
           } @empty {
-            <tr><td colspan="4" class="empty">No attendance history for this month.</td></tr>
+            <tr>
+              <td colspan="11" class="empty-text">📋 No payroll records found for this month.</td>
+            </tr>
           }
         </tbody>
       </table>
     </div>
-
-    <div class="panel table-wrap">
-      <h3>My Leave History</h3>
-      <table>
-        <thead>
-          <tr>
-            <th>Type</th>
-            <th>From</th>
-            <th>To</th>
-            <th>Status</th>
-          </tr>
-        </thead>
-        <tbody>
-          @for (leave of filteredLeaves; track leave.id) {
-            <tr>
-              <td>{{ leave.leaveType }}</td>
-              <td>{{ leave.fromDate }}</td>
-              <td>{{ leave.toDate }}</td>
-              <td>{{ leave.status }}</td>
-            </tr>
-          } @empty {
-            <tr><td colspan="4" class="empty">No leave history for this month.</td></tr>
-          }
-        </tbody>
-      </table>
-    </div>
-  }
+  </div>
 </section>

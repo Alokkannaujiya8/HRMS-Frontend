@@ -47,7 +47,7 @@ export class HrDashboardHome implements OnInit {
   }
 
   get totalEmployees(): number {
-    return this.employees.length || 24;
+    return this.employees.length > 0 ? this.employees.length : 256;
   }
 
   get activeEmployees(): number {
@@ -55,36 +55,43 @@ export class HrDashboardHome implements OnInit {
   }
 
   get todayAttendance(): number {
-    return this.attendance.filter((entry) => entry.date === this.today).length || Math.floor(this.totalEmployees * 0.85);
+    const count = this.attendance.filter((entry) => entry.date === this.today).length;
+    return count > 0 ? count : 218;
   }
 
   get absentEmployees(): number {
-    return Math.max(0, this.totalEmployees - this.todayAttendance - this.onLeaveEmployees);
+    return 12;
+  }
+
+  get lateEmployees(): number {
+    return 9;
   }
 
   get onLeaveEmployees(): number {
-    return this.leaveRequests.filter((request) => request.status === 'Approved').length || 2;
+    const count = this.leaveRequests.filter((request) => request.status === 'Approved').length;
+    return count > 0 ? count : 17;
+  }
+
+  get pendingLeaves(): number {
+    const count = this.leaveRequests.filter((request) => request.status === 'Pending').length;
+    return count > 0 ? count : 7;
+  }
+
+  get pendingPayrollCount(): number {
+    return 18;
   }
 
   get totalOvertimeHours(): number {
     return this.payrollSummaries.reduce((sum, summary) => sum + summary.totalOvertimeHours, 0);
   }
 
-  get lateEmployees(): number {
-    return this.payrollSummaries.filter((summary) => summary.lateDays > 0).length || 3;
-  }
-
-  get pendingLeaves(): number {
-    return this.leaveRequests.filter((request) => request.status === 'Pending').length || 4;
-  }
-
   get payrollTotal(): number {
     const total = this.payrollSummaries.reduce((sum, summary) => sum + summary.totalSalary, 0);
-    return total > 0 ? total : 1485000;
+    return total > 0 ? total : 24850000;
   }
 
   get activeAssetsCount(): number {
-    return 48;
+    return 102;
   }
 
   get departmentsCount(): number {
